@@ -1,11 +1,35 @@
+<script setup lang="ts">
+import { defineComponent, ref } from 'vue';
+import Glayout from "@/components/Glayout.vue";
+import { ComponentItemConfig, ItemType, type LayoutConfig } from 'golden-layout';
+</script>
+
 <template>
-  <textarea v-model="code"></textarea>
-  <div><button @click="run()">Run</button></div>
-  <pre>{{ output }}</pre>
+  <Glayout ref="gLayoutRoot" glc-path="./" style="width: 100%; height: calc(100% - 90px)"></Glayout>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+const layout: LayoutConfig = {
+  root: {
+    type: ItemType.row,
+    content: [
+      <ComponentItemConfig>{
+        type: "component",
+        title: "Code",
+        header: { show: "top", popout: false },
+        componentType: "CodeBox",
+        size: '100%',
+      },
+      <ComponentItemConfig>{
+        type: "component",
+        title: "Output",
+        header: { show: "top", popout: false },
+        size: '100%',
+        componentType: "Output",
+      },
+    ],
+  },
+};
 
 export default defineComponent({
   data() {
@@ -21,6 +45,18 @@ export default defineComponent({
         this.output += res;
       });
     }
+  },
+  mounted() {
+    (<any>this.$refs.gLayoutRoot).loadGLLayout(layout);
   }
 });
 </script>
+
+<style>
+  #app {
+    height: 90vh;
+  }
+</style>
+
+<style src="golden-layout/dist/css/goldenlayout-base.css"></style>
+<style src="golden-layout/dist/css/themes/goldenlayout-light-theme.css"></style>

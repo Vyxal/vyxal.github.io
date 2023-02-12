@@ -17,7 +17,7 @@ const layout: LayoutConfig = {
         type: "component",
         title: "Code",
         header: { show: "top", popout: false },
-        componentType: "CodeBox",
+        componentType: () => import(`@/components/CodeBox.vue`),
         size: '100%',
       },
       <ComponentItemConfig>{
@@ -25,7 +25,7 @@ const layout: LayoutConfig = {
         title: "Output",
         header: { show: "top", popout: false },
         size: '100%',
-        componentType: "Output",
+        componentType: () => import(`@/components/Output.vue`),
       },
     ],
   },

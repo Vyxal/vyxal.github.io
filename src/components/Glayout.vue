@@ -17,8 +17,6 @@ import {
   ref,
   markRaw,
   readonly,
-  defineExpose,
-  defineAsyncComponent,
   defineProps,
   nextTick,
   getCurrentInstance,

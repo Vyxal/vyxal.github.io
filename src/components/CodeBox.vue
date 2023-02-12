@@ -1,7 +1,9 @@
 <template>
-  <textarea v-model="code"></textarea>
-  <br>
-  <button @click="run">Run</button>
+  <div class="cont">
+    <textarea v-model="code"></textarea>
+    <br>
+    <button @click="run">Run</button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -24,3 +26,15 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+  .cont {
+    padding: 20px;
+    height: 100%;
+  }
+
+  textarea {
+    width: 100% !important;
+    height: 50%;
+  }
+</style>

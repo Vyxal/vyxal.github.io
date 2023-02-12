@@ -22,3 +22,14 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+pre {
+  color: white;
+  padding: 10px 20px;
+  white-space: pre-wrap;
+  overflow: auto;
+  word-break: break-all;
+  max-height: 95%;
+}
+</style>

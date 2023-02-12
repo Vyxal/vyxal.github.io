@@ -22,7 +22,7 @@ import {
   defineProps,
   nextTick,
   getCurrentInstance,
-type AsyncComponentLoader,
+  type Component,
 } from "vue";
 import {
   ComponentContainer,
@@ -62,9 +62,9 @@ const instance = getCurrentInstance();
 * Method
 *******************/
 /** @internal */
-const addComponent = (componentType: AsyncComponentLoader, title: string) => {
+const addComponent = (componentType: Component, title: string) => {
   const glc = markRaw(
-    defineAsyncComponent(componentType)
+    componentType
   );
   let index = CurIndex;
   if (UnusedIndexes.length > 0) index = UnusedIndexes.pop() as number;
@@ -72,7 +72,7 @@ const addComponent = (componentType: AsyncComponentLoader, title: string) => {
   AllComponents.value.set(index, glc);
   return index;
 };
-const addGLComponent = async (componentType: AsyncComponentLoader, title: string) => {
+const addGLComponent = async (componentType: Component, title: string) => {
   if (componentType.length == 0)
     throw new Error("addGLComponent: Component's type is empty");
   const index = addComponent(componentType, title);
@@ -86,7 +86,7 @@ const loadGLLayout = async (
   AllComponents.value.clear();
   const config = (
     'resolved' in layoutConfig &&
-    layoutConfig.resolved
+      layoutConfig.resolved
       ? LayoutConfig.fromResolved(layoutConfig as ResolvedLayoutConfig)
       : layoutConfig
   ) as LayoutConfig;
@@ -102,7 +102,7 @@ const loadGLLayout = async (
     for (let itemConfig of content) {
       if (itemConfig.type == "component") {
         index = addComponent(
-          itemConfig.componentType as AsyncComponentLoader,
+          itemConfig.componentType as Component,
           itemConfig.title as string
         );
         if (typeof itemConfig.componentState == "object")

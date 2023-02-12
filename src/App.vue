@@ -2,6 +2,8 @@
 import { defineComponent, ref } from 'vue';
 import Glayout from "@/components/Glayout.vue";
 import { ComponentItemConfig, ItemType, type LayoutConfig } from 'golden-layout';
+import CodeBox from './components/CodeBox.vue';
+import Output from './components/Output.vue';
 </script>
 
 <template>
@@ -17,7 +19,7 @@ const layout: LayoutConfig = {
         type: "component",
         title: "Code",
         header: { show: "top", popout: false },
-        componentType: () => import(`@/components/CodeBox.vue`),
+        componentType: CodeBox,
         size: '100%',
       },
       <ComponentItemConfig>{
@@ -25,7 +27,7 @@ const layout: LayoutConfig = {
         title: "Output",
         header: { show: "top", popout: false },
         size: '100%',
-        componentType: () => import(`@/components/Output.vue`),
+        componentType: Output,
       },
     ],
   },

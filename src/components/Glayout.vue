@@ -50,7 +50,7 @@ let GLayout: VirtualLayout;
 const GlcKeyPrefix = readonly(ref("glc_"));
 const MapComponents = new Map<
   ComponentContainer,
-  { refId: number; glc: GlComponent }
+  { refId: number; glc: typeof GlComponent }
 >();
 const AllComponents = ref(new Map<number, any>());
 const UnusedIndexes: number[] = [];
@@ -86,15 +86,14 @@ const loadGLLayout = async (
   GLayout.clear();
   AllComponents.value.clear();
   const config = (
+    'resolved' in layoutConfig &&
     layoutConfig.resolved
       ? LayoutConfig.fromResolved(layoutConfig as ResolvedLayoutConfig)
       : layoutConfig
   ) as LayoutConfig;
   let contents: (
-    | RowOrColumnItemConfig[]
-    | StackItemConfig[]
-    | ComponentItemConfig[]
-  )[] = [config.root.content];
+    [] | (RowOrColumnItemConfig | StackItemConfig | ComponentItemConfig)[] | ComponentItemConfig[]
+  )[] = [config.root!.content!];
   let index = 0;
   while (contents.length > 0) {
     const content = contents.shift() as
@@ -108,7 +107,7 @@ const loadGLLayout = async (
           itemConfig.title as string
         );
         if (typeof itemConfig.componentState == "object")
-          itemConfig.componentState["refId"] = index;
+          (<any>itemConfig.componentState)["refId"] = index;
         else itemConfig.componentState = { refId: index };
       } else if (itemConfig.content.length > 0) {
         contents.push(
@@ -200,7 +199,7 @@ onMounted(() => {
       );
     }
     const ref = GlcKeyPrefix.value + refId;
-    const component = instance?.refs[ref] instanceof Array ? instance?.refs[ref][0] : instance?.refs[ref] as GlComponent;
+    const component = instance?.refs[ref] instanceof Array ? (<any>instance?.refs[ref])[0] : instance?.refs[ref] as typeof GlComponent;
     MapComponents.set(container, { refId: refId, glc: component });
     container.virtualRectingRequiredEvent = (container, width, height) =>
       handleContainerVirtualRectingRequiredEvent(

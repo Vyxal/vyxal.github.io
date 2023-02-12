@@ -18,6 +18,9 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+env:
+  NODE_ENV: "production"
+
 jobs:
   deploy:
     environment:
@@ -40,7 +43,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: NODE_ENV=production npm run build
+        run: npm run build
 
       - name: Upload built HTML
         uses: actions/upload-pages-artifact@v1

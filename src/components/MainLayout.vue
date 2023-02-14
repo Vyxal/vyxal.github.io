@@ -7,7 +7,7 @@ import Output from '@/components/Output.vue';
 </script>
 
 <template>
-  <Glayout ref="gLayoutRoot" glc-path="./" style="width: 95%; height: 90%"></Glayout>
+  <Glayout ref="gLayoutRoot" glc-path="./" style="width: 100%; height: 90%"></Glayout>
 </template>
 
 <script lang="ts">

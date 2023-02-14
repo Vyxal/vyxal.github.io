@@ -15,5 +15,6 @@
     height: 100%;
     display: flex;
     align-items: center;
+    padding-right: 30px;
   }
 </style>

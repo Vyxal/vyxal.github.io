@@ -18,14 +18,14 @@ const layout: LayoutConfig = {
       <ComponentItemConfig>{
         type: "component",
         title: "Code",
-        header: { show: "top", popout: false },
+        header: { show: "top", popout: false, maximise: false },
         componentType: CodeBox,
         size: '100%',
       },
       <ComponentItemConfig>{
         type: "component",
         title: "Output",
-        header: { show: "top", popout: false },
+        header: { show: "top", popout: false, maximise: false },
         size: '100%',
         componentType: Output,
       },

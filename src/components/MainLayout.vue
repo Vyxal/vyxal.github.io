@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue';
 import Glayout from "@/components/Glayout.vue";
-import { ComponentItemConfig, ItemType, type LayoutConfig } from 'golden-layout';
-import CodeBox from '@/components/CodeBox.vue';
+import { ComponentItemConfig, ItemType, type LayoutConfig, type StackItemConfig } from 'golden-layout';
 import Output from '@/components/Output.vue';
+import MainCode from './MainCode.vue';
+import Header from './Header.vue';
+import Footer from './Footer.vue';
 </script>
 
 <template>
@@ -14,15 +16,35 @@ import Output from '@/components/Output.vue';
 const layout: LayoutConfig = {
   root: {
     type: ItemType.row,
-    content: <ComponentItemConfig[]>[
-      {
-        type: "component",
-        title: "Code",
-        header: { show: "top", popout: false, maximise: false },
-        componentType: CodeBox,
-        size: '100%',
+    content: [
+      <StackItemConfig>{
+        type: "stack",
+        size: "100%",
+        content: [
+          {
+            type: "component",
+            title: "Code",
+            header: { show: "top", popout: false, maximise: false },
+            componentType: MainCode,
+            size: '100%',
+          },
+          {
+            type: "component",
+            title: "Header",
+            header: { show: "top", popout: false, maximise: false },
+            componentType: Header,
+            size: '100%',
+          },
+          {
+            type: "component",
+            title: "Footer",
+            header: { show: "top", popout: false, maximise: false },
+            componentType: Footer,
+            size: '100%',
+          },
+        ]
       },
-      {
+      <ComponentItemConfig>{
         type: "component",
         title: "Output",
         header: { show: "top", popout: false, maximise: false },
@@ -54,5 +76,9 @@ export default defineComponent({
 });
 </script>
 
-<style src="golden-layout/dist/css/goldenlayout-base.css"></style>
-<style src="golden-layout/dist/css/themes/goldenlayout-dark-theme.css"></style>
+<style src="golden-layout/dist/css/goldenlayout-base.css">
+
+</style>
+<style src="golden-layout/dist/css/themes/goldenlayout-dark-theme.css">
+
+</style>

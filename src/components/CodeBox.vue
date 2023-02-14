@@ -5,25 +5,39 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import { useMainStore } from '@/stores/MainStore';
-import { mapWritableState } from 'pinia';
 
 export default defineComponent({
+  props: {
+    dataName: {
+      type: String as PropType<"header" | "code" | "footer">,
+      required: true
+    }
+  },
   computed: {
-    ...mapWritableState(useMainStore, ['code'])
+    code: {
+      get() {
+        const store = useMainStore();
+        return store[this.dataName];
+      },
+      set(newVal: string) {
+        const store = useMainStore();
+        store.$patch({ [this.dataName]: newVal });
+      }
+    }
   }
 });
 </script>
 
 <style scoped>
-  .cont {
-    padding: 20px;
-    height: 100%;
-  }
+.cont {
+  padding: 20px;
+  height: 100%;
+}
 
-  textarea {
-    width: 100% !important;
-    height: 50%;
-  }
+textarea {
+  width: 100% !important;
+  height: 50%;
+}
 </style>

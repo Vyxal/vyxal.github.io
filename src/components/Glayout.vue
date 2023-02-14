@@ -17,7 +17,6 @@ import {
   ref,
   markRaw,
   readonly,
-  defineProps,
   nextTick,
   getCurrentInstance,
   type Component,

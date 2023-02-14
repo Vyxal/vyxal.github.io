@@ -1,25 +1,19 @@
 <template>
-  <pre>{{ out }}</pre>
+  <pre>{{ output }}</pre>
 </template>
 
 <script lang="ts">
-import Store from '@/stores/Store';
+import { useMainStore } from '@/stores/MainStore';
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
   data() {
-    return {
-      out: ""
-    }
+    return {}
   },
-  mounted() {
-    Store.emptyCallback = () => {
-      this.out = "";
-    };
-    Store.outCallback = (s) => {
-      this.out += s;
-    };
-  }
+  computed: {
+    ...mapState(useMainStore, ['output'])
+  },
 });
 </script>
 

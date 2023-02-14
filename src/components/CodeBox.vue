@@ -8,20 +8,20 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Store from '@/stores/Store';
+import { useMainStore } from '@/stores/MainStore';
+import { mapWritableState } from 'pinia';
 
 export default defineComponent({
   data() {
-    return {
-      code: ""
-    };
+    return {};
+  },
+  computed: {
+    ...mapWritableState(useMainStore, ['code'])
   },
   methods: {
     run() {
-      Store.emptyCallback();
-      Vyxal.execute(this.code, "", "", res => {
-        Store.outCallback(res);
-      });
+      const store = useMainStore();
+      store.execute();
     }
   }
 });

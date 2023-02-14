@@ -1,8 +1,6 @@
 <template>
   <div class="cont">
     <textarea v-model="code"></textarea>
-    <br>
-    <button @click="run">Run</button>
   </div>
 </template>
 
@@ -12,17 +10,8 @@ import { useMainStore } from '@/stores/MainStore';
 import { mapWritableState } from 'pinia';
 
 export default defineComponent({
-  data() {
-    return {};
-  },
   computed: {
     ...mapWritableState(useMainStore, ['code'])
-  },
-  methods: {
-    run() {
-      const store = useMainStore();
-      store.execute();
-    }
   }
 });
 </script>

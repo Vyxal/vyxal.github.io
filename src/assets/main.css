@@ -1,8 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
 body {
   margin: 0;
   height: 100vh;
   background-color: #0a0a0a;
   color-scheme: dark;
+  font-family: Raleway, sans-serif;
 }
 
 *,
@@ -29,4 +32,8 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.lm_tab {
+  font-family: Raleway, sans-serif !important;
 }

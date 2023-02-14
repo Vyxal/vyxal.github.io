@@ -37,3 +37,7 @@ body {
 .lm_tab {
   font-family: Raleway, sans-serif !important;
 }
+
+.lm_popout, .lm_maximise {
+  display: none !important;
+}

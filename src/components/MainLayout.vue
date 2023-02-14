@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import Glayout from "@/components/Glayout.vue";
 import { ComponentItemConfig, ItemType, type LayoutConfig } from 'golden-layout';
 import CodeBox from '@/components/CodeBox.vue';
@@ -14,15 +14,15 @@ import Output from '@/components/Output.vue';
 const layout: LayoutConfig = {
   root: {
     type: ItemType.row,
-    content: [
-      <ComponentItemConfig>{
+    content: <ComponentItemConfig[]>[
+      {
         type: "component",
         title: "Code",
         header: { show: "top", popout: false, maximise: false },
         componentType: CodeBox,
         size: '100%',
       },
-      <ComponentItemConfig>{
+      {
         type: "component",
         title: "Output",
         header: { show: "top", popout: false, maximise: false },

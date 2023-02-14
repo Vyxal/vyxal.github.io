@@ -1,6 +1,7 @@
 <template>
   <div class="cont">
-    <textarea v-model="code"></textarea>
+    <textarea v-model="code" v-if="inputType == 'textarea'"></textarea>
+    <input type="text" v-model="code" v-else>
   </div>
 </template>
 
@@ -11,8 +12,12 @@ import { useMainStore } from '@/stores/MainStore';
 export default defineComponent({
   props: {
     dataName: {
-      type: String as PropType<"header" | "code" | "footer">,
+      type: String as PropType<"header" | "code" | "footer" | "inputs" | "flags">,
       required: true
+    },
+    inputType: {
+      type: String as PropType<"textarea" | "input">,
+      default: "textarea"
     }
   },
   computed: {

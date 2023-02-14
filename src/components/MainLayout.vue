@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { defineComponent } from 'vue';
 import Glayout from "@/components/Glayout.vue";
-import { ComponentItemConfig, ItemType, type LayoutConfig, type StackItemConfig } from 'golden-layout';
+import { ComponentItemConfig, ItemType, RowOrColumnItemConfig, type LayoutConfig, type StackItemConfig } from 'golden-layout';
 import Output from '@/components/Output.vue';
 import MainCode from './MainCode.vue';
 import Header from './Header.vue';
 import Footer from './Footer.vue';
+import Inputs from './Inputs.vue';
+import Flags from './Flags.vue';
 </script>
 
 <template>
@@ -17,31 +19,51 @@ const layout: LayoutConfig = {
   root: {
     type: ItemType.row,
     content: [
-      <StackItemConfig>{
-        type: "stack",
+      <RowOrColumnItemConfig>{
+        type: "column",
         size: "100%",
         content: [
-          {
+          <ComponentItemConfig>{
             type: "component",
-            title: "Code",
+            title: "Flags",
             header: { show: "top", popout: false, maximise: false },
-            componentType: MainCode,
-            size: '100%',
+            size: '10%',
+            componentType: Flags
           },
-          {
+          <StackItemConfig>{
+            type: "stack",
+            size: "50%",
+            content: [
+              {
+                type: "component",
+                title: "Code",
+                header: { show: "top", popout: false, maximise: false },
+                componentType: MainCode,
+                size: '100%',
+              },
+              {
+                type: "component",
+                title: "Header",
+                header: { show: "top", popout: false, maximise: false },
+                componentType: Header,
+                size: '100%',
+              },
+              {
+                type: "component",
+                title: "Footer",
+                header: { show: "top", popout: false, maximise: false },
+                componentType: Footer,
+                size: '100%',
+              },
+            ]
+          },
+          <ComponentItemConfig>{
             type: "component",
-            title: "Header",
+            title: "Inputs",
             header: { show: "top", popout: false, maximise: false },
-            componentType: Header,
-            size: '100%',
-          },
-          {
-            type: "component",
-            title: "Footer",
-            header: { show: "top", popout: false, maximise: false },
-            componentType: Footer,
-            size: '100%',
-          },
+            size: '40%',
+            componentType: Inputs
+          }
         ]
       },
       <ComponentItemConfig>{

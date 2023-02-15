@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { Codemirror } from 'vue-codemirror'
+import { oneDark } from '@codemirror/theme-one-dark'
 </script>
 
 <template>
   <div class="cont">
-    <div ref="container" style="height: 100%; width: 100%" v-if="inputType == 'textarea'"></div>
+    <Codemirror
+      :extensions="[oneDark]"
+      :style="{ height: '100%', width: '100%' }"
+      v-model="code"
+      v-if="inputType == 'textarea'"
+    />
     <input type="text" v-model="code" v-else>
   </div>
 </template>
@@ -36,32 +42,6 @@ export default defineComponent({
       }
     }
   },
-  mounted() {
-    if (this.inputType == "textarea") {
-      monaco.editor.defineTheme("vs-dark2", {
-        base: "vs-dark",
-        inherit: true,
-        rules: [],
-        colors: {
-          "editor.background": '#131313'
-        }
-      });
-      
-      const editor = monaco.editor.create(<HTMLElement>this.$refs.container, {
-        theme: 'vs-dark2',
-        value: "",
-        automaticLayout: true,
-        minimap: { enabled: false },
-        lineNumbers: 'off'
-      });
-
-      this.code = editor.getValue();
-
-      editor.onDidChangeModelContent(() => {
-        this.code = editor.getValue();
-      });
-    }
-  },
 });
 </script>
 
@@ -77,7 +57,7 @@ textarea {
 }
 
 input {
-  background: #131313;
+  background: #282c34;
   border: none;
   padding: 5px;
   outline: none !important;

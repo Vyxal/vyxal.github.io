@@ -11,10 +11,12 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@codemirror/theme-one-dark": "^6.1.0",
+    "codemirror": "^6.0.1",
     "golden-layout": "^2.6.0",
-    "monaco-editor": "^0.35.0",
     "pinia": "^2.0.30",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "vue-codemirror": "^6.1.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",

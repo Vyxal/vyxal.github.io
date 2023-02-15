@@ -7,4 +7,8 @@ declare const Vyxal: {
     flags: string,
     callback: (res: string) => void
   ): void;
+
+  getSBCSified(code: string): string;
+
+  getCodepage(): string;
 };

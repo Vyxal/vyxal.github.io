@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "golden-layout": "^2.6.0",
+    "monaco-editor": "^0.35.0",
     "pinia": "^2.0.30",
     "vue": "^3.2.45"
   },

@@ -1,6 +1,10 @@
+<script setup lang="ts">
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+</script>
+
 <template>
   <div class="cont">
-    <textarea v-model="code" v-if="inputType == 'textarea'"></textarea>
+    <div ref="container" style="height: 100%; width: 100%" v-if="inputType == 'textarea'"></div>
     <input type="text" v-model="code" v-else>
   </div>
 </template>
@@ -31,7 +35,33 @@ export default defineComponent({
         store.$patch({ [this.dataName]: newVal });
       }
     }
-  }
+  },
+  mounted() {
+    if (this.inputType == "textarea") {
+      monaco.editor.defineTheme("vs-dark2", {
+        base: "vs-dark",
+        inherit: true,
+        rules: [],
+        colors: {
+          "editor.background": '#131313'
+        }
+      });
+      
+      const editor = monaco.editor.create(<HTMLElement>this.$refs.container, {
+        theme: 'vs-dark2',
+        value: "",
+        automaticLayout: true,
+        minimap: { enabled: false },
+        lineNumbers: 'off'
+      });
+
+      this.code = editor.getValue();
+
+      editor.onDidChangeModelContent(() => {
+        this.code = editor.getValue();
+      });
+    }
+  },
 });
 </script>
 
@@ -44,5 +74,13 @@ export default defineComponent({
 textarea {
   width: 100% !important;
   height: 50%;
+}
+
+input {
+  background: #131313;
+  border: none;
+  padding: 5px;
+  outline: none !important;
+  font: inherit;
 }
 </style>

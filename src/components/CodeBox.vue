@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { Codemirror } from 'vue-codemirror'
-import { oneDark } from '@codemirror/theme-one-dark'
+import { Codemirror } from 'vue-codemirror';
+import { EditorView } from '@codemirror/view';
+import { oneDark } from '@codemirror/theme-one-dark';
+
+const extensions = [
+  EditorView.theme({
+    '&': { background: '#0c0c0c' },
+    '.cm-gutters': { background: '#151515' },
+    '.cm-activeLineGutter': { background: '#1f1f1f' },
+    '.cm-activeLine': { background: '#141414' }
+  }),
+  oneDark
+];
 </script>
 
 <template>
   <div class="cont">
-    <Codemirror
-      :extensions="[oneDark]"
-      :style="{ height: '100%', width: '100%' }"
-      v-model="code"
-      v-if="inputType == 'textarea'"
-    />
+    <Codemirror :extensions="extensions" :style="{ height: '100%', width: '100%' }" v-model="code"
+      v-if="inputType == 'textarea'" />
     <input type="text" v-model="code" v-else>
   </div>
 </template>
@@ -57,7 +64,7 @@ textarea {
 }
 
 input {
-  background: #282c34;
+  background: #0c0c0c;
   border: none;
   padding: 5px;
   outline: none !important;

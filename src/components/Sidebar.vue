@@ -98,14 +98,10 @@ export default defineComponent({
       const store = useMainStore();
       store.execute();
     },
-    makeLink() {
-      const store = useMainStore();
-      const obj = [store.flags, store.header, store.footer, store.code, store.inputs];
-      return location.protocol + '//' + location.host + '/#' + btoa(JSON.stringify(obj));
-    },
     outputLink(type: string) {
       const store = useMainStore();
-      const link = this.makeLink();
+      const obj = [store.flags, store.header, store.footer, store.code, store.inputs];
+      const link = location.protocol + '//' + location.host + '/#' + btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
 
       const flags = store.flags.replace(/[5bBTAP…aṠ]/g, "");
       let code = store.code;

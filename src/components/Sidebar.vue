@@ -126,7 +126,7 @@ export default defineComponent({
 \`\`\`
 ${code}
 \`\`\`
-[Try it online!${flags.includes("l") ? " (link is to literate version)" : ""}](${link})`;
+[Try it online!${flags.includes("l") ? " (link is to literate version)" : ""}](${link})${code.includes('🍪') ? "\n\n🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪🍪" : ""}`;
           break;
         case "markdown":
           store.output = `[Try it online!](${link})`

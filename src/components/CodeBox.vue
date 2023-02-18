@@ -5,10 +5,9 @@ import { oneDark } from '@codemirror/theme-one-dark';
 
 const extensions = [
   EditorView.theme({
-    '&': { background: '#0c0c0c' },
-    '.cm-gutters': { background: '#151515' },
-    '.cm-activeLineGutter': { background: '#1f1f1f' },
-    '.cm-activeLine': { background: '#141414' }
+    '&': { backgroundColor: '#0c0c0c' },
+    '.cm-gutters': { backgroundColor: '#151515' },
+    '.cm-activeLineGutter': { backgroundColor: '#1f1f1f' },
   }),
   oneDark
 ];

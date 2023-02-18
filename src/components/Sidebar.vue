@@ -13,10 +13,13 @@
         </g>
       </svg>
     </a>
-    <div class="text"><a href="https://github.com/Vyxal/Vyxal">Vyxal</a></div>
+    <div class="text"><a href="https://github.com/Vyxal/Vyxal">{{ text }}</a></div>
     <!-- all icons from heroicons or remixicon -->
-    <button class="play" @click="run">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <button class="play">
+      <svg xmlns="http://www.w3.org/2000/svg" @click="cancel" class="cog" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" v-if="worker">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12a7.5 7.5 0 0015 0m-15 0a7.5 7.5 0 1115 0m-15 0H3m16.5 0H21m-1.5 0H12m-8.457 3.077l1.41-.513m14.095-5.13l1.41-.513M5.106 17.785l1.15-.964m11.49-9.642l1.149-.964M7.501 19.795l.75-1.3m7.5-12.99l.75-1.3m-6.063 16.658l.26-1.477m2.605-14.772l.26-1.477m0 17.726l-.26-1.477M10.698 4.614l-.26-1.477M16.5 19.794l-.75-1.299M7.5 4.205L12 12m6.894 5.785l-1.149-.964M6.256 7.178l-1.15-.964m15.352 8.864l-1.41-.513M4.954 9.435l-1.41-.514M12.002 12l-3.75 6.495" />
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" @click="run" viewBox="0 0 24 24" v-else>
         <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
     </button>
@@ -83,20 +86,55 @@ button svg {
   fill: white;
 }
 
+button svg.cog {
+  fill: none;
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 button:hover svg {
   fill: hsl(240, 34%, 80%);
+}
+button:hover svg.cog {
+  fill: none;
+  stroke: hsl(240, 34%, 80%);
 }
 </style>
 
 <script lang="ts">
 import { useMainStore } from '@/stores/MainStore';
+import { mapState } from 'pinia';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  data() {
+    return {
+      text: 'Vyxal'
+    };
+  },
+  computed: {
+    ...mapState(useMainStore, ['worker'])
+  },
   methods: {
     run() {
       const store = useMainStore();
       store.execute();
+      if (store.code.includes('🍪')) {
+        this.text = '🍪';
+      }
+    },
+    cancel() {
+      const store = useMainStore();
+      store.cancel("Code terminated by user");
     },
     outputLink(type: string) {
       const store = useMainStore();
@@ -104,6 +142,9 @@ export default defineComponent({
       const link = location.protocol + '//' + location.host + '/#' + btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
 
       const flags = store.flags.replace(/[5bBTAP…aṠ]/g, "");
+      if (store.code.includes('🍪')) {
+        this.text = '🍪';
+      }
       let code = store.code;
       const codepage = Vyxal.getCodepage();
       const utfable = [...code].every(x => (codepage + ' ' + '\n').includes(x));

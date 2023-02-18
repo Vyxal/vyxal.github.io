@@ -10,7 +10,7 @@ export const useMainStore = defineStore("main", {
       inputs: "",
       flags: "",
       extra: "",
-      worker: <null | Worker>null
+      worker: <null | Worker>null,
     };
   },
   actions: {
@@ -20,15 +20,19 @@ export const useMainStore = defineStore("main", {
       this.worker = null;
     },
     execute() {
-      const session = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const session =
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
       this.worker = new Worker(new URL("../worker.js", import.meta.url));
 
-      if (this.code === 'lyxal') {
-        (<any>window)[atob('bG9jYXRpb24=')][atob('aHJlZg==')] = atob('aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQ==');
+      if (this.code === "lyxal") {
+        (<any>window)[atob("bG9jYXRpb24=")][atob("aHJlZg==")] = atob(
+          "aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQ=="
+        );
         return;
       }
 
-      this.worker.onmessage = e => {
+      this.worker.onmessage = (e) => {
         if (e.data.session !== session) return;
         if (e.data.command === "done") {
           this.worker = null;
@@ -37,7 +41,9 @@ export const useMainStore = defineStore("main", {
         let out = this.output;
         out += e.data.val;
         if (out.length > 64000) {
-          this.cancel("Output exceeded 64KB; output was truncated and code was terminated.");
+          this.cancel(
+            "Output exceeded 64KB; output was truncated and code was terminated."
+          );
           out = out.slice(0, 64000);
         }
         this.output = out;
@@ -58,10 +64,15 @@ export const useMainStore = defineStore("main", {
       this.extra = "";
       this.worker.postMessage({
         mode: "run",
-        code: this.header + (this.header && "\n") + this.code + (this.footer && "\n") + this.footer,
+        code:
+          this.header +
+          (this.header && "\n") +
+          this.code +
+          (this.footer && "\n") +
+          this.footer,
         inputs: this.inputs,
         flags: this.flags,
-        session
+        session,
       });
 
       setTimeout(() => {
@@ -70,5 +81,5 @@ export const useMainStore = defineStore("main", {
         }
       }, timeout);
     },
-  }
+  },
 });

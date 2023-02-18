@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CodeBox from './CodeBox.vue';
+import CodeBox from "@/components/CodeBox.vue";
 </script>
 
 <template>

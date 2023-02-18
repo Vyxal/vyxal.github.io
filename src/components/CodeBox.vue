@@ -1,40 +1,46 @@
 <script setup lang="ts">
-import { Codemirror } from 'vue-codemirror';
-import { EditorView } from '@codemirror/view';
-import { oneDark } from '@codemirror/theme-one-dark';
+import { Codemirror } from "vue-codemirror";
+import { EditorView } from "@codemirror/view";
+import { oneDark } from "@codemirror/theme-one-dark";
 
 const extensions = [
   EditorView.theme({
-    '&': { backgroundColor: '#0c0c0c' },
-    '.cm-gutters': { backgroundColor: '#151515' },
-    '.cm-activeLineGutter': { backgroundColor: '#1f1f1f' },
+    "&": { backgroundColor: "#0c0c0c" },
+    ".cm-gutters": { backgroundColor: "#151515" },
+    ".cm-activeLineGutter": { backgroundColor: "#1f1f1f" },
   }),
-  oneDark
+  oneDark,
 ];
 </script>
 
 <template>
   <div class="cont">
-    <Codemirror :extensions="extensions" :style="{ height: '100%', width: '100%' }" v-model="code"
-      v-if="inputType == 'textarea'" />
-    <input type="text" v-model="code" v-else>
+    <Codemirror
+      :extensions="extensions"
+      :style="{ height: '100%', width: '100%' }"
+      v-model="code"
+      v-if="inputType == 'textarea'"
+    />
+    <input type="text" v-model="code" v-else />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
-import { useMainStore } from '@/stores/MainStore';
+import { defineComponent, type PropType } from "vue";
+import { useMainStore } from "@/stores/MainStore";
 
 export default defineComponent({
   props: {
     dataName: {
-      type: String as PropType<"header" | "code" | "footer" | "inputs" | "flags">,
-      required: true
+      type: String as PropType<
+        "header" | "code" | "footer" | "inputs" | "flags"
+      >,
+      required: true,
     },
     inputType: {
       type: String as PropType<"textarea" | "input">,
-      default: "textarea"
-    }
+      default: "textarea",
+    },
   },
   computed: {
     code: {
@@ -45,8 +51,8 @@ export default defineComponent({
       set(newVal: string) {
         const store = useMainStore();
         store.$patch({ [this.dataName]: newVal });
-      }
-    }
+      },
+    },
   },
 });
 </script>

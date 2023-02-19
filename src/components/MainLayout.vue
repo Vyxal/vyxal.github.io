@@ -8,6 +8,7 @@ import Header from "./HeaderCode.vue";
 import Footer from "./FooterCode.vue";
 import Inputs from "./InputsBox.vue";
 import Flags from "./FlagsBox.vue";
+import CookieClicker from "./CookieClicker.vue";
 </script>
 
 <template>
@@ -20,11 +21,11 @@ const layout: LayoutConfig = {
     type: ItemType.row,
     content: [
       {
-        type: "column",
+        type: ItemType.column,
         size: "100%",
         content: [
           {
-            type: "component",
+            type: ItemType.component,
             title: "Flags",
             header: { show: "top", popout: false, maximise: false },
             size: "10%",
@@ -35,21 +36,21 @@ const layout: LayoutConfig = {
             size: "50%",
             content: [
               {
-                type: "component",
+                type: ItemType.component,
                 title: "Code",
                 header: { show: "top", popout: false, maximise: false },
                 componentType: MainCode,
                 size: "100%",
               },
               {
-                type: "component",
+                type: ItemType.component,
                 title: "Header",
                 header: { show: "top", popout: false, maximise: false },
                 componentType: Header,
                 size: "100%",
               },
               {
-                type: "component",
+                type: ItemType.component,
                 title: "Footer",
                 header: { show: "top", popout: false, maximise: false },
                 componentType: Footer,
@@ -58,7 +59,7 @@ const layout: LayoutConfig = {
             ],
           },
           {
-            type: "component",
+            type: ItemType.component,
             title: "Inputs",
             header: { show: "top", popout: false, maximise: false },
             size: "40%",
@@ -67,12 +68,25 @@ const layout: LayoutConfig = {
         ],
       },
       {
-        type: "component",
-        title: "Output",
-        header: { show: "top", popout: false, maximise: false },
+        type: ItemType.column,
         size: "100%",
-        componentType: Output,
-      },
+        content: [
+          {
+            type: ItemType.component,
+            title: "Output",
+            header: { show: "top", popout: false, maximise: false },
+            size: "60%",
+            componentType: Output,
+          },
+          {
+            type: ItemType.component,
+            title: "🍪🍪🍪🍪🍪🍪🍪",
+            header: { show: "top", popout: false, maximise: false },
+            size: "40%",
+            componentType: CookieClicker
+          }
+        ]
+      }
     ],
   },
 };

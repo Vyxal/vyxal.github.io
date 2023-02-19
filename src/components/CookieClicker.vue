@@ -19,6 +19,7 @@
     font-size: 9rem;
     cursor: pointer;
     transition: font-size .2s;
+    user-select: none;
   }
 
   .cookie:hover {

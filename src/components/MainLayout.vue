@@ -15,32 +15,15 @@ import { defineComponent, shallowRef, watch, toRef } from "vue";
 import "golden-layout/dist/css/goldenlayout-base.css";
 import "golden-layout/dist/css/themes/goldenlayout-dark-theme.css";
 
-import Output from "./OutputBox.vue";
-import MainCode from "./MainCode.vue";
-import Header from "./HeaderCode.vue";
-import Footer from "./FooterCode.vue";
-import Inputs from "./InputsBox.vue";
-import Flags from "./FlagsBox.vue";
-import CookieClicker from "./CookieClicker.vue";
 import { useMainStore } from "@/stores/MainStore";
-import { comp, defaultLayout } from "@/data/Layout";
-
-const components = {
-  Output,
-  MainCode,
-  Header,
-  Footer,
-  Inputs,
-  Flags,
-  CookieClicker,
-};
+import { comp, defaultLayout, components, type ComponentType } from "@/data/Layout";
 
 export default defineComponent({
   components,
   setup() {
     interface ComponentInstance {
       id: number;
-      type: string;
+      type: ComponentType;
       element: HTMLElement;
     }
     let instanceId = 0;
@@ -54,7 +37,7 @@ export default defineComponent({
       ++instanceId;
       componentInstances.value = componentInstances.value.concat({
         id: instanceId,
-        type,
+        type: type as ComponentType,
         element,
       });
     };

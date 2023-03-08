@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import type { ComponentType } from '@/data/Layout';
 
 export const useMainStore = defineStore("main", {
   state() {
@@ -11,7 +12,7 @@ export const useMainStore = defineStore("main", {
       flags: "",
       extra: "",
       worker: <null | Worker>null,
-      closedTabs: ["CookieClicker"] as string[],
+      closedTabs: ["CookieClicker" as ComponentType],
     };
   },
   actions: {

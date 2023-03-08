@@ -10,3 +10,8 @@ declare const Vyxal: {
 
   getCodepage(): string;
 };
+
+declare const dictionary: {
+  short: string[],
+  long: string[],
+};

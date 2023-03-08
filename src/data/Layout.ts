@@ -1,16 +1,25 @@
 import { ComponentItemConfig, ItemType, LayoutConfig } from "golden-layout";
 
-export function comp(type: string, size?: string): ComponentItemConfig {
-  return {
-    componentType: type,
-    header: { show: "top", popout: false, maximise: false },
-    type: ItemType.component,
-    title: (titles as any)[type],
-    ...(size ? { size } : {}),
-  };
-}
+import Output from "@/components/OutputBox.vue";
+import MainCode from "@/components/MainCode.vue";
+import Header from "@/components/HeaderCode.vue";
+import Footer from "@/components/FooterCode.vue";
+import Inputs from "@/components/InputsBox.vue";
+import Flags from "@/components/FlagsBox.vue";
+import CookieClicker from "@/components/CookieClicker.vue";
+import type { Component } from 'vue';
 
-export const titles: { [key: string]: string } = {
+export const components: { [key in ComponentType]: Component } = {
+  Output,
+  MainCode,
+  Header,
+  Footer,
+  Inputs,
+  Flags,
+  CookieClicker,
+};
+
+export const titles = {
   Flags: "Flags",
   MainCode: "Code",
   Header: "Header",
@@ -19,6 +28,18 @@ export const titles: { [key: string]: string } = {
   Output: "Output",
   CookieClicker: "🍪🍪🍪🍪🍪🍪🍪",
 };
+
+export type ComponentType = keyof typeof titles;
+
+export function comp(type: ComponentType, size?: string): ComponentItemConfig {
+  return {
+    componentType: type,
+    header: { show: "top", popout: false, maximise: false },
+    type: ItemType.component,
+    title: (titles as any)[type],
+    ...(size ? { size } : {}),
+  };
+}
 
 export const defaultLayout: LayoutConfig = {
   root: {

@@ -4,7 +4,7 @@ import { titles } from "@/data/Layout";
 
 <template>
   <div class="h-full bg-neutral-900 p-5 flex flex-col items-center gap-7 mr-5">
-    <a href="https://github.com/Vyxal/Vyxal">
+    <a href="https://github.com/Vyxal/Vyxal/tree/version-3" target="_blank">
       <svg
         viewBox="0.325 0.024 50.026 55.291"
         width="50.026"
@@ -45,7 +45,7 @@ import { titles } from "@/data/Layout";
       </svg>
     </a>
     <div class="text-white text-2xl">
-      <a class="text-white" href="https://github.com/Vyxal/Vyxal">{{ text }}</a>
+      <a class="text-white" href="https://github.com/Vyxal/Vyxal/tree/version-3" target="_blank">{{ text }}</a>
     </div>
     <!-- all icons from heroicons or remixicon -->
     <button class="play" title="Run">

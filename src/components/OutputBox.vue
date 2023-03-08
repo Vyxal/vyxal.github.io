@@ -8,9 +8,16 @@
     >
   </div>
   <pre
-    class="text-white px-5 py-3 whitespace-pre-wrap overflow-auto break-all max-h-[95%] font-mono"
+    class="text-white px-5 py-3 whitespace-pre-wrap overflow-auto break-all max-h-[calc(95%-70px)] font-mono"
     >{{ output }}</pre
   >
+  <button
+    class="text-white bg-slate-700 px-4 py-3 rounded cursor-pointer hover:bg-slate-800 ml-3 mt-5"
+    @click="copy"
+    v-if="output"
+  >
+    Copy to Clipboard
+  </button>
 </template>
 
 <script lang="ts">
@@ -23,5 +30,10 @@ export default defineComponent({
     ...mapState(useMainStore, ["output"]),
     ...mapWritableState(useMainStore, ["extra"]),
   },
+  methods: {
+    copy() {
+      navigator.clipboard.writeText(this.output);
+    }
+  }
 });
 </script>

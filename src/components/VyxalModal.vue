@@ -1,8 +1,8 @@
 <template>
-  <div class="modal" @click="$emit('close')">
-    <div class="modal-content" @click.stop="">
-      <div class="modal-header">
-        <div class="modal-title">{{ title }}</div>
+  <div class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-80 z-40 flex justify-center items-center" @click="$emit('close')">
+    <div class="w-[min(95%,800px)] bg-white rounded-2xl absolute z-50" @click.stop="">
+      <div class="p-5 border-b border-gray-300">
+        <div class="font-bold text-xl">{{ title }}</div>
       </div>
       <div class="modal-body">
         <slot></slot>
@@ -20,36 +20,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.modal {
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background: #000d;
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  width: min(95%, 800px);
-  background: white;
-  border-radius: 15px;
-  position: absolute;
-  z-index: 200;
-}
-
-.modal-header {
-  padding: 20px;
-  border-bottom: 1px solid #ccc;
-}
-
-.modal-title {
-  font-weight: bold;
-  font-size: 1.3rem;
-}
-</style>

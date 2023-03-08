@@ -5,7 +5,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 
 const extensions = [
   EditorView.theme({
-    "&": { backgroundColor: "#0c0c0c" },
+    "&": { backgroundColor: "rgb(23 23 23)" },
     ".cm-gutters": { backgroundColor: "#151515" },
     ".cm-activeLineGutter": { backgroundColor: "#1f1f1f" },
   }),
@@ -14,14 +14,14 @@ const extensions = [
 </script>
 
 <template>
-  <div class="cont">
+  <div class="cont h-full p-5">
     <Codemirror
       :extensions="extensions"
       :style="{ height: '100%', width: '100%' }"
       v-model="code"
       v-if="inputType == 'textarea'"
     />
-    <input type="text" v-model="code" v-else />
+    <input type="text" v-model="code" class="bg-neutral-900 text-white p-1 border-none outline-none" v-else />
   </div>
 </template>
 
@@ -56,23 +56,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.cont {
-  padding: 20px;
-  height: 100%;
-}
-
-textarea {
-  width: 100% !important;
-  height: 50%;
-}
-
-input {
-  background: #0c0c0c;
-  border: none;
-  padding: 5px;
-  outline: none !important;
-  font: inherit;
-}
-</style>

@@ -1,9 +1,8 @@
 <template>
-  <div class="extra">
-    {{ extra
-    }}<span v-if="extra"> (<a href="#" @click="extra = ''">Dismiss</a>)</span>
+  <div class="text-white m-5 mb-0">
+    {{ extra }}<span v-if="extra"> (<a class="text-white hover:underline" href="#" @click="extra = ''">Dismiss</a>)</span>
   </div>
-  <pre>{{ output }}</pre>
+  <pre class="text-white px-5 py-3 whitespace-pre-wrap overflow-auto break-all max-h-[95%] font-mono">{{ output }}</pre>
 </template>
 
 <script lang="ts">
@@ -19,23 +18,3 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-pre {
-  color: white;
-  padding: 10px 20px;
-  white-space: pre-wrap;
-  overflow: auto;
-  word-break: break-all;
-  max-height: 95%;
-}
-
-.extra {
-  color: white;
-  margin: 20px;
-  margin-bottom: 0;
-}
-
-a {
-  color: white;
-}
-</style>

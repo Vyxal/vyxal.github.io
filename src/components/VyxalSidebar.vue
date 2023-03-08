@@ -3,7 +3,7 @@ import { titles } from "@/data/Layout";
 </script>
 
 <template>
-  <div class="sidebar">
+  <div class="h-full bg-neutral-900 p-5 flex flex-col items-center gap-7 mr-5">
     <a href="https://github.com/Vyxal/Vyxal">
       <svg
         viewBox="0.325 0.024 50.026 55.291"
@@ -44,8 +44,8 @@ import { titles } from "@/data/Layout";
         </g>
       </svg>
     </a>
-    <div class="text">
-      <a href="https://github.com/Vyxal/Vyxal">{{ text }}</a>
+    <div class="text-white text-2xl">
+      <a class="text-white" href="https://github.com/Vyxal/Vyxal">{{ text }}</a>
     </div>
     <!-- all icons from heroicons or remixicon -->
     <button class="play">
@@ -107,7 +107,7 @@ import { titles } from "@/data/Layout";
         />
       </svg>
     </button>
-    <button class="add" @click="modalIsOpen = true" v-if="closedTabs.length">
+    <button class="!mt-auto" @click="modalIsOpen = true" v-if="closedTabs.length">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           fill-rule="evenodd"
@@ -119,7 +119,7 @@ import { titles } from "@/data/Layout";
   </div>
   <VyxalModal title="Add Tab" v-if="modalIsOpen" @close="modalIsOpen = false">
     <div
-      class="tab"
+      class="cursor-pointer p-5 border-t border-gray-300 hover:bg-zinc-100 active:bg-zinc-300 last:rounded-b-2xl"
       v-for="item in closedTabs"
       @click="openTab(item)"
       :key="item"
@@ -130,31 +130,6 @@ import { titles } from "@/data/Layout";
 </template>
 
 <style scoped>
-.sidebar {
-  height: 100%;
-  background: #161616;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
-  margin-right: 20px;
-}
-
-.add {
-  margin-top: auto;
-}
-
-.text {
-  color: white;
-  font-size: 1.5rem;
-}
-
-a {
-  color: white;
-  text-decoration: none;
-}
-
 button {
   all: unset;
   cursor: pointer;
@@ -187,25 +162,6 @@ button:hover svg {
 button:hover svg.cog {
   fill: none;
   stroke: hsl(240, 34%, 80%);
-}
-
-.tab {
-  padding: 20px;
-  border-top: 1px solid #ccc;
-  cursor: pointer;
-}
-
-.tab:hover {
-  background-color: #eee;
-}
-
-.tab:active {
-  background-color: #ddd;
-}
-
-.tab:last-child {
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
 }
 </style>
 

@@ -22,8 +22,7 @@ const extensions = [
         }
         const all = [...Vyxal.getElements(), ...Vyxal.getModifiers()];
         while (line.length >= 2) {
-          const t = all.find((x) => x.keywords.some((y) => line === y));
-          console.log(t);
+          const t = all.find((x) => x.keywords.includes(line));
           if (t) {
             view.value!.dispatch({
               changes: { from: cur - line.length, to: cur, insert: t.symbol },
@@ -52,9 +51,10 @@ const handleReady = (p: {
 
 <template>
   <div class="cont h-full p-5">
+    <div class="text-white text-xl mb-2" v-if="byteCount">{{ length }}</div>
     <Codemirror
       :extensions="extensions"
-      :style="{ height: '100%', width: '100%' }"
+      :style="{ height: byteCount ? 'calc(100% - 30px)' : '100%', width: '100%' }"
       @ready="handleReady"
       v-model="code"
       v-if="inputType == 'textarea'"
@@ -71,6 +71,7 @@ const handleReady = (p: {
 <script lang="ts">
 import { defineComponent, type PropType } from "vue";
 import { useMainStore } from "@/stores/MainStore";
+import { getByteCount } from "@/helpers/byte-count";
 import type { EditorState } from "@codemirror/state";
 
 export default defineComponent({
@@ -85,6 +86,10 @@ export default defineComponent({
       type: String as PropType<"textarea" | "input">,
       default: "textarea",
     },
+    byteCount: {
+      type: Boolean,
+      default: false,
+    }
   },
   computed: {
     code: {
@@ -97,6 +102,14 @@ export default defineComponent({
         store.$patch({ [this.dataName]: newVal });
       },
     },
+    length() {
+      const store = useMainStore();
+      const code = this.code;
+      const lit = store.flags.includes('l');
+      const { utfable, len } = getByteCount(lit ? Vyxal.getSBCSified(code) : code);
+      const plural = len === 1 ? '' : 's';
+      return `${len} ${lit ? "literate " : ""}byte${plural}` + (utfable ? "" : " (UTF-8)");
+    }
   },
 });
 </script>

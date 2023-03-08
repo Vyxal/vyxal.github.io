@@ -1,13 +1,17 @@
 <template>
-  <div ref="element" style="width: 100%; height: 95%;">
-    <teleport v-for="{ id, type, element } in componentInstances" :key="id" :to="element">
+  <div ref="element" style="width: 100%; height: 95%">
+    <teleport
+      v-for="{ id, type, element } in componentInstances"
+      :key="id"
+      :to="element"
+    >
       <component :is="type"></component>
     </teleport>
   </div>
 </template>
 <script lang="ts">
 import { useGoldenLayout } from "@/helpers/use-golden-layout";
-import { defineComponent, shallowRef } from "vue";
+import { defineComponent, shallowRef, watch, toRef } from "vue";
 import "golden-layout/dist/css/goldenlayout-base.css";
 import "golden-layout/dist/css/themes/goldenlayout-dark-theme.css";
 
@@ -18,9 +22,18 @@ import Footer from "./FooterCode.vue";
 import Inputs from "./InputsBox.vue";
 import Flags from "./FlagsBox.vue";
 import CookieClicker from "./CookieClicker.vue";
-import { ItemType } from 'golden-layout';
+import { useMainStore } from "@/stores/MainStore";
+import { comp, defaultLayout } from "@/data/Layout";
 
-const components = { Output, MainCode, Header, Footer, Inputs, Flags, CookieClicker };
+const components = {
+  Output,
+  MainCode,
+  Header,
+  Footer,
+  Inputs,
+  Flags,
+  CookieClicker,
+};
 
 export default defineComponent({
   components,
@@ -45,86 +58,25 @@ export default defineComponent({
         element,
       });
     };
+    const store = useMainStore();
     const destroyComponent = (toBeRemoved: HTMLElement) => {
-      console.log(componentInstances.value);
-      componentInstances.value = componentInstances.value.filter(
-        ({ element }) => element !== toBeRemoved
+      const idx = componentInstances.value.findIndex(
+        ({ element }) => element === toBeRemoved
       );
+      store.closedTabs.push(componentInstances.value[idx].type);
+      componentInstances.value.splice(idx, 1);
     };
 
-    const { element } = useGoldenLayout(createComponent, destroyComponent, {
-      root: {
-        type: ItemType.row,
-        content: [
-          {
-            type: ItemType.column,
-            size: "100%",
-            content: [
-              {
-                type: ItemType.component,
-                title: "Flags",
-                header: { show: "top", popout: false, maximise: false },
-                size: "10%",
-                componentType: "Flags",
-              },
-              {
-                type: "stack",
-                size: "50%",
-                content: [
-                  {
-                    type: ItemType.component,
-                    title: "Code",
-                    header: { show: "top", popout: false, maximise: false },
-                    componentType: "MainCode",
-                    size: "100%",
-                  },
-                  {
-                    type: ItemType.component,
-                    title: "Header",
-                    header: { show: "top", popout: false, maximise: false },
-                    componentType: "Header",
-                    size: "100%",
-                  },
-                  {
-                    type: ItemType.component,
-                    title: "Footer",
-                    header: { show: "top", popout: false, maximise: false },
-                    componentType: "Footer",
-                    size: "100%",
-                  },
-                ],
-              },
-              {
-                type: ItemType.component,
-                title: "Inputs",
-                header: { show: "top", popout: false, maximise: false },
-                size: "40%",
-                componentType: "Inputs",
-              },
-            ],
-          },
-          {
-            type: ItemType.column,
-            size: "100%",
-            content: [
-              {
-                type: ItemType.component,
-                title: "Output",
-                header: { show: "top", popout: false, maximise: false },
-                size: "60%",
-                componentType: "Output",
-              },
-              {
-                type: ItemType.component,
-                title: "🍪🍪🍪🍪🍪🍪🍪",
-                header: { show: "top", popout: false, maximise: false },
-                size: "40%",
-                componentType: "CookieClicker"
-              }
-            ]
-          }
-        ],
-      },
+    const { element, layout } = useGoldenLayout(
+      createComponent,
+      destroyComponent,
+      defaultLayout
+    );
+
+    watch(toRef(store, "closedTabs"), (val, old) => {
+      const [tab] = old.filter((x) => !val.includes(x));
+      if (!tab) return;
+      layout.value?.addItemAtLocation(comp(tab));
     });
 
     return { element, componentInstances };

@@ -11,9 +11,13 @@ export const useMainStore = defineStore("main", {
       flags: "",
       extra: "",
       worker: <null | Worker>null,
+      closedTabs: [] as string[],
     };
   },
   actions: {
+    openTab(tab: string) {
+      this.closedTabs = this.closedTabs.filter((x) => x !== tab);
+    },
     cancel(msg: string) {
       this.worker?.terminate();
       this.extra = msg;

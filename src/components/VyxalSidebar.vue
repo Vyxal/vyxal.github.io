@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { titles } from "@/data/Layout";
+</script>
+
 <template>
   <div class="sidebar">
     <a href="https://github.com/Vyxal/Vyxal">
@@ -103,7 +107,26 @@
         />
       </svg>
     </button>
+    <button class="add" @click="modalIsOpen = true" v-if="closedTabs.length">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path
+          fill-rule="evenodd"
+          d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
   </div>
+  <VyxalModal title="Add Tab" v-if="modalIsOpen" @close="modalIsOpen = false">
+    <div
+      class="tab"
+      v-for="item in closedTabs"
+      @click="openTab(item)"
+      :key="item"
+    >
+      {{ titles[item] }}
+    </div>
+  </VyxalModal>
 </template>
 
 <style scoped>
@@ -116,6 +139,10 @@
   align-items: center;
   gap: 30px;
   margin-right: 20px;
+}
+
+.add {
+  margin-top: auto;
 }
 
 .text {
@@ -156,9 +183,29 @@ button svg.cog {
 button:hover svg {
   fill: hsl(240, 34%, 80%);
 }
+
 button:hover svg.cog {
   fill: none;
   stroke: hsl(240, 34%, 80%);
+}
+
+.tab {
+  padding: 20px;
+  border-top: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.tab:hover {
+  background-color: #eee;
+}
+
+.tab:active {
+  background-color: #ddd;
+}
+
+.tab:last-child {
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 </style>
 
@@ -166,15 +213,17 @@ button:hover svg.cog {
 import { useMainStore } from "@/stores/MainStore";
 import { mapState } from "pinia";
 import { defineComponent } from "vue";
+import VyxalModal from "@/components/VyxalModal.vue";
 
 export default defineComponent({
   data() {
     return {
       text: "Vyxal",
+      modalIsOpen: false,
     };
   },
   computed: {
-    ...mapState(useMainStore, ["worker"]),
+    ...mapState(useMainStore, ["worker", "closedTabs"]),
   },
   methods: {
     run() {
@@ -203,7 +252,6 @@ export default defineComponent({
         location.host +
         "/#" +
         btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
-
       const flags = store.flags.replace(/[5bBTAP…aṠ]/g, "");
       if (store.code.includes("🍪")) {
         this.text = "🍪";
@@ -249,6 +297,12 @@ ${code}
           break;
       }
     },
+    openTab(item: string) {
+      const store = useMainStore();
+      store.openTab(item);
+      this.modalIsOpen = false;
+    },
   },
+  components: { VyxalModal },
 });
 </script>

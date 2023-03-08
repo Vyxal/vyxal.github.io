@@ -78,6 +78,7 @@ export const useMainStore = defineStore("main", {
         inputs: this.inputs,
         flags: this.flags,
         session,
+        dictionary,
       });
 
       setTimeout(() => {

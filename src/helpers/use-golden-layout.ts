@@ -1,4 +1,9 @@
-import { ComponentContainer, GoldenLayout, LayoutConfig } from "golden-layout";
+import {
+  ComponentContainer,
+  ContentItem,
+  GoldenLayout,
+  LayoutConfig,
+} from "golden-layout";
 import { onMounted, ref, shallowRef } from "vue";
 
 export const isClient = typeof window !== "undefined";
@@ -60,5 +65,16 @@ export function useGoldenLayout(
     initialized.value = true;
   });
 
-  return { element, initialized, layout };
+  const focusOutput = () => {
+    function temp(item: ContentItem | undefined) {
+      if ((item as any)?.componentName === "Output") {
+        (item as any)?.focus?.();
+      }
+      item?.contentItems?.forEach(temp);
+    }
+
+    temp(layout.value?.rootItem);
+  };
+
+  return { element, initialized, layout, focusOutput };
 }

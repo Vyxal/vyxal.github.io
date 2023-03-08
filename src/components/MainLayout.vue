@@ -55,11 +55,17 @@ export default defineComponent({
       componentInstances.value.splice(idx, 1);
     };
 
-    const { element, layout } = useGoldenLayout(
+    const { element, layout, focusOutput } = useGoldenLayout(
       createComponent,
       destroyComponent,
       defaultLayout
     );
+
+    store.$onAction(({ name }) => {
+      if (name === "execute") {
+        focusOutput();
+      }
+    });
 
     watch(toRef(store, "closedTabs"), (val, old) => {
       const [tab] = old.filter((x) => !val.includes(x));

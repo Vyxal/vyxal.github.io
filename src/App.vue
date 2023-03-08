@@ -1,20 +1,34 @@
-<script setup lang="ts">
-import MainLayout from "@/components/MainLayout.vue";
-import Sidebar from "@/components/VyxalSidebar.vue";
-</script>
-
 <template>
-  <div class="main-flex">
-    <Sidebar />
+  <div class="h-full flex items-center pr-7">
+    <VyxalSidebar ref="sidebarRef" />
     <MainLayout />
   </div>
 </template>
 
-<style scoped>
-.main-flex {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding-right: 30px;
-}
-</style>
+<script lang="ts">
+import MainLayout from "@/components/MainLayout.vue";
+import VyxalSidebar from "@/components/VyxalSidebar.vue";
+import { defineComponent } from 'vue';
+import { useMainStore } from './stores/MainStore';
+
+export default defineComponent({
+  components: { VyxalSidebar, MainLayout },
+  mounted() {
+    const store = useMainStore();
+    const hash = location.hash.slice(1)
+    if (hash) {
+      try {
+        const [flags, header, footer, code, inputs] = JSON.parse(decodeURIComponent(escape(atob(hash))));
+        store.$patch({
+          flags,
+          header,
+          footer,
+          code,
+          inputs,
+        });
+        (this.$refs.sidebarRef as any).run();
+      } catch {}
+    }
+  }
+});
+</script>

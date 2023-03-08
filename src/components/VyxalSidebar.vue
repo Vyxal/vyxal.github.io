@@ -172,6 +172,7 @@ import { defineComponent } from "vue";
 import VyxalModal from "@/components/VyxalModal.vue";
 
 export default defineComponent({
+  expose: ['run'],
   data() {
     return {
       text: "Vyxal",

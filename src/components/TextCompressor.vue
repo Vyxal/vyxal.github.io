@@ -1,5 +1,5 @@
 <template>
-  <input type="text" v-model="text" placeholder="Text to compress..."
+  <textarea v-model="text" placeholder="Text to compress..."
     class="p-3 m-4 w-[90%] rounded outline-none text-white focus:ring-4 ring-slate-900 bg-slate-700" />
   <div class="m-4">
     <button class="text-white bg-slate-700 px-4 py-3 rounded cursor-pointer hover:bg-slate-800"

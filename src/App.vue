@@ -8,17 +8,19 @@
 <script lang="ts">
 import MainLayout from "@/components/MainLayout.vue";
 import VyxalSidebar from "@/components/VyxalSidebar.vue";
-import { defineComponent } from 'vue';
-import { useMainStore } from './stores/MainStore';
+import { defineComponent } from "vue";
+import { useMainStore } from "./stores/MainStore";
 
 export default defineComponent({
   components: { VyxalSidebar, MainLayout },
   mounted() {
     const store = useMainStore();
-    const hash = location.hash.slice(1)
+    const hash = location.hash.slice(1);
     if (hash) {
       try {
-        const [flags, header, footer, code, inputs] = JSON.parse(decodeURIComponent(escape(atob(hash))));
+        const [flags, header, footer, code, inputs] = JSON.parse(
+          decodeURIComponent(escape(atob(hash)))
+        );
         store.$patch({
           flags,
           header,
@@ -27,8 +29,10 @@ export default defineComponent({
           inputs,
         });
         (this.$refs.sidebarRef as any).run();
-      } catch {}
+      } catch {
+        // i have to add this comment because eslint is stupid
+      }
     }
-  }
+  },
 });
 </script>

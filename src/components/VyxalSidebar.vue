@@ -107,7 +107,11 @@ import { titles } from "@/data/Layout";
         />
       </svg>
     </button>
-    <button class="!mt-auto" @click="modalIsOpen = true" v-if="closedTabs.length">
+    <button
+      class="!mt-auto"
+      @click="modalIsOpen = true"
+      v-if="closedTabs.length"
+    >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           fill-rule="evenodd"
@@ -172,7 +176,7 @@ import { defineComponent } from "vue";
 import VyxalModal from "@/components/VyxalModal.vue";
 
 export default defineComponent({
-  expose: ['run'],
+  expose: ["run"],
   data() {
     return {
       text: "Vyxal",

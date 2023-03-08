@@ -10,9 +10,20 @@ declare const Vyxal: {
 
   getCodepage(): string;
 
-  getElements(): { keywords: string[], name: string, overloads: string[], symbol: string, vectorises: boolean }[];
+  getElements(): {
+    keywords: string[];
+    name: string;
+    overloads: string[];
+    symbol: string;
+    vectorises: boolean;
+  }[];
 
-  getModifiers(): { keywords: string[], name: string, symbol: string, description: string }[];
+  getModifiers(): {
+    keywords: string[];
+    name: string;
+    symbol: string;
+    description: string;
+  }[];
 
   compress(text: string): string;
 
@@ -24,6 +35,6 @@ declare const Vyxal: {
 };
 
 declare const dictionary: {
-  short: string[],
-  long: string[],
+  short: string[];
+  long: string[];
 };

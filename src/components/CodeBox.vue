@@ -21,7 +21,12 @@ const extensions = [
       v-model="code"
       v-if="inputType == 'textarea'"
     />
-    <input type="text" v-model="code" class="bg-neutral-900 text-white p-1 border-none outline-none" v-else />
+    <input
+      type="text"
+      v-model="code"
+      class="bg-neutral-900 text-white p-1 border-none outline-none"
+      v-else
+    />
   </div>
 </template>
 

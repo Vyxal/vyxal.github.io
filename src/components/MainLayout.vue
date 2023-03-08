@@ -16,7 +16,12 @@ import "golden-layout/dist/css/goldenlayout-base.css";
 import "golden-layout/dist/css/themes/goldenlayout-dark-theme.css";
 
 import { useMainStore } from "@/stores/MainStore";
-import { comp, defaultLayout, components, type ComponentType } from "@/data/Layout";
+import {
+  comp,
+  defaultLayout,
+  components,
+  type ComponentType,
+} from "@/data/Layout";
 
 export default defineComponent({
   components,

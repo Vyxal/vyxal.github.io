@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { ComponentType } from '@/data/Layout';
+import type { ComponentType } from "@/data/Layout";
 
 export const useMainStore = defineStore("main", {
   state() {

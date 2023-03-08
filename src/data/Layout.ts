@@ -8,7 +8,7 @@ import Inputs from "@/components/InputsBox.vue";
 import Flags from "@/components/FlagsBox.vue";
 import CookieClicker from "@/components/CookieClicker.vue";
 import TextCompressor from "@/components/TextCompressor.vue";
-import type { Component } from 'vue';
+import type { Component } from "vue";
 
 export const components: { [key in ComponentType]: Component } = {
   Output,

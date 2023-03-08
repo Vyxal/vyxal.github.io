@@ -11,7 +11,7 @@ export const useMainStore = defineStore("main", {
       flags: "",
       extra: "",
       worker: <null | Worker>null,
-      closedTabs: [] as string[],
+      closedTabs: ["CookieClicker"] as string[],
     };
   },
   actions: {

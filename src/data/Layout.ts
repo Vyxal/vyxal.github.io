@@ -41,11 +41,7 @@ export const defaultLayout: LayoutConfig = {
           comp("Inputs", "40%"),
         ],
       },
-      {
-        type: ItemType.column,
-        size: "100%",
-        content: [comp("Output", "60%"), comp("CookieClicker", "40%")],
-      },
+      comp("Output", "60%"),
     ],
   },
 };

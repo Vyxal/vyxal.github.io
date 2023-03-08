@@ -33,7 +33,7 @@ export default defineComponent({
   methods: {
     copy() {
       navigator.clipboard.writeText(this.output);
-    }
-  }
+    },
+  },
 });
 </script>

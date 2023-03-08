@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Codemirror } from "vue-codemirror";
-import { EditorView } from "@codemirror/view";
+import { EditorView, keymap } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { shallowRef } from "vue";
 
 const extensions = [
   EditorView.theme({
@@ -9,8 +10,44 @@ const extensions = [
     ".cm-gutters": { backgroundColor: "#151515" },
     ".cm-activeLineGutter": { backgroundColor: "#1f1f1f" },
   }),
+  keymap.of([
+    {
+      key: "Tab",
+      run() {
+        const val = view.value!.state.doc.toString();
+        const cur = view.value!.state.selection.main.head;
+        let line = val.slice(0, cur).split("\n").slice(-1)[0];
+        if (!line) {
+          return true;
+        }
+        const all = [...Vyxal.getElements(), ...Vyxal.getModifiers()];
+        while (line.length >= 2) {
+          const t = all.find((x) => x.keywords.some((y) => line === y));
+          console.log(t);
+          if (t) {
+            view.value!.dispatch({
+              changes: { from: cur - line.length, to: cur, insert: t.symbol },
+            });
+            return true;
+          }
+          line = line.slice(1);
+        }
+        return true;
+      },
+    },
+  ]),
   oneDark,
 ];
+
+const view = shallowRef<EditorView>();
+
+const handleReady = (p: {
+  view: EditorView;
+  state: EditorState;
+  container: HTMLDivElement;
+}) => {
+  view.value = p.view;
+};
 </script>
 
 <template>
@@ -18,6 +55,7 @@ const extensions = [
     <Codemirror
       :extensions="extensions"
       :style="{ height: '100%', width: '100%' }"
+      @ready="handleReady"
       v-model="code"
       v-if="inputType == 'textarea'"
     />
@@ -33,6 +71,7 @@ const extensions = [
 <script lang="ts">
 import { defineComponent, type PropType } from "vue";
 import { useMainStore } from "@/stores/MainStore";
+import type { EditorState } from "@codemirror/state";
 
 export default defineComponent({
   props: {

@@ -7,6 +7,7 @@ import Footer from "@/components/FooterCode.vue";
 import Inputs from "@/components/InputsBox.vue";
 import Flags from "@/components/FlagsBox.vue";
 import CookieClicker from "@/components/CookieClicker.vue";
+import TextCompressor from "@/components/TextCompressor.vue";
 import type { Component } from 'vue';
 
 export const components: { [key in ComponentType]: Component } = {
@@ -17,6 +18,7 @@ export const components: { [key in ComponentType]: Component } = {
   Inputs,
   Flags,
   CookieClicker,
+  TextCompressor,
 };
 
 export const titles = {
@@ -27,6 +29,7 @@ export const titles = {
   Inputs: "Inputs",
   Output: "Output",
   CookieClicker: "🍪🍪🍪🍪🍪🍪🍪",
+  TextCompressor: "Compressor",
 };
 
 export type ComponentType = keyof typeof titles;

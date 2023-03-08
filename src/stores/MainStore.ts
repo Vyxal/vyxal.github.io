@@ -12,7 +12,7 @@ export const useMainStore = defineStore("main", {
       flags: "",
       extra: "",
       worker: <null | Worker>null,
-      closedTabs: ["CookieClicker" as ComponentType],
+      closedTabs: ["CookieClicker", "TextCompressor"] as ComponentType[],
     };
   },
   actions: {

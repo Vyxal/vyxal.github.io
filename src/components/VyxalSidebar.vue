@@ -48,7 +48,7 @@ import { titles } from "@/data/Layout";
       <a class="text-white" href="https://github.com/Vyxal/Vyxal">{{ text }}</a>
     </div>
     <!-- all icons from heroicons or remixicon -->
-    <button class="play">
+    <button class="play" title="Run">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         @click="cancel"
@@ -73,7 +73,7 @@ import { titles } from "@/data/Layout";
         <polygon points="5 3 19 12 5 21 5 3"></polygon>
       </svg>
     </button>
-    <button class="link" @click="outputLink('permalink')">
+    <button class="link" @click="outputLink('permalink')" title="Get Permalink">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           fill-rule="evenodd"
@@ -82,7 +82,7 @@ import { titles } from "@/data/Layout";
         />
       </svg>
     </button>
-    <button class="cgcc" @click="outputLink('cgcc')">
+    <button class="cgcc" @click="outputLink('cgcc')" title="CGCC post">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path fill="none" d="M0 0h24v24H0z" />
         <path
@@ -90,7 +90,7 @@ import { titles } from "@/data/Layout";
         />
       </svg>
     </button>
-    <button class="markdown" @click="outputLink('markdown')">
+    <button class="markdown" @click="outputLink('markdown')" title="Markdown link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path fill="none" d="M0 0h24v24H0z" />
         <path
@@ -98,7 +98,7 @@ import { titles } from "@/data/Layout";
         />
       </svg>
     </button>
-    <button class="cmc" @click="outputLink('cmc')">
+    <button class="cmc" @click="outputLink('cmc')" title="CMC">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path
           fill-rule="evenodd"
@@ -107,7 +107,7 @@ import { titles } from "@/data/Layout";
         />
       </svg>
     </button>
-    <button class="literate" @click="sbcs">
+    <button class="literate" @click="sbcs" title="Get SBCSified">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path fill-rule="evenodd" d="M14.447 3.027a.75.75 0 01.527.92l-4.5 16.5a.75.75 0 01-1.448-.394l4.5-16.5a.75.75 0 01.921-.526zM16.72 6.22a.75.75 0 011.06 0l5.25 5.25a.75.75 0 010 1.06l-5.25 5.25a.75.75 0 11-1.06-1.06L21.44 12l-4.72-4.72a.75.75 0 010-1.06zm-9.44 0a.75.75 0 010 1.06L2.56 12l4.72 4.72a.75.75 0 11-1.06 1.06L.97 12.53a.75.75 0 010-1.06l5.25-5.25a.75.75 0 011.06 0z" clip-rule="evenodd" />
       </svg>
@@ -116,6 +116,7 @@ import { titles } from "@/data/Layout";
       class="!mt-auto"
       @click="modalIsOpen = true"
       v-if="closedTabs.length"
+      title="Open a new tab"
     >
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path

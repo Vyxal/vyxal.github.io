@@ -1,6 +1,6 @@
 <template>
   <div class="h-full flex items-center pr-7">
-    <VyxalSidebar ref="sidebarRef" />
+    <VyxalSidebar />
     <MainLayout />
   </div>
 </template>
@@ -28,7 +28,7 @@ export default defineComponent({
           code,
           inputs,
         });
-        (this.$refs.sidebarRef as any).run();
+        store.execute();
       } catch {
         // i have to add this comment because eslint is stupid
       }

@@ -1,5 +1,12 @@
-- name: "Cookie"
-  code: "🍪"
-  description: "Infinitely prints cookie."
-  link: "#WyIiLCIiLCIiLCLwn42qIiwiIl0="
-  keywords: ["cookie"]
+- code: "\U0001F36A"
+  description: Infinitely prints cookie.
+  keywords:
+  - cookie
+  link: '#WyIiLCIiLCIiLCLwn42qIiwiIl0='
+  name: Cookie
+- code: test
+  description: test
+  keywords:
+  - test
+  link: WyIiLCAiIiwgIiIsICJ0ZXN0IiwgIiJd
+  name: test

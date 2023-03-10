@@ -54,7 +54,10 @@ const handleReady = (p: {
     <div class="text-white text-xl mb-2" v-if="byteCount">{{ length }}</div>
     <Codemirror
       :extensions="extensions"
-      :style="{ height: byteCount ? 'calc(100% - 30px)' : '100%', width: '100%' }"
+      :style="{
+        height: byteCount ? 'calc(100% - 30px)' : '100%',
+        width: '100%',
+      }"
       @ready="handleReady"
       v-model="code"
       v-if="inputType == 'textarea'"
@@ -89,7 +92,7 @@ export default defineComponent({
     byteCount: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   computed: {
     code: {
@@ -105,11 +108,16 @@ export default defineComponent({
     length() {
       const store = useMainStore();
       const code = this.code;
-      const lit = store.flags.includes('l');
-      const { utfable, len } = getByteCount(lit ? Vyxal.getSBCSified(code) : code);
-      const plural = len === 1 ? '' : 's';
-      return `${len} ${lit ? "literate " : ""}byte${plural}` + (utfable ? "" : " (UTF-8)");
-    }
+      const lit = store.flags.includes("l");
+      const { utfable, len } = getByteCount(
+        lit ? Vyxal.getSBCSified(code) : code
+      );
+      const plural = len === 1 ? "" : "s";
+      return (
+        `${len} ${lit ? "literate " : ""}byte${plural}` +
+        (utfable ? "" : " (UTF-8)")
+      );
+    },
   },
 });
 </script>

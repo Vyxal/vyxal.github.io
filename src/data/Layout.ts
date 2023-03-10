@@ -8,6 +8,7 @@ import Inputs from "@/components/InputsBox.vue";
 import Flags from "@/components/FlagsBox.vue";
 import CookieClicker from "@/components/CookieClicker.vue";
 import TextCompressor from "@/components/TextCompressor.vue";
+import Idioms from "@/components/VyxalIdioms.vue";
 import type { Component } from "vue";
 
 export const components: { [key in ComponentType]: Component } = {
@@ -19,6 +20,7 @@ export const components: { [key in ComponentType]: Component } = {
   Flags,
   CookieClicker,
   TextCompressor,
+  Idioms,
 };
 
 export const titles = {
@@ -30,6 +32,7 @@ export const titles = {
   Output: "Output",
   CookieClicker: "🍪🍪🍪🍪🍪🍪🍪",
   TextCompressor: "Compressor",
+  Idioms: "Idioms",
 };
 
 export type ComponentType = keyof typeof titles;

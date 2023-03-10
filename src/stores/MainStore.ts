@@ -12,7 +12,7 @@ export const useMainStore = defineStore("main", {
       flags: "",
       extra: "",
       worker: <null | Worker>null,
-      closedTabs: ["CookieClicker", "TextCompressor"] as ComponentType[],
+      closedTabs: ["CookieClicker", "TextCompressor", "Idioms"] as ComponentType[],
     };
   },
   actions: {
@@ -45,11 +45,11 @@ export const useMainStore = defineStore("main", {
         }
         let out = this.output;
         out += e.data.val;
-        if (out.length > 64000) {
+        if (out.length > 16000) {
           this.cancel(
-            "Output exceeded 64KB; output was truncated and code was terminated."
+            "Output exceeded 16KB; output was truncated and code was terminated."
           );
-          out = out.slice(0, 64000);
+          out = out.slice(0, 16000);
         }
         this.output = out;
       };

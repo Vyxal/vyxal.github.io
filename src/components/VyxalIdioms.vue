@@ -15,7 +15,7 @@
     <div class="text-white text-2xl font-bold mb-2" v-html="idiom.name"></div>
     <div class="text-white mb-3" v-html="idiom.description"></div>
     <pre
-      class="bg-zinc-700 rounded p-2 cursor-pointer active:bg-zinc-800 mb-3"
+      class="bg-zinc-700 rounded p-2 cursor-pointer active:bg-zinc-800 mb-3 text-white"
       @click="copy(idiom.code)"
       >{{ idiom.code }}</pre
     >
@@ -51,10 +51,17 @@ export default defineComponent({
   computed: {
     idioms() {
       if (!this.search) return idioms;
-      const x = go(this.search, idioms, {
-        keys: ["description", "name"],
-        threshold: -10000,
-      });
+      const x = go(
+        this.search,
+        idioms.map((x) => ({
+          ...x,
+          keywords: x.keywords.join(" "),
+        })),
+        {
+          keys: ["description", "name", "keywords"],
+          threshold: -10000,
+        }
+      );
       return x.map((x) => {
         return {
           ...x.obj,

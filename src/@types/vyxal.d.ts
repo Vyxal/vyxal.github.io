@@ -29,12 +29,4 @@ declare const Vyxal: {
 
   decompress(text: string): string;
 
-  setShortDict(dict: string[]): void;
-
-  setLongDict(dict: string[]): void;
-};
-
-declare const dictionary: {
-  short: string[];
-  long: string[];
 };

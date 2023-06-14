@@ -38,8 +38,6 @@ export default defineComponent({
   },
   methods: {
     compress() {
-      Vyxal.setShortDict(dictionary.short);
-      Vyxal.setLongDict(dictionary.long);
       this.compressed = Vyxal.compress(this.text);
     },
     copy() {

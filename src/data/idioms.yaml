@@ -19,3 +19,10 @@
   - digits
   link: '#WyIiLCIiLCIiLCIxMjMgJyUlTzQ4LSIsIiJd'
   name: Digits
+- code: □¯±
+  description: Reverse 3 way comparison operator that outputs as a singleton list
+  keywords:
+  - 3-way-comparison
+  - math
+  link: '#WyIiLCAiIiwgIiIsICJcdTI1YTFcdTAwYWZcdTAwYjEiLCAiIl0='
+  name: 3-way Comparison

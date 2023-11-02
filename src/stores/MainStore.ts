@@ -11,6 +11,8 @@ export const useMainStore = defineStore("main", {
       inputs: "",
       flags: "",
       extra: "",
+      short: "",
+      long: "",
       worker: <null | Worker>null,
       closedTabs: [
         "CookieClicker",
@@ -82,7 +84,7 @@ export const useMainStore = defineStore("main", {
         inputs: this.inputs,
         flags: this.flags,
         session,
-        dictionary,
+        dictionary: { short: this.short, long: this.long },
       });
 
       setTimeout(() => {

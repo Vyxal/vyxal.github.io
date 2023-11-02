@@ -27,6 +27,7 @@
 </template>
 
 <script lang="ts">
+import { useMainStore } from "@/stores/MainStore";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -38,8 +39,9 @@ export default defineComponent({
   },
   methods: {
     compress() {
-      Vyxal.setShortDict(dictionary.short);
-      Vyxal.setLongDict(dictionary.long);
+      const store = useMainStore();
+      Vyxal.setShortDict(store.short);
+      Vyxal.setLongDict(store.long);
       this.compressed = Vyxal.compress(this.text);
     },
     copy() {

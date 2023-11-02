@@ -14,6 +14,16 @@ import { useMainStore } from "./stores/MainStore";
 export default defineComponent({
   components: { VyxalSidebar, MainLayout },
   mounted() {
+    (async () => {
+      const store = useMainStore();
+      const short = await fetch(
+        "https://raw.githubusercontent.com/Vyxal/Vyxal/version-3/shared/resources/ShortDictionary.txt"
+      ).then((res) => res.text());
+      const long = await fetch(
+        "https://raw.githubusercontent.com/Vyxal/Vyxal/version-3/shared/resources/LongDictionary.txt"
+      ).then((res) => res.text());
+      store.$patch({ short, long });
+    })();
     function check() {
       const store = useMainStore();
       const hash = location.hash.slice(1);
@@ -36,7 +46,7 @@ export default defineComponent({
       }
     }
     check();
-    window.onhashchange = check;
+    window.addEventListener("hashchange", check);
   },
 });
 </script>

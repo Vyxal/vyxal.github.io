@@ -37,5 +37,4 @@ declare const Vyxal: {
 declare const dictionary: {
   short: string;
   long: string;
-
 };

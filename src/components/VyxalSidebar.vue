@@ -204,6 +204,18 @@ export default defineComponent({
   computed: {
     ...mapState(useMainStore, ["worker", "closedTabs"]),
   },
+  mounted() {
+    window.addEventListener("keydown", (e) => {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        !e.altKey &&
+        !e.shiftKey &&
+        e.key === "Enter"
+      ) {
+        this.run();
+      }
+    });
+  },
   methods: {
     run() {
       const store = useMainStore();

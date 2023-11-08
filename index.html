@@ -6,7 +6,24 @@
   <link rel="icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vyxal Interpreter</title>
-  <script src="https://vyxal.github.io/Vyxal/vyxal.js" async defer></script>
+  <script>
+    function backupLoad() {
+      console.log("Local vyxal.js file not found.");
+      console.log("That's okay. Loading from GitHub...");
+      let scriptTag = document.createElement("script");
+      scriptTag.src = "https://vyxal.github.io/Vyxal/vyxal.js";
+      scriptTag.onerror = function () {
+        console.log(`Error loading vyxal.js. If you're reading this 
+        in the console, please report this to the Vyxal team over at 
+        https://chat.stackexchange.com/rooms/106764/vyxal.`);
+      }
+      scriptTag.defer = true;
+      scriptTag.async = true;
+      document.head.appendChild(scriptTag);
+    }
+  </script>
+  <script src="vyxal.js" onerror="backupLoad()"></script>
+  <script src="src/dictionary.js" async defer></script>
 </head>
 
 <body>

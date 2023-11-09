@@ -35,7 +35,7 @@ export const useMainStore = defineStore("main", {
       this.worker = null;
     },
     save(lay: ShallowRef<GoldenLayout | null>) {
-      this.layoutInfo = lay;
+      this.layoutInfo = lay.value;
     },
     execute() {
       const session =

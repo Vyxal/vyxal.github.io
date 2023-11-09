@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import type { ComponentType } from "@/data/Layout";
+import type { GoldenLayout, ResolvedLayoutConfig } from "golden-layout";
+import { shallowRef, type ShallowRef } from "vue";
 
 export const useMainStore = defineStore("main", {
   state() {
@@ -18,7 +20,9 @@ export const useMainStore = defineStore("main", {
         "CookieClicker",
         "TextCompressor",
         "Idioms",
+        "LayoutSaver",
       ] as ComponentType[],
+      layoutInfo: shallowRef<GoldenLayout | null>(null),
     };
   },
   actions: {
@@ -29,6 +33,9 @@ export const useMainStore = defineStore("main", {
       this.worker?.terminate();
       this.extra = msg;
       this.worker = null;
+    },
+    save(lay: ShallowRef<GoldenLayout | null>) {
+      this.layoutInfo = lay;
     },
     execute() {
       const session =

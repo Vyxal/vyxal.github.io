@@ -1,10 +1,6 @@
 <template>
   <div ref="element" style="width: 100%; height: 95%">
-    <teleport
-      v-for="{ id, type, element } in componentInstances"
-      :key="id"
-      :to="element"
-    >
+    <teleport v-for="{ id, type, element } in componentInstances" :key="id" :to="element">
       <component :is="type"></component>
     </teleport>
   </div>
@@ -22,6 +18,7 @@ import {
   components,
   type ComponentType,
 } from "@/data/Layout";
+import { LayoutConfig } from "golden-layout";
 
 export default defineComponent({
   components,
@@ -60,6 +57,8 @@ export default defineComponent({
       destroyComponent,
       defaultLayout
     );
+
+    store.save(layout);
 
     store.$onAction(({ name }) => {
       if (name === "execute") {

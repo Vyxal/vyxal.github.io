@@ -48,27 +48,152 @@ export function comp(type: ComponentType, size?: string): ComponentItemConfig {
 }
 
 export const defaultLayout: LayoutConfig = {
-  root: {
-    type: ItemType.row,
-    content: [
+  "root": {
+    "type": "column",
+    "content": [
       {
-        type: ItemType.column,
-        size: "100%",
-        content: [
-          comp("Flags", "10%"),
+        "type": "stack",
+        "content": [
           {
-            type: "stack",
-            size: "50%",
-            content: [
-              comp("MainCode", "100%"),
-              comp("Header", "100%"),
-              comp("Footer", "100%"),
-            ],
+            "type": "component",
+            "content": [],
+            "size": "10%",
+            "id": "",
+            "maximised": false,
+            "isClosable": true,
+            "reorderEnabled": true,
+            "title": "Flags",
+            "header": {
+              "show": "top",
+              "popout": false,
+              "maximise": false
+            },
+            "componentType": "Flags",
+            "componentState": {}
           },
-          comp("Inputs", "40%"),
+          {
+            "type": "component",
+            "content": [],
+            "size": "100%",
+            "id": "",
+            "maximised": false,
+            "isClosable": true,
+            "reorderEnabled": true,
+            "title": "Code",
+            "header": {
+              "show": "top",
+              "popout": false,
+              "maximise": false
+            },
+            "componentType": "MainCode",
+            "componentState": {}
+          },
+          {
+            "type": "component",
+            "content": [],
+            "size": "100%",
+            "id": "",
+            "maximised": false,
+            "isClosable": true,
+            "reorderEnabled": true,
+            "title": "Header",
+            "header": {
+              "show": "top",
+              "popout": false,
+              "maximise": false
+            },
+            "componentType": "Header",
+            "componentState": {}
+          },
+          {
+            "type": "component",
+            "content": [],
+            "size": "100%",
+            "id": "",
+            "maximised": false,
+            "isClosable": true,
+            "reorderEnabled": true,
+            "title": "Footer",
+            "header": {
+              "show": "top",
+              "popout": false,
+              "maximise": false
+            },
+            "componentType": "Footer",
+            "componentState": {}
+          },
         ],
+        "size": "55.55555555555556%",
+        "id": "",
+        "isClosable": true,
+        "maximised": false,
+        "activeItemIndex": 1
       },
-      comp("Output", "60%"),
+      {
+        "type": "row",
+        "content": [
+          {
+            "type": "stack",
+            "content": [
+              {
+                "type": "component",
+                "content": [],
+                "size": "40%",
+                "id": "",
+                "maximised": false,
+                "isClosable": true,
+                "reorderEnabled": true,
+                "title": "Inputs",
+                "header": {
+                  "show": "top",
+                  "popout": false,
+                  "maximise": false
+                },
+                "componentType": "Inputs",
+                "componentState": {}
+              }
+            ],
+            "size": "50%",
+            "id": "",
+            "isClosable": true,
+            "maximised": false,
+            "activeItemIndex": 0
+          },
+          {
+            "type": "stack",
+            "content": [
+              {
+                "type": "component",
+                "content": [],
+                "size": "60%",
+                "id": "",
+                "maximised": false,
+                "isClosable": true,
+                "reorderEnabled": true,
+                "title": "Output",
+                "header": {
+                  "show": "top",
+                  "popout": false,
+                  "maximise": false
+                },
+                "componentType": "Output",
+                "componentState": {}
+              }
+            ],
+            "size": "50%",
+            "id": "",
+            "isClosable": true,
+            "maximised": false,
+            "activeItemIndex": 0
+          }
+        ],
+        "size": "44.44444444444444%",
+        "id": "",
+        "isClosable": true
+      }
     ],
+    "size": "1fr",
+    "id": "",
+    "isClosable": true
   },
 };

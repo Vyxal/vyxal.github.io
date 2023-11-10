@@ -20,6 +20,7 @@ import {
   defaultMobileLayout,
 } from "@/data/Layout";
 import type { LayoutConfig } from "golden-layout";
+import { storeToRefs } from "pinia";
 
 export default defineComponent({
   data() {
@@ -42,6 +43,7 @@ export default defineComponent({
       if (!componentTypes.has(type)) {
         throw new Error(`Component not found: '${type}'`);
       }
+
       ++instanceId;
       componentInstances.value = componentInstances.value.concat({
         id: instanceId,
@@ -54,7 +56,10 @@ export default defineComponent({
       const idx = componentInstances.value.findIndex(
         ({ element }) => element === toBeRemoved
       );
-      store.closedTabs.push(componentInstances.value[idx].type);
+      let type = componentInstances.value[idx].type;
+      if (!store.closedTabs.includes(type)) {
+        store.closedTabs.push(type);
+      }
       componentInstances.value.splice(idx, 1);
     };
 
@@ -76,6 +81,8 @@ export default defineComponent({
         focusOutput();
       }
     });
+
+    store.resetTabs();
 
     watch(toRef(store, "closedTabs"), (val, old) => {
       const [tab] = old.filter((x) => !val.includes(x));

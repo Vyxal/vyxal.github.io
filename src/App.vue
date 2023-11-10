@@ -49,8 +49,7 @@ export default defineComponent({
       }
     }
     check();
-    window.addEventListener("hashchange", check);
-    window.addEventListener("resize", e => {
+    function resizeEverything() {
       const store = useMainStore();
       let factor = 1;
       if (window.innerWidth < 640) {
@@ -58,18 +57,24 @@ export default defineComponent({
         if (store.desktopMode) {
           store.layoutInfo?.loadLayout(defaultMobileLayout);
           store.setDesktopMode(false);
+          store.resetTabs();
         }
       } else {
         if (!store.desktopMode) {
           store.setDesktopMode(true);
           store.layoutInfo?.loadLayout(defaultLayout);
+          store.resetTabs();
         }
 
       }
       store.layoutInfo?.updateRootSize();
+      console.log(store.closedTabs);
       document.getElementById("big_div")!.style.setProperty("height", `${window.innerHeight * factor}px`);
     }
-    )
+    resizeEverything();
+    window.addEventListener("hashchange", check);
+    window.addEventListener("resize", resizeEverything);
+
   },
 })
 </script>

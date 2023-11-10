@@ -76,7 +76,7 @@ import { titles } from "@/data/Layout";
   </div>
   <VyxalModal title="Add Tab" v-if="modalIsOpen" @close="modalIsOpen = false">
     <div class="cursor-pointer p-5 border-t border-gray-300 hover:bg-zinc-100 active:bg-zinc-300 last:rounded-b-2xl"
-      v-for="item in closedTabs" @click="openTab(item)" :key="item">
+      v-for="item in store.closedTabs" @click="openTab(item)" :key="item">
       {{ titles[item] }}
     </div>
   </VyxalModal>
@@ -95,7 +95,7 @@ button svg {
 
 @media screen and (min-width: 768px){
 button svg {
-  width: 50px;
+  width: 40px;
   fill: white;
 }
 }
@@ -137,6 +137,7 @@ export default defineComponent({
     return {
       text: "Vyxal",
       modalIsOpen: false,
+      store: useMainStore(),
     };
   },
   computed: {

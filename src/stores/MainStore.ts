@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import type { ComponentType } from "@/data/Layout";
 import type { GoldenLayout, ResolvedLayoutConfig } from "golden-layout";
 import { shallowRef, type ShallowRef } from "vue";
 

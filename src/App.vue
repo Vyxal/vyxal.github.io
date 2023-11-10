@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex items-center pr-7">
+  <div id="big_div" class="flex flex-col items-center" style="height: 200%">
     <VyxalSidebar />
     <MainLayout />
   </div>
@@ -8,12 +8,15 @@
 <script lang="ts">
 import MainLayout from "@/components/MainLayout.vue";
 import VyxalSidebar from "@/components/VyxalSidebar.vue";
-import { defineComponent } from "vue";
+import { defineComponent, vModelCheckbox } from "vue";
 import { useMainStore } from "./stores/MainStore";
+import { storeToRefs } from "pinia";
+import { defaultMobileLayout, defaultLayout } from "./data/Layout";
 
 export default defineComponent({
   components: { VyxalSidebar, MainLayout },
   mounted() {
+    document.getElementById("big_div")!.style.setProperty("--height", `${window.innerHeight}px`);
     (async () => {
       const store = useMainStore();
       const short = await fetch(
@@ -47,6 +50,19 @@ export default defineComponent({
     }
     check();
     window.addEventListener("hashchange", check);
+    window.addEventListener("resize", e => {
+      const store = useMainStore();
+      let factor = 1;
+      if (window.innerWidth < 640) {
+        factor = 2;
+        store.layoutInfo?.loadLayout(defaultMobileLayout);
+      } else {
+        store.layoutInfo?.loadLayout(defaultLayout);
+      }
+      store.layoutInfo?.updateRootSize();
+      document.getElementById("big_div")!.style.setProperty("height", `${window.innerHeight * factor}px`);
+    }
+    )
   },
-});
+})
 </script>

@@ -5,6 +5,7 @@ import {
   LayoutConfig,
 } from "golden-layout";
 import { onMounted, ref, shallowRef } from "vue";
+import { useMainStore } from "@/stores/MainStore";
 
 export const isClient = typeof window !== "undefined";
 export const isDocumentReady = () =>
@@ -40,6 +41,8 @@ export function useGoldenLayout(
   useDocumentReady(() => {
     if (element.value == null) throw new Error("Element must be set.");
     const goldenLayout = new GoldenLayout(element.value);
+    goldenLayout.resizeWithContainerAutomatically = true;
+
 
     goldenLayout.bindComponentEvent = (container, itemConfig) => {
       const { componentType } = itemConfig;
@@ -55,7 +58,6 @@ export function useGoldenLayout(
       destroyComponent(container.element);
     };
 
-    goldenLayout.resizeWithContainerAutomatically = true;
 
     if (config != null) goldenLayout.loadLayout(config);
 
@@ -63,6 +65,8 @@ export function useGoldenLayout(
     layout.value = goldenLayout as any;
 
     initialized.value = true;
+    const store = useMainStore();
+    store.save(layout);
   });
 
   const focusOutput = () => {

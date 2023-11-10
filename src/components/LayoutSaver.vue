@@ -3,7 +3,7 @@
         Get the the layout infomration
     </button>
     <pre class="m-4 text-white whitespace-pre-wrap font-mono bg-slate-800 p-4 rounded"
-        style="overflow-y:scroll; height: 100%;" v-if="layoutinfo">{{ layoutinfo }}</pre>
+        style="overflow-y:scroll; height: 100%;">{{ layoutinfo }}</pre>
 </template>
 <script lang="ts">
 import { useMainStore } from "@/stores/MainStore";

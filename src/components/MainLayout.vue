@@ -1,5 +1,5 @@
 <template>
-  <div ref="element" style="width: 100%; height: 95%">
+  <div ref="element" style="width: 100%; height: 100%; overflow: scroll;" :key="LAYOUT_KEY">
     <teleport v-for="{ id, type, element } in componentInstances" :key="id" :to="element">
       <component :is="type"></component>
     </teleport>
@@ -17,10 +17,16 @@ import {
   defaultLayout,
   components,
   type ComponentType,
+  defaultMobileLayout,
 } from "@/data/Layout";
-import { LayoutConfig } from "golden-layout";
+import type { LayoutConfig } from "golden-layout";
 
 export default defineComponent({
+  data() {
+    return {
+      LAYOUT_KEY: 0
+    }
+  },
   components,
   setup() {
     interface ComponentInstance {
@@ -52,13 +58,18 @@ export default defineComponent({
       componentInstances.value.splice(idx, 1);
     };
 
+    let use_layout = null;
+    if (window.innerWidth < 640) {
+      use_layout = defaultMobileLayout
+    } else {
+      use_layout = defaultLayout
+    }
+
     const { element, layout, focusOutput } = useGoldenLayout(
       createComponent,
       destroyComponent,
-      defaultLayout
+      use_layout as LayoutConfig
     );
-
-    store.save(layout);
 
     store.$onAction(({ name }) => {
       if (name === "execute") {

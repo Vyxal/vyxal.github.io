@@ -1,5 +1,5 @@
 <template>
-  <div id="big_div" class="flex flex-col items-center" style="height: 200%">
+  <div id="big_div" class="flex flex-col items-center" style="height: 100%">
     <VyxalSidebar />
     <MainLayout />
   </div>

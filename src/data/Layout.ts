@@ -9,7 +9,6 @@ import Flags from "@/components/FlagsBox.vue";
 import CookieClicker from "@/components/CookieClicker.vue";
 import TextCompressor from "@/components/TextCompressor.vue";
 import Idioms from "@/components/VyxalIdioms.vue";
-import LayoutSaver from "@/components/LayoutSaver.vue";
 import type { Component } from "vue";
 
 export const components: { [key in ComponentType]: Component } = {
@@ -22,19 +21,8 @@ export const components: { [key in ComponentType]: Component } = {
   CookieClicker,
   TextCompressor,
   Idioms,
-  LayoutSaver,
 };
 
-export const componentsArray: Array<Component> = [Output,
-  MainCode,
-  Header,
-  Footer,
-  Inputs,
-  Flags,
-  CookieClicker,
-  TextCompressor,
-  Idioms,
-  LayoutSaver,]
 
 export const titles = {
   Flags: "Flags",
@@ -46,7 +34,6 @@ export const titles = {
   CookieClicker: "🍪🍪🍪🍪🍪🍪🍪",
   TextCompressor: "Compressor",
   Idioms: "Idioms",
-  LayoutSaver: "Layout Saver",
 };
 
 export type ComponentType = keyof typeof titles;

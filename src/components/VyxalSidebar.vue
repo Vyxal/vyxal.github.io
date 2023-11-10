@@ -3,8 +3,21 @@ import { titles } from "@/data/Layout";
 </script>
 
 <template>
-  <div class="w-full bg-neutral-900 p-5 flex flex-wrap items-center gap-3.5">
-    <div class="text-white text-xl">
+  <div class="w-full bg-neutral-900 p-5 flex flex-wrap items-center gap-3.5 md:gap-7">
+    <a class="hidden md:block" href="https://github.com/Vyxal/Vyxal/tree/version-3" target="_blank">
+      <svg viewBox="0.325 0.024 50.026 55.291" width="50.026" height="55.291" xmlns="http://www.w3.org/2000/svg">
+        <g stroke-linejoin="round" stroke-width="6.465" transform="matrix(1, 0, 0, 1, -21.719837, -24.963709)">
+          <rect transform="rotate(-41.01)" x="-4.3189" y="38.562" width="10.583" height="64.067" fill="#333" />
+          <rect transform="matrix(-.7546 -.65619 -.65619 .7546 0 0)" x="-75.339" y="-23.195" width="10.583"
+            height="64.067" fill="#333" />
+          <path d="m22.045 73.333 7.9861 6.9448 24.039-27.645-7.0125-8.0641z" fill="#333368" />
+          <path
+            d="m30.031 24.988-7.9861 6.9448c8.3376 9.5881 16.675 19.176 25.013 28.764l25.013-28.764-7.9861-6.9448-17.027 19.581z"
+            fill="#d63333" fill-opacity=".5098" />
+        </g>
+      </svg>
+    </a>
+    <div class="text-white text-xl sm:text-3xl">
       <a class="text-white" href="https://github.com/Vyxal/Vyxal/tree/version-3" target="_blank">{{ text }}</a>
     </div>
     <!-- all icons from heroicons or remixicon -->
@@ -79,6 +92,14 @@ button svg {
   width: 25px;
   fill: white;
 }
+
+@media screen and (min-width: 768px){
+button svg {
+  width: 50px;
+  fill: white;
+}
+}
+
 
 button svg.cog {
   fill: none;

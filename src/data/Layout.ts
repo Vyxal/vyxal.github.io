@@ -128,7 +128,6 @@ export const defaultLayout: LayoutConfig = {
         "id": "",
         "isClosable": true,
         "maximised": false,
-        "activeItemIndex": 1
       },
       {
         "type": "row",
@@ -158,7 +157,6 @@ export const defaultLayout: LayoutConfig = {
             "id": "",
             "isClosable": true,
             "maximised": false,
-            "activeItemIndex": 0
           },
           {
             "type": "stack",
@@ -231,7 +229,7 @@ export const defaultMobileLayout: LayoutConfig = {
         ],
         "size": "25%",
         "id": "",
-        "isClosable": true,
+        "isClosable": false,
         "maximised": false,
       },
       {

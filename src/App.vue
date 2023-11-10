@@ -55,9 +55,16 @@ export default defineComponent({
       let factor = 1;
       if (window.innerWidth < 640) {
         factor = 2;
-        store.layoutInfo?.loadLayout(defaultMobileLayout);
+        if (store.desktopMode) {
+          store.layoutInfo?.loadLayout(defaultMobileLayout);
+          store.setDesktopMode(false);
+        }
       } else {
-        store.layoutInfo?.loadLayout(defaultLayout);
+        if (!store.desktopMode) {
+          store.setDesktopMode(true);
+          store.layoutInfo?.loadLayout(defaultLayout);
+        }
+
       }
       store.layoutInfo?.updateRootSize();
       document.getElementById("big_div")!.style.setProperty("height", `${window.innerHeight * factor}px`);

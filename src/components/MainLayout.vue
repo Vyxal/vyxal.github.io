@@ -59,10 +59,10 @@ export default defineComponent({
     };
 
     let use_layout = null;
-    if (window.innerWidth < 640) {
-      use_layout = defaultMobileLayout
+    if (window.innerWidth < 640 && store.desktopMode) {
+      use_layout = defaultMobileLayout;
     } else {
-      use_layout = defaultLayout
+      use_layout = defaultLayout;
     }
 
     const { element, layout, focusOutput } = useGoldenLayout(

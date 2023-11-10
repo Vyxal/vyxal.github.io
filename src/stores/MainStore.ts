@@ -19,14 +19,24 @@ export const useMainStore = defineStore("main", {
         "CookieClicker",
         "TextCompressor",
         "Idioms",
-        "LayoutSaver",
       ] as ComponentType[],
       layoutInfo: shallowRef<GoldenLayout | null>(null),
+      desktopMode: window.innerWidth > 640,
     };
   },
   actions: {
     openTab(tab: string) {
       this.closedTabs = this.closedTabs.filter((x) => x !== tab);
+    },
+    resetTabs() {
+      this.closedTabs = [
+        "CookieClicker",
+        "TextCompressor",
+        "Idioms",
+      ] as ComponentType[];
+    },
+    setDesktopMode(mode: boolean) {
+      this.desktopMode = mode;
     },
     cancel(msg: string) {
       this.worker?.terminate();

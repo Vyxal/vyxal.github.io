@@ -22,13 +22,16 @@ export const useMainStore = defineStore("main", {
       ] as ComponentType[],
       layoutInfo: shallowRef<GoldenLayout | null>(null),
       desktopMode: window.innerWidth > 640,
+      safeToAdd: false,
     };
   },
   actions: {
     openTab(tab: string) {
+      this.safeToAdd = true;
       this.closedTabs = this.closedTabs.filter((x) => x !== tab);
     },
     resetTabs() {
+      this.safeToAdd = false;
       this.closedTabs = [
         "CookieClicker",
         "TextCompressor",

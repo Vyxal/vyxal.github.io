@@ -86,7 +86,7 @@ export default defineComponent({
 
     watch(toRef(store, "closedTabs"), (val, old) => {
       const [tab] = old.filter((x) => !val.includes(x));
-      if (!tab) return;
+      if (!tab || !store.safeToAdd) return;
       layout.value?.addItemAtLocation(comp(tab));
     });
 

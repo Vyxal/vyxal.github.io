@@ -199,9 +199,6 @@ export const defaultLayout: LayoutConfig = {
 
 
 export const defaultMobileLayout: LayoutConfig = {
-  "dimensions": {
-    "defaultMinItemHeight": "1000px",
-  },
   "root": {
     "type": "column",
     "content": [
@@ -211,7 +208,7 @@ export const defaultMobileLayout: LayoutConfig = {
           {
             "type": "component",
             "content": [],
-            "size": "25%",
+            "size": "50%",
             "id": "",
             "maximised": false,
             "isClosable": false,
@@ -226,7 +223,7 @@ export const defaultMobileLayout: LayoutConfig = {
             "componentState": {}
           },
         ],
-        "size": "25%",
+        "size": "50%",
         "id": "",
         "isClosable": false,
         "maximised": false,

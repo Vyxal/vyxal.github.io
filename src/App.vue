@@ -54,6 +54,9 @@ export default defineComponent({
       let factor = 1;
       if ((window.innerWidth / parseInt(getComputedStyle(document.body).fontSize)) < 48) {
         factor = 2;
+        if ((window.innerHeight / parseInt(getComputedStyle(document.body).fontSize)) < 30) {
+          factor = 3;
+        }
         if (store.desktopMode) {
           store.layoutInfo?.loadLayout(defaultMobileLayout);
           store.setDesktopMode(false);
@@ -68,7 +71,7 @@ export default defineComponent({
 
       }
       store.layoutInfo?.updateRootSize();
-      document.getElementById("big_div")!.style.setProperty("height", `${window.innerHeight * factor}px`);
+      document.getElementById("big_div")!.style.setProperty("height", `${Math.min(1000, window.innerHeight * factor)}px`);
     }
     resizeEverything();
     window.addEventListener("hashchange", check);

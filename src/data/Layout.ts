@@ -201,7 +201,6 @@ export const defaultLayout: LayoutConfig = {
 export const defaultMobileLayout: LayoutConfig = {
   "dimensions": {
     "defaultMinItemHeight": "1000px",
-    "defaultMinItemHeightUnit": "%"
   },
   "root": {
     "type": "column",

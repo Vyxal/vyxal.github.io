@@ -52,7 +52,7 @@ export default defineComponent({
     function resizeEverything() {
       const store = useMainStore();
       let factor = 1;
-      if (window.innerWidth < 640) {
+      if ((window.innerWidth / parseInt(getComputedStyle(document.body).fontSize)) < 48) {
         factor = 2;
         if (store.desktopMode) {
           store.layoutInfo?.loadLayout(defaultMobileLayout);
@@ -68,7 +68,6 @@ export default defineComponent({
 
       }
       store.layoutInfo?.updateRootSize();
-      console.log(store.closedTabs);
       document.getElementById("big_div")!.style.setProperty("height", `${window.innerHeight * factor}px`);
     }
     resizeEverything();

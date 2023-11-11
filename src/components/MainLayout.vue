@@ -64,7 +64,7 @@ export default defineComponent({
     };
 
     let use_layout = null;
-    if (window.innerWidth < 640 && store.desktopMode) {
+    if ((window.innerWidth / parseInt(getComputedStyle(document.body).fontSize)) < 48) {
       use_layout = defaultMobileLayout;
     } else {
       use_layout = defaultLayout;

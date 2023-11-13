@@ -7,6 +7,9 @@ import ViteYaml from "@modyfi/vite-plugin-yaml";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), ViteYaml()],
+  build: {
+    target: "ES2022"
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

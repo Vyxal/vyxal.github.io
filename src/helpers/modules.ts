@@ -9,4 +9,4 @@ export const dynamicLoad = async (localPath: string, url: string) => {
 };
 
 export const { Vyxal } = await dynamicLoad("../vyxal.js", "https://vyxal.github.io/Vyxal/vyxal.js");
-// export const { HelpText } = await dynamicLoad("../helpText.js", "https://vyxal.github.io/Vyxal/helpText.js");
+export const { HelpText } = await dynamicLoad("../helpText.js", "https://vyxal.github.io/Vyxal/helpText.js");

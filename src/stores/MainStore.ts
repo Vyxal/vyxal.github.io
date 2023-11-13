@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import type { GoldenLayout, ResolvedLayoutConfig } from "golden-layout";
 import { shallowRef, type ShallowRef } from "vue";
 import type { ComponentType } from "@/data/Layout";
-import { Vyxal } from "@/helpers/modules";
+import { HelpText } from "@/helpers/modules";
 export const useMainStore = defineStore("main", {
   state() {
     return {
@@ -56,6 +56,14 @@ export const useMainStore = defineStore("main", {
         Math.random().toString(36).substring(2, 15);
       this.worker = new Worker(new URL("../worker.js", import.meta.url), { type: "module" });
 
+      if (this.flags.includes("h")) {
+        // Output help text
+        this.worker?.terminate();
+        this.worker = null;
+        this.output = HelpText.getHelpText();
+        return;
+      }
+
       if (this.code === "lyxal") {
         (<any>window)[atob("bG9jYXRpb24=")][atob("aHJlZg==")] = atob(
           "aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2g/dj1kUXc0dzlXZ1hjUQ=="
@@ -93,7 +101,6 @@ export const useMainStore = defineStore("main", {
 
       this.output = "";
       this.extra = "";
-      console.log("Sendin");
       this.worker.postMessage({
         mode: "run",
         code:
@@ -107,7 +114,6 @@ export const useMainStore = defineStore("main", {
         session,
         dictionary: { short: this.short, long: this.long },
       });
-      console.log("Sent");
 
       setTimeout(() => {
         if (this.worker) {

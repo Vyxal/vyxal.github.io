@@ -350,6 +350,10 @@ function initCodeMirror() {
         autofocus: true,
     }
 
+    function escapeRegex(string) {
+        return string.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
     let codeMode = {
         ...mode,
         extraKeys: {
@@ -357,9 +361,10 @@ function initCodeMirror() {
                 const cur = cm.getCursor();
                 const lines = cm.getValue().split("\n");
                 const line = lines[cur.line].slice(0, cur.ch);
-                let alpha = line.match(/[a-z_0-9]+$/)?.[0];
-                while (alpha?.length >= 3) { // Greedily match as many characters as possible
-                    const t = Object.entries(other_aliases).find(x => x[1].some(y => alpha.match(y)?.[0] == alpha));
+                let alpha = line.match(/[ -~]+$/)?.[0];
+                while (alpha?.length >= 3) {
+                    // Greedily match as many characters as possible
+                    const t = Object.entries(other_aliases).find(x => x[1].some(y => alpha.match(escapeRegex(y))?.[0] == alpha));
                     if (t) {
                         cm.replaceRange(t[0], { line: cur.line, ch: cur.ch - alpha.length }, { line: cur.line, ch: cur.ch }); // Suggested by copilot. **works**???
                         return;

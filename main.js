@@ -23,12 +23,27 @@ async function fetchOr(localPath, remotePath) {
         if (!inner.ok) {
             throw new Error("Failed to fetch")
         }
-        return inner;
+        return inner.text();
     }
-    return response;
+    return response.text();
 }
-let shortDict = await fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt")
-let longDict = await fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt")
+
+let shortDict = null;
+let longDict = null;
+
+fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt").then(
+    (text) => {
+        shortDict = text
+        Vyxal.setShortDict(shortDict)
+    }
+)
+
+fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt").then(
+    (text) => {
+        longDict = text
+        Vyxal.setLongDict(longDict)
+    }
+)
 
 
 function resizeCodeBox(id) {

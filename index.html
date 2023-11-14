@@ -25,9 +25,11 @@
   <script defer src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script defer src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script defer src="https://unpkg.com/htm@3.1.1/dist/htm.umd.js"></script>
-  <script defer src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script defer src="https://unpkg.com/react-popper/dist/index.umd.js"></script>
   <script defer src="https://unpkg.com/fuzzysort@2.0.1"></script>
+  <link rel="stylesheet" href="https://vyxal.github.io/Vylight/mode-vyxal.css">
+
   <link rel="stylesheet" href="https://vyxal.github.io/Vylight/mode-vyxal.css">
 
   <script type="importmap">
@@ -37,7 +39,15 @@
       }
     }
   </script>
-  <script src="./main.js" type="module"></script>
+  <script>
+    var selectedBox = "code";
+    function setBox(box) {
+      selectedBox = box;
+    }
+  </script>
+  <script src="./main.js" type="module" defer></script>
+  <script src="parsed_yaml.js" defer></script>
+  <script src="keyboard.js" type="module"></script>
   <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 
@@ -86,17 +96,22 @@
     <input type="text" name="flags" id="flag" style="min-height: 2em;" oninput="updateCount()">
   </details>
 
-  <details id="header-detail">
+  <details>
+    <summary>Keyboard</summary>
+    <div id="keyboard-root"></div>
+  </details>
+
+  <details onclick="setBox('header')" id="header-detail">
     <summary>Header</summary>
     <textarea id="header" name="header" oninput="resizeCodeBox('header')"></textarea>
   </details>
 
-  <details open id="code-detail">
+  <details onclick="setBox('code')" open id="code-detail">
     <summary id="code-count">Code: 0 bytes</summary>
     <textarea id="code" name="code" oninput="resizeCodeBox('code'); updateCount()" onkeyup="updateCount()"></textarea>
   </details>
 
-  <details id="footer-detail">
+  <details onclick="setBox('footer')" id="footer-detail">
     <summary>Footer</summary>
     <textarea id="footer" name="footer"></textarea>
   </details>

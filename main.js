@@ -16,36 +16,19 @@ let worker;
 
 var selectedBox = 'code' //whether 'header', 'code', or 'footer' are selected
 
-function fetchOr(localPath, remotePath) {
-    fetch(localPath).then((response) => {
-        if (!response.ok) {
-            fetch(remotePath).then((inner) => {
-                if (!inner.ok) {
-                    throw new Error("Neither local nor remote file exists")
-                }
-                console.log("Using remote file for " + localPath)
-                return inner;
-            })
-        } else {
-            console.log("Using local file for " + localPath)
-            return response;
+async function fetchOr(localPath, remotePath) {
+    let response = await fetch(localPath)
+    if (!response.ok) {
+        let inner = await fetch(remotePath)
+        if (!inner.ok) {
+            throw new Error("Failed to fetch")
         }
-    })
+        return inner;
+    }
+    return response;
 }
-
-let shortDict = null;
-
-fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt").then((response) => {
-    shortDict = response.text();
-    Vyxal.setShortDict(shortDict)
-});
-
-let longDict = null;
-
-fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt").then((response) => {
-    longDict = response.text();
-    Vyxal.setLongDict(longDict)
-});
+let shortDict = await fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt")
+let longDict = await fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt")
 
 
 function resizeCodeBox(id) {

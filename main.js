@@ -16,21 +16,19 @@ let worker;
 
 var selectedBox = 'code' //whether 'header', 'code', or 'footer' are selected
 
-function fetchOr(localPath, remotePath) {
-    fetch(localPath).then((response) => {
-        if (!response.ok) {
-            fetch(remotePath).then((inner) => {
-                if (!inner.ok) {
-                    throw new Error("Neither local nor remote file exists")
-                }
-                console.log("Using remote file for " + localPath)
-                return inner;
-            })
-        } else {
-            console.log("Using local file for " + localPath)
-            return response;
+async function fetchOr(localPath, remotePath) {
+    const response = await fetch(localPath);
+    if (!response.ok) {
+        let inner = await fetch(remotePath);
+        if (!inner.ok) {
+            throw new Error("Neither local nor remote file exists")
         }
-    })
+        console.log("Using remote file for " + localPath)
+        return inner;
+    } else {
+        console.log("Using local file for " + localPath)
+        return response;
+    }
 }
 
 let shortDict = null;

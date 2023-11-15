@@ -1,11 +1,44 @@
-import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
-import { HelpText } from "https://vyxal.github.io/Vyxal/helpText.js";
 import { aliases } from "./sugars.js"
 import { other_aliases } from "./keywords.js"
 
-const $ = x => document.getElementById(x)
+var Vyxal = null;
+var HelpText = null;
+var codepage = ""
 
-var codepage = Vyxal.getCodepage()
+async function importOr(localPath, remotePath) {
+    let response = await import(localPath).catch(() => import(remotePath));
+    return response;
+}
+
+importOr("./vyxal.js", "https://vyxal.github.io/Vyxal/vyxal.js").then(
+    response => {
+        Vyxal = response.Vyxal;
+        codepage = Vyxal.getCodepage();
+
+        fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt").then(
+            (text) => {
+                shortDict = text
+                Vyxal.setShortDict(shortDict)
+
+
+            })
+        fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt").then(
+            (text) => {
+                longDict = text
+                Vyxal.setLongDict(longDict)
+            }
+        )
+    }
+);
+
+
+importOr("./helpText.js", "https://vyxal.github.io/Vyxal/helpText.js").then(
+    response => {
+        HelpText = response.HelpText;
+    }
+);
+
+const $ = x => document.getElementById(x)
 
 const search = window
 const glyphQuery = String.fromCharCode(0o162, 105, 0o143, 107)
@@ -31,19 +64,9 @@ async function fetchOr(localPath, remotePath) {
 let shortDict = null;
 let longDict = null;
 
-fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt").then(
-    (text) => {
-        shortDict = text
-        Vyxal.setShortDict(shortDict)
-    }
-)
 
-fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt").then(
-    (text) => {
-        longDict = text
-        Vyxal.setLongDict(longDict)
-    }
-)
+
+
 
 
 function resizeCodeBox(id) {

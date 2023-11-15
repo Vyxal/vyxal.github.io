@@ -5,8 +5,10 @@ has breaking changes. The matrix's keys represent the version of the permalink.
 The values represent the maximum version that the permalink is compatible with.
 */
 
+// An asterisk means that the permalink is compatible with all versions so far.
+
 const incompatMatrix = {
-    "3.0.0": "3.1.0"
+    "3.0.0": "*"
 }
 
 function comesAfter(target, current) {

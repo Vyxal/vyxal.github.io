@@ -113,7 +113,7 @@ function generateURL() {
     var footer = e_footer.doc.getValue()
 
     var url = [flags, header, code, footer, inputs];
-    return location.origin + "/Vyxal/#" + encode(url)
+    return window.location.href + "#" + encode(url)
 }
 
 // onclick event listener for sharing buttons

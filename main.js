@@ -1,5 +1,6 @@
 import { aliases } from "./sugars.js"
 import { other_aliases } from "./keywords.js"
+import { incomptabile } from "./incompatible_versions.js";
 
 var Vyxal = null;
 var HelpText = null;
@@ -64,11 +65,6 @@ async function fetchOr(localPath, remotePath) {
 let shortDict = null;
 let longDict = null;
 
-
-
-
-
-
 function resizeCodeBox(id) {
     // Resize the code box with the given id
     var element = document.getElementById(id);
@@ -111,8 +107,9 @@ function generateURL() {
     var inputs = document.getElementById("inputs").value
     var header = e_header.doc.getValue()
     var footer = e_footer.doc.getValue()
+    var version = "3.0.0" // Vyxal.getVersion()
 
-    var url = [flags, header, code, footer, inputs];
+    var url = [flags, header, code, footer, inputs, version];
     return window.location.href + "#" + encode(url)
 }
 
@@ -160,7 +157,11 @@ ${code}
 }
 
 function decodeURL() {
-    var [flags, header, code, footer, inputs] = decode(window.location.hash.substring(1));
+    var [flags, header, code, footer, inputs, version] = decode(window.location.hash.substring(1));
+
+    if (version !== undefined && true) { //incomptabile(version, "3.0.0")) {
+        window.location.href = `https://vyxal.github.io/versions/v${version}/#${window.location.hash.substring(1)}`
+    }
 
     var flag_box = document.getElementById("flag")
     var inputs_box = document.getElementById("inputs")
@@ -239,6 +240,7 @@ window.shareOptions = shareOptions
 window.updateCount = updateCount
 window.resizeCodeBox = resizeCodeBox
 window.Vyxal = Vyxal
+window.copyToClipboard = copyToClipboard
 
 // set up event listeners for execution
 window.addEventListener("DOMContentLoaded", e => {

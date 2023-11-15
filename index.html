@@ -41,6 +41,8 @@
   </script>
   <script>
     var selectedBox = "code";
+    var resizeCodeBox;
+    var updateCount;
     function setBox(box) {
       selectedBox = box;
     }
@@ -53,18 +55,20 @@
       }
       document.head.appendChild(scriptTag);
     }
+
+    function setFunctions() {
+      resizeCodeBox = window.resizeCodeBox;
+      updateCount = window.updateCount;
+      copyToClipboard = window.copyToClipboard;
+    }
   </script>
-  <script src="./main.js" type="module" defer></script>
+  <script src="./main.js" type="module" onload="setFunctions()" defer></script>
   <script src="parsed_yaml.js" onerror="backupLoad('https://vyxal.github.io/vyxal/parsed_yaml.js')" defer></script>
   <script src="keyboard.js" type="module"></script>
   <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 
 <body>
-  <script>
-    const resizeCodeBox = window.resizeCodeBox;
-    const updateCount = window.updateCount;
-  </script>
   <textarea id=dummy style="visibility: hidden;position:absolute; height: 0px; font: size 20px;"></textarea>
   <h2 style="display: inline-block;"><a href="https://github.com/Vyxal/Vyxal/tree/version-3" target="_blank">Vyxal 3</a>
   </h2>

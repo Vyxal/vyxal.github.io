@@ -31,24 +31,10 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v2
 
-      - name: Set up Node.js 19
-        uses: actions/setup-node@v3
-        with:
-          node-version: 19
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-        env:
-          NODE_ENV: "production"
-
       - name: Upload built HTML
         uses: actions/upload-pages-artifact@v1
         with:
-          path: './dist'
-
+          path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1

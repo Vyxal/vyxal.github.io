@@ -1,44 +1,15 @@
+/* === */
+import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
+import { HelpText } from "https://vyxal.github.io/Vyxal/helpText.js";
+/* === */
+
 import { aliases } from "./sugars.js"
 import { other_aliases } from "./keywords.js"
 import { incomptabile } from "./incompatible_versions.js";
 
-var Vyxal = null;
-var HelpText = null;
-var codepage = ""
 
-async function importOr(localPath, remotePath) {
-    let response = await import(localPath).catch(() => import(remotePath));
-    return response;
-}
+var codepage = Vyxal.getCodepage()
 
-importOr("./vyxal.js", "https://vyxal.github.io/Vyxal/vyxal.js").then(
-    response => {
-        Vyxal = response.Vyxal;
-        window.Vyxal = Vyxal
-        codepage = Vyxal.getCodepage();
-
-        fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt").then(
-            (text) => {
-                shortDict = text
-                Vyxal.setShortDict(shortDict)
-
-
-            })
-        fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt").then(
-            (text) => {
-                longDict = text
-                Vyxal.setLongDict(longDict)
-            }
-        )
-    }
-);
-
-
-importOr("./helpText.js", "https://vyxal.github.io/Vyxal/helpText.js").then(
-    response => {
-        HelpText = response.HelpText;
-    }
-);
 
 const $ = x => document.getElementById(x)
 
@@ -354,12 +325,12 @@ function initCodeMirror() {
     function resize(elem) {
         var dummy = $$$("#dummy")
         dummy.style.fontFamily = getComputedStyle($$$('.CodeMirror.cm-s-default')).fontFamily
-        dummy.style.fontSize = '15px'
+        dummy.style.fontSize = '12px'
         dummy.style.lineHeight = '24px'
         dummy.value = elem.doc.getValue()
         elem.setSize(
             null,
-            (elem.lineCount() * 22) + 24
+            (elem.lineCount() * 24) + 24
         )
         elem.refresh();
         dummy.value = ""
@@ -371,7 +342,7 @@ function initCodeMirror() {
     }
 
     let mode = {
-        mode: 'vyxal',
+        mode: '',
         lineWrapping: true,
         autofocus: true,
     }
@@ -440,7 +411,6 @@ function initCodeMirror() {
     }
 
     for (const boxId of ['header', 'code', 'footer']) {
-        console.log(boxId)
         globalThis['e_' + boxId] = CodeMirror.fromTextArea($$$('#' + boxId), boxId === 'code' ? codeMode : mode)
         globalThis['e_' + boxId].on('change', cm => {
             resize(globalThis['e_' + boxId])

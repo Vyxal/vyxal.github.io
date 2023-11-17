@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   <title>Vyxal 3 Interpreter</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"
@@ -28,9 +29,6 @@
   <script src="https://unpkg.com/@popperjs/core@2"></script>
   <script defer src="https://unpkg.com/react-popper/dist/index.umd.js"></script>
   <script defer src="https://unpkg.com/fuzzysort@2.0.1"></script>
-  <link rel="stylesheet" href="https://vyxal.github.io/Vylight/mode-vyxal.css">
-
-  <link rel="stylesheet" href="https://vyxal.github.io/Vylight/mode-vyxal.css">
 
   <script type="importmap">
     {
@@ -47,15 +45,6 @@
       selectedBox = box;
     }
 
-    function backupLoad(remotePath) {
-      let scriptTag = document.createElement("script");
-      scriptTag.src = remotePath;
-      scriptTag.onerror = function () {
-        console.log("Error loading both local and remote scripts for " + remotePath);
-      }
-      document.head.appendChild(scriptTag);
-    }
-
     function setFunctions() {
       resizeCodeBox = window.resizeCodeBox;
       updateCount = window.updateCount;
@@ -63,8 +52,10 @@
     }
   </script>
   <script src="./main.js" type="module" onload="setFunctions()" defer></script>
-  <script src="parsed_yaml.js" onerror="backupLoad('https://vyxal.github.io/Vyxal/parsed_yaml.js')" defer></script>
-  <script src="keyboard.js" type="module"></script>
+  <!-- === -->
+  <script src="https://vyxal.github.io/Vyxal/parsed_yaml.js" defer></script>
+  <!-- === -->
+  <script src="keyboard.js" type="module" defer></script>
   <link rel="stylesheet" type="text/css" href="./style.css">
 </head>
 

@@ -14,6 +14,7 @@ async function importOr(localPath, remotePath) {
 importOr("./vyxal.js", "https://vyxal.github.io/Vyxal/vyxal.js").then(
     response => {
         Vyxal = response.Vyxal;
+        window.Vyxal = Vyxal
         codepage = Vyxal.getCodepage();
 
         fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt").then(

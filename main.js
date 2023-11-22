@@ -37,6 +37,19 @@ async function fetchOr(localPath, remotePath) {
 let shortDict = null;
 let longDict = null;
 
+fetchOr("/ShortDictionary.txt", "https://vyxal.github.io/Vyxal/ShortDictionary.txt").then(
+    (text) => {
+        shortDict = text
+        Vyxal.setShortDict(shortDict)
+
+
+    })
+fetchOr("/LongDictionary.txt", "https://vyxal.github.io/Vyxal/LongDictionary.txt").then(
+    (text) => {
+        longDict = text
+        Vyxal.setLongDict(longDict)
+    }
+)
 function resizeCodeBox(id) {
     // Resize the code box with the given id
     var element = document.getElementById(id);

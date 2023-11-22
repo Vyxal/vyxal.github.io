@@ -270,7 +270,7 @@ window.addEventListener("DOMContentLoaded", e => {
 
         worker = new Worker('./worker.js', { type: "module" });
         worker.onmessage = function (e) {
-            if (e.data.session != sessioncode) { return; }
+            if (e.data.session != sessioncode || !runButton.innerHTML.includes('fa-spin')) { return; }
             if (e.data.command == "done") { runButton.innerHTML = '<i class="fas fa-play-circle"></i>'; }
             else { output.value += e.data.val; expandBoxes() }
         }

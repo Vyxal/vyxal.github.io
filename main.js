@@ -9,6 +9,7 @@ import { incomptabile } from "./incompatible_versions.js";
 
 
 var codepage = Vyxal.getCodepage()
+var sessioncode = ""
 
 
 const $ = x => document.getElementById(x)
@@ -253,7 +254,7 @@ window.addEventListener("DOMContentLoaded", e => {
             return;
         }
         // generate random 32 character session string
-        const sessioncode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        sessioncode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         let timeout = 10000
         if (flags.value.includes("5")) {
             timeout = 5000;

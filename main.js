@@ -145,7 +145,7 @@ ${code}
 function decodeURL() {
     var [flags, header, code, footer, inputs, version] = decode(window.location.hash.substring(1));
 
-    if (version !== undefined && true) { //incomptabile(version, "3.0.0")) {
+    if (version !== undefined && incomptabile(version, Vyxal.getVersion())) {
         window.location.href = `https://vyxal.github.io/versions/v${version}/#${window.location.hash.substring(1)}`
     }
 

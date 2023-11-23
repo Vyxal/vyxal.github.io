@@ -93,7 +93,7 @@ function generateURL() {
     var inputs = document.getElementById("inputs").value
     var header = e_header.doc.getValue()
     var footer = e_footer.doc.getValue()
-    var version = "3.0.0" // Vyxal.getVersion()
+    var version = Vyxal.getVersion()
 
     var url = [flags, header, code, footer, inputs, version];
     return window.location.href + "#" + encode(url)
@@ -125,7 +125,7 @@ function shareOptions(shareType) {
                 code = Vyxal.getSBCSified(code)
                 len = code.length
             }
-            output = `# [Vyxal 3](https://github.com/Vyxal/Vyxal/tree/version-3)${flagAppendage} ${len} byte${"s".repeat(len != 1)}${utfable ? '' : ' (UTF-8)'}
+            output = `# [Vyxal 3](https://github.com/Vyxal/Vyxal/tree/version-3)${flagAppendage}, ${len} byte${"s".repeat(len != 1)}${utfable ? '' : ' (UTF-8)'}
 \`\`\`
 ${code}
 \`\`\`

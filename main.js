@@ -96,7 +96,7 @@ function generateURL() {
     var version = Vyxal.getVersion()
 
     var url = [flags, header, code, footer, inputs, version];
-    return window.location.href + "#" + encode(url)
+    return window.location.href.split("#")[0] + "#" + encode(url);
 }
 
 // onclick event listener for sharing buttons

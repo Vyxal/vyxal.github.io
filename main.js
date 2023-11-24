@@ -284,7 +284,7 @@ window.addEventListener("DOMContentLoaded", e => {
         output.value = ""
         extra.value = ""
 
-        let flags = $('flag').value
+        let flagText = $('flag').value
 
         worker.postMessage({
             "mode": "run",
@@ -292,7 +292,7 @@ window.addEventListener("DOMContentLoaded", e => {
                 + e_code.doc.getValue() +
                 (e_footer.doc.getValue() ? '\n' + e_footer.doc.getValue() : ''),
             "inputs": $('inputs').value,
-            "flags": flags.replace("<", "l"),
+            "flags": flagText.replace("<", "l"),
             "session": sessioncode,
             "shortDict": shortDict,
             "longDict": longDict

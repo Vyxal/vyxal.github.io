@@ -104,8 +104,8 @@ function shareOptions(shareType) {
     var code = e_code.doc.getValue()
     const url = generateURL()
     const flags = document.getElementById("flag").value
-    let flagAppendage = ","
-    const flagsThatMatter = flags.replace(/[5bBTAP…aṠ]/g, "");
+    let flagAppendage = ""
+    const flagsThatMatter = flags.replace(/[5bBT<]/g, "");
     if (flagsThatMatter) {
         flagAppendage = " `" + flagsThatMatter + "`,"
     }
@@ -125,7 +125,7 @@ function shareOptions(shareType) {
                 code = Vyxal.getSBCSified(code)
                 len = code.length
             }
-            output = `# [Vyxal 3](https://github.com/Vyxal/Vyxal/tree/version-3)${flagAppendage}, ${len} byte${"s".repeat(len != 1)}${utfable ? '' : ' (UTF-8)'}
+            output = `# [Vyxal 3${flags.includes("<") ? "L" : ""}](https://github.com/Vyxal/Vyxal/tree/version-3)${flagAppendage}, ${len} byte${"s".repeat(len != 1)}${utfable ? '' : ' (UTF-8)'}
 \`\`\`
 ${code}
 \`\`\`
@@ -284,13 +284,15 @@ window.addEventListener("DOMContentLoaded", e => {
         output.value = ""
         extra.value = ""
 
+        let flags = $('flag').value
+
         worker.postMessage({
             "mode": "run",
             "code": (e_header.doc.getValue() ? e_header.doc.getValue() + '\n' : '')
                 + e_code.doc.getValue() +
                 (e_footer.doc.getValue() ? '\n' + e_footer.doc.getValue() : ''),
             "inputs": $('inputs').value,
-            "flags": $('flag').value,
+            "flags": flags.replace("<", "l"),
             "session": sessioncode,
             "shortDict": shortDict,
             "longDict": longDict

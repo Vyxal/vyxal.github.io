@@ -107,7 +107,7 @@ function shareOptions(shareType) {
     let flagAppendage = ""
     const flagsThatMatter = flags.replace(/[5bBT<]/g, "");
     if (flagsThatMatter) {
-        flagAppendage = " `" + flagsThatMatter + "`,"
+        flagAppendage = " `" + flagsThatMatter + "`"
     }
     let output = ""
     const utfable = [...code].every(x => (codepage + ' ' + '\n').includes(x))

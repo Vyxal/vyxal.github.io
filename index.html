@@ -12,6 +12,7 @@
         fetch("https://raw.githubusercontent.com/Vyxal/versions/main/versions.json").then(
             res => res.json()).then(json => {
                 let versions = json.versions;
+                versions.reverse();
                 let versionBox = document.getElementById("version-box");
                 for (let i = 0; i < versions.length; i++) {
                     let option = document.createElement("option");

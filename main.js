@@ -269,6 +269,8 @@ window.addEventListener("DOMContentLoaded", e => {
             location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
         }
 
+        let cumulativePrint = "";
+
         worker = new Worker('./worker.js', { type: "module" });
         worker.onmessage = function (e) {
             if (e.data.session != sessioncode || !runButton.innerHTML.includes('fa-spin')) {
@@ -276,11 +278,20 @@ window.addEventListener("DOMContentLoaded", e => {
             }
             if (e.data.command == "done") {
                 runButton.innerHTML = '<i class="fas fa-play-circle"></i>';
+                if (!flags.value.includes(",")) {
+                    output.value = cumulativePrint; expandBoxes();
+                }
             }
             else if (e.data.command == "error") {
                 extra.value += e.data.val; expandBoxes();
             }
-            else { output.value += e.data.val; expandBoxes() }
+            else {
+                if (flags.value.includes(",")) {
+                    output.value += e.data.val; expandBoxes()
+                } else {
+                    cumulativePrint += e.data.val;
+                }
+            }
         }
         if (runButton.innerHTML.includes('fa-spin')) {
             cancelWorker("Code terminated by user")
@@ -289,9 +300,14 @@ window.addEventListener("DOMContentLoaded", e => {
         runButton.innerHTML = '<i class="fa fa-cog fa-spin"></i>';
 
         output.value = ""
+        resizeCodeBox("output")
         extra.value = ""
 
         let flagText = $('flag').value
+        let flagsToRemove = "5bBT,"
+        for (let i = 0; i < flagsToRemove.length; i++) {
+            flagText = flagText.replaceAll(flagsToRemove[i], "")
+        }
 
         worker.postMessage({
             "mode": "run",
@@ -309,6 +325,10 @@ window.addEventListener("DOMContentLoaded", e => {
             // only execute if worker isn't terminated
             if (runButton.innerHTML.includes('fa-spin')) {
                 cancelWorker(`Code terminated after ${timeout / 1000} seconds`);
+                if (!flags.value.includes(",")) {
+                    output.value = cumulativePrint;
+                    expandBoxes();
+                }
             }
         }, timeout);
     }

@@ -8,7 +8,9 @@ to their respective archived version.
 
 const incompatMatrix = {
     "3.0.0": true,
-    "3.1.0": false
+    "3.1.0": true, 
+    "3.2.0": true,
+    "3.3.0": false,
 }
 
 export function incomptabile(target, current) {

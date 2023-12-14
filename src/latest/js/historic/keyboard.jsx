@@ -1,7 +1,12 @@
-const html = htm.bind(React.createElement);
-const { createRoot } = ReactDOM;
-const { useState, useEffect, useRef } = React;
-const { usePopper } = ReactPopper;
+// const html = htm.bind(React.createElement);
+// const { createRoot } = ReactDOM;
+// const { useState, useEffect, useRef } = React;
+// const { usePopper } = ReactPopper;
+
+import { usePopper } from "react-popper";
+import { useState, useEffect, useRef } from "react";
+import { createRoot } from "react-dom/client";
+import fuzzysort from "fuzzysort"
 
 function throttle(func, timeFrame) {
     let lastTime = 0;
@@ -40,13 +45,9 @@ function Key({ chr, isFocused, addRef }) {
         if (!onMobile) typeKey(chr);
     };
 
-    return html`<span
-    ref=${key}
-    className=${isFocused ? "key touched" : "key"}
-    onPointerUp=${pointerUp}
-  >
-    ${chr.replace(" ", "␠").replace("\n", "␤")}
-  </span>`;
+    return <span ref={key} className={isFocused ? "key touched" : "key"} onPointerUp={pointerUp}>
+        ${chr.replace(" ", "␠").replace("\n", "␤")}
+    </span>;
 }
 
 /** Component for rendering a single token of a tooltip */
@@ -56,17 +57,17 @@ function Description({ result, token, name, description, overloads }) {
             resultItem &&
             fuzzysort.highlight(
                 resultItem,
-                (match, i) => html`<span key=${i} className="highlight">${match.replace(" ", "␠").replace("\n", "␤")}</span>`
+                (match, i) => <span key={i} className="highlight">{match.replace(" ", "␠").replace("\n", "␤")}</span>
             );
         return highlight?.length > 0 ? highlight : defaultItem;
     };
-    return html`<div className="description">
-    <button class="insertToken" onClick=${() => typeKey(token)}>${token}</button>${" "}
-    (${highlightResult(name, result?.[0])})${"\n"}${highlightResult(
-        description,
-        result?.[1]
-    )}${"\n"}${highlightResult(overloads, result?.[2])}
-  </div>`;
+    return <div className="description">
+        <button class="insertToken" onClick={() => typeKey(token)}>{token}</button>{" "}
+        ({highlightResult(name, result?.[0])}){"\n"}{highlightResult(
+            description,
+            result?.[1]
+        )}{"\n"}{highlightResult(overloads, result?.[2])}
+    </div>;
 }
 
 /** Component for rendering the key and its tooltip. */
@@ -105,35 +106,34 @@ function Tooltip({
 
     const descriptions = descs?.map((desc, i) => {
         const result = results.find((result) => result.obj.token === desc.token);
-        return html`<${Description} key=${i} result=${result} ...${desc} />`;
+        return <Description key={i} result={result} {...desc} />;
     });
 
-    const renderTooltip = () => html`
-    <div
-      className="tooltip"
-      ref=${setPopper}
-      style=${styles.popper}
-      ...${attributes.popper}
-    >
-      ${descriptions}
-      <div className="arrow" ref=${setArrow} style=${styles.arrow} />
-    </div>
-  `;
+    const renderTooltip = () =>
+        <div
+            className="tooltip"
+            ref={setPopper}
+            style={styles.popper}
+            {...attributes.popper}
+        >
+            ${descriptions}
+            <div className="arrow" ref={setArrow} style={styles.arrow} />
+        </div>
+        ;
 
     // the "onMouseEnter" and "onMouseLeave" events really mean mouse; they are
     // not triggered by touch screens.
 
-    return html`
-    <span ref=${setParent}>
-      <span
-        onMouseEnter=${() => setLastTouchedKey(chr)}
-        onMouseLeave=${() => setLastTouchedKey(null)}
-      >
-        <${Key} chr=${chr} isFocused=${showTooltip} addRef=${addRef} />
-        ${showTooltip && renderTooltip()}
-      </span>
+    return <span ref={setParent}>
+        <span
+            onMouseEnter={() => setLastTouchedKey(chr)}
+            onMouseLeave={() => setLastTouchedKey(null)}
+        >
+            <Key chr={chr} isFocused={showTooltip} addRef={addRef} />
+            {showTooltip && renderTooltip()}
+        </span>
     </span>
-  `;
+        ;
 }
 
 function Keyboard() {
@@ -276,53 +276,53 @@ function Keyboard() {
         ];
         return keys.map(([i, results]) => {
             const chr = codepage[i];
-            return html`<${Tooltip}
-        key=${i}
-        chr=${chr}
-        descs=${codepage_descriptions[i]}
-        results=${results}
-        setLastTouchedKey=${setLastTouchedKey}
-        showTooltip=${showTooltips && chr === lastTouchedKey}
-        addRef=${(elt) => keyElts.current.push({ chr, elt })}
-      />`;
+            return <Tooltip
+                key={i}
+                chr={chr}
+                descs={codepage_descriptions[i]}
+                results={results}
+                setLastTouchedKey={setLastTouchedKey}
+                showTooltip={showTooltips && chr === lastTouchedKey}
+                addRef={(elt) => keyElts.current.push({ chr, elt })}
+            />;
         });
     };
 
     const ELEMENTS_LINK =
         "https://github.com/Vyxal/Vyxal/blob/main/documents/knowledge/elements.md";
 
-    return html`
+    return <>
     <div className="row">
       <label htmlFor="filterBox"
-        >Search <a href=${ELEMENTS_LINK}>elements</a>:
+        >Search <a href={ELEMENTS_LINK}>elements</a>:
       </label>
       <input
         label="Search elements:"
-        onInput=${(e) => setQuery(e.target.value)}
+        onInput={(e) => setQuery(e.target.value)}
       />
       <div className="twelve columns">
         <div
           id="keyboard"
-          ref=${keyboardRef}
-          style=${{
+          ref={keyboardRef}
+          style={{
             touchAction: showTooltips ? "pinch-zoom" : "auto",
             userSelect: isPointerDown ? "none" : "auto",
         }}
-          onPointerDown=${pointerDown}
-          onPointerUp=${pointerUp}
-          onTouchStart=${touchStart}
-          onTouchEnd=${touchEnd}
-          onTouchCancel=${touchEnd}
+          onPointerDown={pointerDown}
+          onPointerUp={pointerUp}
+          onTouchStart={touchStart}
+          onTouchEnd={touchEnd}
+          onTouchCancel={touchEnd}
         >
-          ${renderChildren()}
+          {renderChildren()}
         </div>
       </div>
     </div>
-  `;
+    </>;
 }
 
 window.addEventListener("DOMContentLoaded", () => {
     const kb = document.getElementById("keyboard-root");
     const root = createRoot(kb);
-    root.render(html`<${Keyboard} />`);
+    root.render(<Keyboard />);
 });

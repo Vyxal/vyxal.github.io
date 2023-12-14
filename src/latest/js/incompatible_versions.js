@@ -9,8 +9,9 @@ to their respective archived version.
 const incompatMatrix = {
     "3.0.0": true,
     "3.1.0": false
-}
+};
 
-export function incomptabile(target, current) {
-    return incompatMatrix[target]
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function incompatible(target, current) {
+    return incompatMatrix[target];
 }

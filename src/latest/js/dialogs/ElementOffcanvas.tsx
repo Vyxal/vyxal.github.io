@@ -96,9 +96,8 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
     return <Offcanvas show={show} onHide={() => setShow(false)} style={{ width: "600px" }}>
         <Tab.Container activeKey={tab} onSelect={(tab) => setTab(tab!)}>
             <Offcanvas.Header closeButton className="border-bottom">
-                <Offcanvas.Title>Elements</Offcanvas.Title>
-                <Form.Control type="search" placeholder="Search..." value={query} onChange={(event) => setQuery(event.currentTarget.value)} className="ms-3" />
-                <Nav variant="pills" className="flex-nowrap mx-3">
+                <Form.Control type="search" placeholder="Search..." value={query} onChange={(event) => setQuery(event.currentTarget.value)} className="me-3" />
+                <Nav variant="pills" className="flex-nowrap me-3">
                     <Nav.Item>
                         <Nav.Link eventKey="elements">Elements</Nav.Link>
                     </Nav.Item>

@@ -24,7 +24,7 @@ class VyRunner extends EventTarget {
         this.terminal.loadAddon(this.fit);
         this.terminal.open(element);
         this.fit.fit();
-        element.addEventListener("resize", this.onResize);
+        window.addEventListener("resize", this.onResize.bind(this));
         import("https://vyxal.github.io/Vyxal/vyxal.js").then(({ Vyxal }) => {
             this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${Vyxal.getVersion()}`);
         });

@@ -7,6 +7,7 @@ import { sugarTrigraphs } from "./sugar-trigraphs";
 import { Element, ELEMENT_DATA } from './util';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard } from './Cards';
+import { hoverTooltip, Tooltip } from '@uiw/react-codemirror';
 
 const VARIABLE_NAME = /[a-zA-Z][a-zA-Z0-9_]*/;
 const NUMBER = /(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
@@ -96,6 +97,27 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         }
         return null;
     }
+    static elementTooltip = hoverTooltip((view, pos) => {
+        const hoveredChar = view.state.doc.sliceString(pos, pos + 1);
+        return (ELEMENT_DATA.then((data) => {
+            if (data.elementMap.has(hoveredChar)) {
+                const element = data.elementMap.get(hoveredChar)!;
+                return {
+                    pos: pos,
+                    create() {
+                        const container = document.createElement("div");
+                        container.innerHTML = renderToStaticMarkup(ElementCard({ item: element }));
+                        return {
+                            dom: container,
+                        };
+                    },
+                } as Tooltip;
+            }
+            return null;
+        }));
+    });
+
+
     // Highlighting stuff
     startState(): VyxalState {
         return { mode: Mode.Normal };
@@ -197,6 +219,6 @@ class VyxalLanguage implements StreamParser<VyxalState> {
 
 export default function () {
     return new LanguageSupport(
-        StreamLanguage.define(new VyxalLanguage())
+        StreamLanguage.define(new VyxalLanguage()), VyxalLanguage.elementTooltip
     );
 }

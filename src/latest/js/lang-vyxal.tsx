@@ -4,7 +4,7 @@ import { CommentTokens } from "@codemirror/commands";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 
 import { sugarTrigraphs } from "./sugar-trigraphs";
-import { Element, DescriptionEntry } from './util';
+import { Element, ELEMENT_DATA } from './util';
 
 const VARIABLE_NAME = /[a-zA-Z][a-zA-Z0-9_]*/;
 const NUMBER = /(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
@@ -29,25 +29,15 @@ interface LanguageData {
 class VyxalLanguage implements StreamParser<VyxalState> {
     elements: Fuse<Element> | null = null;
     constructor() {
-        fetch("https://vyxal.github.io/Vyxal/descriptions.json")
-            .then((response) => response.json())
-            .then((descriptions) => {
-                const elements: Element[] = [];
-                for (const element of (Object.values(descriptions) as DescriptionEntry[][]).flat()) {
-                    elements.push({
-                        name: element.name,
-                        token: element.token,
-                        keywords: element.description.split(" "),
-                        overloads: element.overloads,
-                    });
-                }
-                console.log(`Loaded ${elements.length} elements`);
-                this.elements = new Fuse(elements, {
-                    includeScore: true,
-                    threshold: 0.4,
-                    keys: ["token", "name", "keywords"],
-                });
+        ELEMENT_DATA.then((data) => {
+            const elements = data.elements;
+            console.log(`Loaded ${elements.length} elements`);
+            this.elements = new Fuse(elements, {
+                includeScore: true,
+                threshold: 0.4,
+                keys: ["token", "name", "keywords"],
             });
+        });
     }
     name = "vyxal3";
     languageData: LanguageData = {
@@ -66,7 +56,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 filter: false,
                 options: results.map((result) => {
                     return {
-                        label: result.item.token,
+                        label: result.item.symbol,
                         detail: result.item.name,
                         info() {
                             const container = document.createElement("div");
@@ -75,7 +65,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                             const keywords = document.createElement("code");
                             keywords.append(result.item.keywords.join(" "));
                             keywordsContainer.append("Keywords: ", keywords);
-                            overloadsContainer.append(result.item.overloads);
+                            overloadsContainer.append(result.item.overloads.join(", "));
                             container.append(keywordsContainer, overloadsContainer);
                             return container;
                         },

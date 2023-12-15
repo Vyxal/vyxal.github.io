@@ -1,0 +1,21 @@
+{
+    "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+    "name": "Vyxal 3",
+    "icons": [
+        {
+            "src": "logos/logo-small.png",
+            "purpose": "any maskable",
+            "sizes": "16x16 32x32 64x64"
+        },
+        {
+            "src": "logos/logo-full.png",
+            "purpose": "any maskable",
+            "sizes": "128x128 256x256"
+        }
+    ],
+    "start_url": "/latest.html",
+    "display": "fullscreen",
+    "description": "The Vyxal 3 web interpreter, now as an app!",
+    "background_color": "#3c4043",
+    "theme_color": "#26b4d1"
+}

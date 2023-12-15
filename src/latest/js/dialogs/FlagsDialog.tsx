@@ -18,7 +18,7 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
         <Modal.Body>
             <div className="mb-3">
                 <span className="form-control font-monospace">
-                    {flags.flags.length > 0 ? `-${flags.flags.join("")}` : "…"}
+                    {flags.flags.length > 0 ? `-${flags.flags.join("")}` : " "}
                 </span>
             </div>
             <BooleanSwitch parameter="literate" flags={flags} setFlags={setFlags}>

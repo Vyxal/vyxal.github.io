@@ -4,6 +4,7 @@ const HtmlBundlerPlugin = require("html-bundler-webpack-plugin");
 const { FaviconsBundlerPlugin } = require("html-bundler-webpack-plugin/plugins");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 
 class MonkeyPatchPlugin {
@@ -81,10 +82,20 @@ module.exports = function (env, argv) {
                     },
                 }
             }),
-            new webpack.SourceMapDevToolPlugin({
-                filename: "[file].map[query]",
-                exclude: [/style.*\.css$/],
-            })
+            prod ? (
+                new webpack.SourceMapDevToolPlugin({
+                    filename: "[file].map[query]",
+                    exclude: [/style.*\.css$/],
+                })
+            ) : (
+                new webpack.EvalSourceMapDevToolPlugin({
+                    // exclude: [/style.*\.css$/],
+                })
+            ),
+            new WorkboxPlugin.InjectManifest({
+                swSrc: "./src/latest/js/service.ts",
+                exclude: [/\.map$/, /^manifest.*\.js$/, /\.html$/, /style.*\.css$/]
+              }),
         ],
         resolve: {
             extensions: [".tsx", ".ts", ".js"],
@@ -145,7 +156,7 @@ module.exports = function (env, argv) {
                     use: "ts-loader"
                 },
                 {
-                    test: /\.txt/,
+                    test: /\.(txt|json)$/,
                     type: "asset/resource"
                 },
                 {
@@ -154,6 +165,14 @@ module.exports = function (env, argv) {
                     generator: {
                         filename: "fonts/[name][ext]",
                     },
+                },
+                {
+                    test: /logo.*\.png$/i,
+                    type: "asset/resource",
+                    generator: {
+                        filename: "logos/[name][ext]",
+                    },
+                    
                 },
                 {
                     test: /\.(png|svg|jpg|jpeg|gif)$/i,

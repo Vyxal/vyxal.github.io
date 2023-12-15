@@ -4,7 +4,7 @@ import { Button, Container, InputGroup, Nav, Navbar, Spinner } from "react-boots
 import { InterpreterFlagSettings } from "./flagsReducer";
 import { VyRunnerState } from "./util";
 
-import logo from "../assets/logo.png";
+import logo from "../assets/logo-small.png";
 
 type HeaderArgs = {
     state: VyRunnerState,

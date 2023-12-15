@@ -9,7 +9,8 @@
         "strictFunctionTypes": true,
         "outDir": "dist",
         "esModuleInterop": true,
-        "jsx": "react-jsx"
+        "jsx": "react-jsx",
+        "lib": ["DOM", "WebWorker"]
     },
     "exclude": [
         "node_modules"

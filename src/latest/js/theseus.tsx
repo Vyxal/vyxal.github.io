@@ -13,6 +13,17 @@ import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 
+import("workbox-window").then(({ Workbox }) => {
+    if ("serviceWorker" in navigator) {
+        const wb = new Workbox("/service.js");
+        wb.register();
+    } else {
+        console.warn("No service worker support detected, skipping registration.");
+    }
+});
+
+import("../assets/logo-full.png");
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type V1Permalink = {
     flags: string,

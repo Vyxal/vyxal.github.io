@@ -1,45 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ELEMENT_DATA, Element, Modifier } from "../util";
-import { Card, Col, ListGroup, Nav, Offcanvas, Row, Tab, Tabs } from "react-bootstrap";
+import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import Fuse from "fuse.js";
-
-type ElementCardParams = {
-    item: Element,
-};
-
-function ElementCard({ item }: ElementCardParams) {
-    return <Card className="h-100">
-        <Card.Body>
-            <Card.Title>{item.symbol}</Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">{item.name}</Card.Subtitle>
-            <Card.Text>
-                {item.keywords.map((keyword, i) => <code key={i} className="code-pill">{keyword}</code>)}
-            </Card.Text>
-        </Card.Body>
-        <ListGroup variant="flush">
-            {item.overloads.map((overload, i) => {
-                return <ListGroup.Item className="font-monospace" key={i}>{overload}</ListGroup.Item>;
-            })}
-        </ListGroup>
-    </Card>;
-}
-
-type ModifierCardParams = {
-    item: Modifier,
-};
-
-function ModifierCard({ item }: ModifierCardParams) {
-    return <Card className="h-100">
-        <Card.Body>
-            <Card.Title>{item.name}</Card.Title>
-            <Card.Text>{item.description}</Card.Text>
-            <Card.Text>
-                {item.keywords.map((keyword, i) => <code key={i} className="code-pill">{keyword}</code>)}
-            </Card.Text>
-        </Card.Body>
-    </Card>;
-}
+import { ElementCard, ModifierCard } from "../Cards";
 
 type CardSearchResultsParams<T> = {
     card: ({ item }: { item: T }) => JSX.Element,

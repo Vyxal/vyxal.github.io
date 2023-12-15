@@ -5,6 +5,8 @@ import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@co
 
 import { sugarTrigraphs } from "./sugar-trigraphs";
 import { Element, ELEMENT_DATA } from './util';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { ElementCard } from './Cards';
 
 const VARIABLE_NAME = /[a-zA-Z][a-zA-Z0-9_]*/;
 const NUMBER = /(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
@@ -60,13 +62,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                         detail: result.item.name,
                         info() {
                             const container = document.createElement("div");
-                            const overloadsContainer = document.createElement("p");
-                            const keywordsContainer = document.createElement("p");
-                            const keywords = document.createElement("code");
-                            keywords.append(result.item.keywords.join(" "));
-                            keywordsContainer.append("Keywords: ", keywords);
-                            overloadsContainer.append(result.item.overloads.join(", "));
-                            container.append(keywordsContainer, overloadsContainer);
+                            container.innerHTML = renderToStaticMarkup(ElementCard({ item: result.item }));
                             return container;
                         },
                         boost: 99 * (1 - (result.score ?? 0)),

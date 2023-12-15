@@ -6,7 +6,7 @@ import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@co
 import { sugarTrigraphs } from "./sugar-trigraphs";
 import { Element, ELEMENT_DATA } from './util';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { ElementCard } from './Cards';
+import { ElementCard } from './cards';
 import { hoverTooltip, Tooltip } from '@uiw/react-codemirror';
 
 const VARIABLE_NAME = /[a-zA-Z][a-zA-Z0-9_]*/;

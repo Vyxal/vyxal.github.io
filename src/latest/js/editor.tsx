@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import ReactCodeMirror from "@uiw/react-codemirror";
+import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import langVyxal from "./lang-vyxal";
@@ -11,7 +11,21 @@ import { githubLight } from "@uiw/codemirror-theme-github";
 import { EditorParams } from "./theseus";
 
 const EXTENSIONS = [
-    langVyxal(), minimalSetup, autocompletion(), lineNumbers()
+    keymap.of([
+        {
+            key: "Shift-Enter",
+            run: (view) => {
+                if (view.state.doc.length <= 0) return false;
+                window.dispatchEvent(new Event("run-vyxal")); // dubious
+                return true;
+            },
+            preventDefault: true
+        }
+    ]),
+    langVyxal(),
+    minimalSetup,
+    autocompletion(),
+    lineNumbers(),
 ];
 const THEMES = {
     [Theme.Dark]: vscodeDark,

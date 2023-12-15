@@ -2,7 +2,7 @@ import { Element, Modifier } from "./util";
 import { Card, ListGroup } from "react-bootstrap";
 
 type ElementCardParams = {
-    item: Element;
+    item: Element,
 };
 
 export function ElementCard({ item }: ElementCardParams) {
@@ -22,17 +22,17 @@ export function ElementCard({ item }: ElementCardParams) {
     </Card>;
 }
 type ModifierCardParams = {
-    item: Modifier;
+    item: Modifier,
 };
 
 export function ModifierCard({ item }: ModifierCardParams) {
     return <Card className="h-100">
         <Card.Body>
             <Card.Title>{item.name}</Card.Title>
-            <Card.Text>{item.description}</Card.Text>
             <Card.Text>
                 {item.keywords.map((keyword, i) => <code key={i} className="code-pill">{keyword}</code>)}
             </Card.Text>
+            <Card.Text>{item.description}</Card.Text>
         </Card.Body>
     </Card>;
 }

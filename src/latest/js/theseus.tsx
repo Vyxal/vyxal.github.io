@@ -115,6 +115,20 @@ function Body() {
         );
     }, [header, code, footer, flags, inputs]);
 
+    useEffect(() => {
+        const listener = () => {
+            if (state != "idle") return;
+            runnerRef.current?.start(
+                header + code + footer,
+                flags.flags,
+                inputs.map((i) => i.value),
+                timeout * 1000
+            );
+        };
+        window.addEventListener("run-vyxal", listener);
+        return () => window.removeEventListener("run-vyxal", listener);
+    }, [header, code, footer, flags, inputs, timeout, state]);
+
     return <>
         <SettingsDialog theme={theme} setTheme={setTheme} timeout={timeout} setTimeout={setTimeout} show={showSettingsDialog} setShow={setShowSettingsDialog} />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
@@ -129,7 +143,7 @@ function Body() {
                             runnerRef.current!.start(
                                 header + code + footer,
                                 flags.flags,
-                                [],
+                                inputs.map((i) => i.value),
                                 timeout * 1000
                             );
                             break;

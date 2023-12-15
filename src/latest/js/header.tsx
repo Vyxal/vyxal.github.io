@@ -42,7 +42,7 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                         <i className="bi bi-gear"></i>
                     </Button>
                     <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowElementOffcanvas(true)} title="Elements">
-                        <i className="bi bi-table"></i>
+                        <i className="bi bi-journal-code"></i>
                     </Button>
                 </Nav>
                 <Nav className="me-md-auto me-0 justify-self-end">

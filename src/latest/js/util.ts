@@ -71,15 +71,48 @@ export function formatBytecount(code: string, literate: boolean) {
         + ` byte${bytecount == 1 ? "" : "s"}`
     );
 }
-export type DescriptionEntry = {
-    name: string;
-    description: string;
-    token: string;
-    overloads: string;
-};
+
 export type Element = {
-    name: string;
-    token: string;
-    keywords: string[];
-    overloads: string;
+    name: string,
+    symbol: string,
+    keywords: string[],
+    overloads: string[],
+    vectorises: boolean,
 };
+
+export type Modifier = {
+    name: string,
+    description: string,
+    keywords: string[],
+};
+
+export type SyntaxFeature = {
+    name: string,
+    description: string,
+    usage: string,
+};
+
+export type ElementData = {
+    elements: Element[],
+    modifiers: Modifier[],
+    syntax: SyntaxFeature[],
+    sugars: Map<string, string>,
+};
+
+type RawElementData = {
+    elements: Element[],
+    modifiers: Modifier[],
+    syntax: SyntaxFeature[],
+    sugars: object,
+};
+
+export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io/Vyxal/theseus.json")
+    .then((response) => response.json())
+    .then((data: RawElementData) => {
+        return {
+            elements: data.elements,
+            modifiers: data.modifiers,
+            syntax: data.syntax,
+            sugars: new Map(Object.entries(data.sugars))
+        };
+    });

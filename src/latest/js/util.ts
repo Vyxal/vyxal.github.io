@@ -71,3 +71,15 @@ export function formatBytecount(code: string, literate: boolean) {
         + ` byte${bytecount == 1 ? "" : "s"}`
     );
 }
+export type DescriptionEntry = {
+    name: string;
+    description: string;
+    token: string;
+    overloads: string;
+};
+export type Element = {
+    name: string;
+    token: string;
+    keywords: string[];
+    overloads: string;
+};

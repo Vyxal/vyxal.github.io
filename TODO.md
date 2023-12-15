@@ -1,0 +1,2 @@
+- Change flag placeholder, probably to &nbsp;
+- Ctrl-Enter to run

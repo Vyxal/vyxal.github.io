@@ -4,6 +4,7 @@ import { CommentTokens } from "@codemirror/commands";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 
 import { sugarTrigraphs } from "./sugar-trigraphs";
+import { Element, DescriptionEntry } from './util';
 
 const VARIABLE_NAME = /[a-zA-Z][a-zA-Z0-9_]*/;
 const NUMBER = /(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
@@ -24,19 +25,6 @@ interface LanguageData {
     commentTokens?: CommentTokens,
     autocomplete?: CompletionSource,
 }
-
-type DescriptionEntry = {
-    name: string,
-    description: string,
-    token: string,
-    overloads: string,
-};
-type Element = {
-    name: string,
-    token: string,
-    keywords: string[],
-    overloads: string,
-};
 
 class VyxalLanguage implements StreamParser<VyxalState> {
     elements: Fuse<Element> | null = null;

@@ -11,6 +11,7 @@ import { VyTerminalRef } from "./runner";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
+import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type V1Permalink = {
@@ -93,6 +94,7 @@ function Body() {
     const [showFlagsDialog, setShowFlagsDialog] = useState(false);
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);
     const [showShareDialog, setShowShareDialog] = useState(false);
+    const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
     const runnerRef = useRef<VyTerminalRef | null>(null);
 
     useEffect(() => {
@@ -117,6 +119,7 @@ function Body() {
         <SettingsDialog theme={theme} setTheme={setTheme} timeout={timeout} setTimeout={setTimeout} show={showSettingsDialog} setShow={setShowSettingsDialog} />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
         <ShareDialog bytecount={formatBytecount(code, flags.literate)} code={code} flags={flags.flags.join("")} show={showShareDialog} setShow={setShowShareDialog} />
+        <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />
         <Header
             state={state} flags={flags} onRunClicked={() => {
                 if (runnerRef.current != null) {
@@ -135,7 +138,7 @@ function Body() {
                             break;
                     }
                 }
-            }} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog}
+            }} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog} setShowElementOffcanvas={setShowElementOffcanvas}
         />
         <Container className="bg-body-tertiary mt-3 rounded">
             <Row>

@@ -13,9 +13,10 @@ type HeaderArgs = {
     setShowFlagsDialog: Dispatch<SetStateAction<boolean>>,
     setShowSettingsDialog: Dispatch<SetStateAction<boolean>>,
     setShowShareDialog: Dispatch<SetStateAction<boolean>>,
+    setShowElementOffcanvas: Dispatch<SetStateAction<boolean>>,
 };
 
-export default function Header({ state, onRunClicked, flags, setShowFlagsDialog, setShowSettingsDialog, setShowShareDialog }: HeaderArgs) {
+export default function Header({ state, onRunClicked, flags, setShowFlagsDialog, setShowSettingsDialog, setShowShareDialog, setShowElementOffcanvas }: HeaderArgs) {
     return (
         <Navbar className="bg-body-tertiary flex-wrap">
             <Container>
@@ -39,6 +40,9 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                     </Button>
                     <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowSettingsDialog(true)} title="Settings">
                         <i className="bi bi-gear"></i>
+                    </Button>
+                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowElementOffcanvas(true)} title="Elements">
+                        <i className="bi bi-table"></i>
                     </Button>
                 </Nav>
                 <Nav className="me-md-auto me-0 justify-self-end">

@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
+import { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
 import { CommentTokens } from "@codemirror/commands";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 
@@ -30,16 +30,17 @@ interface LanguageData {
 }
 
 class VyxalLanguage implements StreamParser<VyxalState> {
-    elements: Fuse<Element> | null = null;
+    elementFuse: Fuse<Element> = new Fuse([], {
+        includeScore: true,
+        threshold: 0.4,
+        keys: ["token", "name", "keywords"],
+    });
+    elements: Element[] = [];
     constructor() {
         ELEMENT_DATA.then((data) => {
-            const elements = data.elements;
-            console.log(`Loaded ${elements.length} elements`);
-            this.elements = new Fuse(elements, {
-                includeScore: true,
-                threshold: 0.4,
-                keys: ["token", "name", "keywords"],
-            });
+            this.elements = data.elements;
+            console.log(`Loaded ${this.elements.length} elements`);
+            this.elementFuse.setCollection(this.elements);
         });
     }
     name = "vyxal3";
@@ -49,31 +50,39 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         },
         autocomplete: this.autocomplete.bind(this)
     };
+    private elementAutocompletion(element: Element): Completion {
+        return {
+            label: element.symbol,
+            detail: element.name,
+            info() {
+                const container = document.createElement("div");
+                container.innerHTML = renderToStaticMarkup(ElementCard({ item: element }));
+                return container;
+            },
+            type: "method"
+        };
+    }
     elementAutocomplete(context: CompletionContext): CompletionResult | null {
-        const word = context.matchBefore(/[a-zA-Z].*/);
+        const word = context.matchBefore(/[a-zA-Z-][a-zA-Z0-9_-]*/);
         if (word != null) {
-            const results = this.elements!.search(word.text);
-            console.log(results);
+            const results = this.elementFuse!.search(word.text);
+            if (!results.length) {
+                return null;
+            }
             return {
                 from: word.from,
                 filter: false,
-                options: results.map((result) => {
-                    return {
-                        label: result.item.symbol,
-                        detail: result.item.name,
-                        info() {
-                            const container = document.createElement("div");
-                            container.innerHTML = renderToStaticMarkup(ElementCard({ item: result.item }));
-                            return container;
-                        },
-                        boost: 99 * (1 - (result.score ?? 0)),
-                        type: "method",
-                    };
-                }),
+                options: results.map((result) => ({ ...this.elementAutocompletion(result.item), boost: 99 * (1 - (result.score ?? 0)) })),
                 update: (current, from, to, context) => this.elementAutocomplete(context),
             };
         }
-        return null;
+        return {
+            from: context.pos,
+            to: context.pos,
+            filter: false,
+            options: this.elements.map(this.elementAutocompletion),
+            update: (current, from, to, context) => this.elementAutocomplete(context),
+        };
     }
     autocomplete(context: CompletionContext): CompletionResult | null {
         const sugar = context.matchBefore(/#[,.^](.)/);
@@ -89,11 +98,8 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 };
             }
         }
-        if (context.explicit && this.elements != null) {
-            const word = context.matchBefore(/[a-zA-Z].*/);
-            if (word != null) {
-                return this.elementAutocomplete(context);
-            }
+        if (context.explicit && this.elementFuse != null) {
+            return this.elementAutocomplete(context);
         }
         return null;
     }
@@ -106,7 +112,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     pos: pos,
                     create() {
                         const container = document.createElement("div");
-                        container.innerHTML = renderToStaticMarkup(ElementCard({ item: element }));
+                        container.innerHTML = renderToStaticMarkup(ElementCard({ item: element, shadow: true }));
                         return {
                             dom: container,
                         };

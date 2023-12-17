@@ -3,7 +3,7 @@ import { Dispatch, lazy, SetStateAction, Suspense, useEffect, useRef, useState }
 
 import { flagsReducer, settingsFromFlags } from "./flagsReducer";
 import Header from "./header";
-import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button } from "react-bootstrap";
+import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Toast, ToastContainer } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { formatBytecount, Theme, VyRunnerState } from "./util";
@@ -13,10 +13,19 @@ import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 
+let updatePending = false;
 import("workbox-window").then(({ Workbox }) => {
     if ("serviceWorker" in navigator) {
         const wb = new Workbox("/service.js");
         wb.register();
+        wb.addEventListener("waiting", () => {
+            updatePending = true;
+            wb.addEventListener("controlling", () => window.location.reload());
+            window.addEventListener("update-accepted", () => {
+                wb.messageSkipWaiting();
+            });
+            window.dispatchEvent(new Event("update-pending"));
+        });
     } else {
         console.warn("No service worker support detected, skipping registration.");
     }
@@ -81,12 +90,31 @@ function loadTheme() {
     return Theme[theme as keyof typeof Theme];
 }
 
+type UpdateToastParams = {
+    show: boolean,
+    setShow: Dispatch<SetStateAction<boolean>>,
+    onUpdateAccepted: () => unknown,
+};
+
+function UpdateToast({ show, setShow, onUpdateAccepted }: UpdateToastParams) {
+    return <Toast show={show} onClose={() => setShow(false)}>
+        <Toast.Header closeButton={false}>
+            <strong>Update available!</strong>
+        </Toast.Header>
+        <Toast.Body className="d-flex flex-column">
+            An update is available for the interpreter!
+            <Button variant="primary" onClick={onUpdateAccepted} className="align-self-end">Install</Button>
+        </Toast.Body>
+    </Toast>;
+}
+
 type Input = {
     id: number,
     value: string,
 };
 
 let inputId = 0;
+
 function Body() {
     let link: V2Permalink | null;
     if (window.location.hash.length) {
@@ -106,6 +134,7 @@ function Body() {
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
+    const [showUpdateToast, setShowUpdateToast] = useState(updatePending);
     const runnerRef = useRef<VyTerminalRef | null>(null);
 
     useEffect(() => {
@@ -140,6 +169,12 @@ function Body() {
         return () => window.removeEventListener("run-vyxal", listener);
     }, [header, code, footer, flags, inputs, timeout, state]);
 
+    useEffect(() => {
+        const listener = () => setShowUpdateToast(true);
+        window.addEventListener("update-pending", listener);
+        return () => window.removeEventListener("update-pending", listener);
+    });
+
     return <>
         <SettingsDialog theme={theme} setTheme={setTheme} timeout={timeout} setTimeout={setTimeout} show={showSettingsDialog} setShow={setShowSettingsDialog} />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
@@ -165,6 +200,9 @@ function Body() {
                 }
             }} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog} setShowElementOffcanvas={setShowElementOffcanvas}
         />
+        <div className="toast-container end-0 mt-2">
+            <UpdateToast show={showUpdateToast} setShow={setShowUpdateToast} onUpdateAccepted={() => window.dispatchEvent(new Event("update-accepted"))} />
+        </div>
         <Container className="bg-body-tertiary mt-3 rounded">
             <Row>
                 <Col lg="6" className="g-0">

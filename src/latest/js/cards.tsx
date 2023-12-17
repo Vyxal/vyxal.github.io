@@ -3,10 +3,11 @@ import { Card, ListGroup } from "react-bootstrap";
 
 type ElementCardParams = {
     item: Element,
+    shadow?: boolean | undefined,
 };
 
-export function ElementCard({ item }: ElementCardParams) {
-    return <Card className="h-100">
+export function ElementCard({ item, shadow = undefined }: ElementCardParams) {
+    return <Card className={`h-100 ${shadow ?? false ? "shadow" : ""}`}>
         <Card.Body>
             <Card.Title>{item.symbol}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">{item.name}</Card.Subtitle>

@@ -167,10 +167,10 @@ module.exports = function (env, argv) {
                     },
                 },
                 {
-                    test: /logo.*\.png$/i,
+                    test: /\.png$/i,
                     type: "asset/resource",
                     generator: {
-                        filename: "logos/[name][ext]",
+                        filename: "assets/[name][ext]",
                     },
                     
                 },

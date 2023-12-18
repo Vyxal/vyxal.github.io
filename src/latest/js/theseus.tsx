@@ -31,7 +31,9 @@ import("workbox-window").then(({ Workbox }) => {
     }
 });
 
-import("../assets/logo-full.png");
+import("../assets/logo-256.png");
+import("../assets/pwa/screenshot-narrow.png");
+import("../assets/pwa/screenshot-wide.png");
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type V1Permalink = {

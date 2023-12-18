@@ -3,14 +3,24 @@
     "name": "Vyxal 3",
     "icons": [
         {
-            "src": "logos/logo-small.png",
-            "purpose": "any maskable",
-            "sizes": "16x16 32x32 64x64"
+            "src": "assets/logo-64.png",
+            "purpose": "maskable",
+            "sizes": "64x64"
         },
         {
-            "src": "logos/logo-full.png",
-            "purpose": "any maskable",
-            "sizes": "128x128 256x256"
+            "src": "assets/logo-256.png",
+            "purpose": "any",
+            "sizes": "256x256"
+        }
+    ],
+    "screenshots": [
+        {
+            "form_factor": "narrow",
+            "src": "assets/screenshot-narrow.png"
+        },
+        {
+            "form_factor": "wide",
+            "src": "assets/screenshot-wide.png"
         }
     ],
     "start_url": "/latest.html",

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import langVyxal from "./lang-vyxal";
+import langVyxal from "./languages/lang-vyxal";
 import { Accordion } from "react-bootstrap";
 import { autocompletion } from "@codemirror/autocomplete";
 import { lineNumbers } from "@codemirror/view";

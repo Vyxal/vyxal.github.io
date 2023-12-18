@@ -3,20 +3,20 @@ import { Completion, CompletionContext, CompletionResult, CompletionSource } fro
 import { CommentTokens } from "@codemirror/commands";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 
-import { sugarTrigraphs } from "./sugar-trigraphs";
-import { Element, ELEMENT_DATA } from './util';
+import { sugarTrigraphs } from "../sugar-trigraphs";
+import { Element, ELEMENT_DATA } from '../util';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { ElementCard } from './cards';
+import { ElementCard } from '../cards';
 import { hoverTooltip, Tooltip } from '@uiw/react-codemirror';
 
 const VARIABLE_NAME = /[a-zA-Z][a-zA-Z0-9_]*/;
 const NUMBER = /(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
-const STRING = /".*["„”“]/;
 const MODIFIER = /[ᵈᶨ¿ᶜϩᵖⁿᵗᵡᶪᶤᵞᶳ⸠ᵒ/эᵂ∦ᵏᴴᴳ∥ᵐᵃᵉЧᶻᵛᶠᵇᵘᴿ]/; // As of Dec 7 2023
 
 enum Mode {
     Normal,
     VariableOp,
+    String,
     LambdaArgs
 }
 
@@ -134,6 +134,10 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 stream.eatWhile(VARIABLE_NAME);
                 state.mode = Mode.Normal;
                 return "variableName";
+            case Mode.String:
+                stream.eatWhile(/[^"„”“]]/);
+                state.mode = Mode.Normal;
+                return "string";
             case Mode.LambdaArgs:
                 if (stream.eat("!")) {
                     state.mode = Mode.Normal;
@@ -199,7 +203,13 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 if (stream.eat(MODIFIER)) {
                     return "modifier";
                 }
-                if (stream.eat(/[[{(ḌṆλƛΩ₳µ⟨]/)) {
+                if (stream.eat("λ")) {
+                    if (stream.match(/^(!|[a-zA-Z0-9_*]+?)\|/, false)) {
+                        state.mode = Mode.LambdaArgs;
+                    }
+                    return "keyword";
+                }
+                if (stream.eat(/[[{(ḌṆƛΩ₳µ⟨]/)) {
                     return "bracket";
                 }
                 if (stream.eat(/}\)]⟩/)) {
@@ -214,9 +224,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 if (stream.match(NUMBER)) {
                     return "number";
                 }
-                if (stream.match(STRING)) {
-                    return "string";
-                }
+                console.log("A")
         }
         stream.next();
         return "content";

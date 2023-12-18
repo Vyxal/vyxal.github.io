@@ -3,8 +3,8 @@ const webpack = require("webpack");
 const HtmlBundlerPlugin = require("html-bundler-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const WorkboxPlugin = require('workbox-webpack-plugin');
-const CopyPlugin = require("copy-webpack-plugin");
+// const WorkboxPlugin = require('workbox-webpack-plugin');
+// const CopyPlugin = require("copy-webpack-plugin");
 
 
 class MonkeyPatchPlugin {
@@ -14,10 +14,10 @@ class MonkeyPatchPlugin {
     }
     apply(compiler) {
         compiler.hooks.compilation.tap(
-            "TestVyPlugin",
+            "MonkeyPatchPlugin",
             (compilation, { normalModuleFactory }) => {
                 normalModuleFactory.hooks.resolve
-                    .tap("TestVyPlugin", (data) => {
+                    .tap("MonkeyPatchPlugin", (data) => {
                         const match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*).txt/.exec(data.request)
                         if (match && this.enabled) {
                             data.request = path.join("/", this.basePath, match.groups[1])
@@ -68,11 +68,11 @@ module.exports = function (env, argv) {
                 //     }
                 // ]
             }),
-            new CopyPlugin({
-                patterns: [
-                    { from: "src/latest/assets/pwa/", to: "pwa" },
-                ],
-            }),
+            // new CopyPlugin({
+            //     patterns: [
+            //         { from: "src/latest/assets/pwa/", to: "pwa" },
+            //     ],
+            // }),
             prod ? (
                 new webpack.SourceMapDevToolPlugin({
                     filename: "[file].map[query]",

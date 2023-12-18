@@ -3,7 +3,7 @@ import { Dispatch, lazy, SetStateAction, Suspense, useEffect, useRef, useState }
 
 import { flagsReducer, settingsFromFlags } from "./flagsReducer";
 import Header from "./header";
-import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Toast, ToastContainer } from "react-bootstrap";
+import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { formatBytecount, isTheSeason, Theme, VyRunnerState } from "./util";
@@ -14,23 +14,12 @@ import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
 
-let updatePending = false;
-import("workbox-window").then(({ Workbox }) => {
-    if ("serviceWorker" in navigator) {
-        const wb = new Workbox("/service.js");
-        wb.register();
-        wb.addEventListener("waiting", () => {
-            updatePending = true;
-            wb.addEventListener("controlling", () => window.location.reload());
-            window.addEventListener("update-accepted", () => {
-                wb.messageSkipWaiting();
-            });
-            window.dispatchEvent(new Event("update-pending"));
-        });
-    } else {
-        console.warn("No service worker support detected, skipping registration.");
-    }
-});
+// Disabled until webpack/webpack#17870 is fixed
+// if ("serviceWorker" in navigator) {
+//     navigator.serviceWorker.register(new URL("./service.ts", import.meta.url), { type: "classic" });
+// } else {
+//     console.warn("No service worker support detected, skipping registration.");
+// }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type V1Permalink = {
@@ -81,25 +70,6 @@ export type EditorParams = { header: string, code: string, height: string, event
 const VyTerminal = lazy(() => import("./runner"));
 const Editor = lazy(() => import("./editor"));
 
-
-type UpdateToastParams = {
-    show: boolean,
-    setShow: Dispatch<SetStateAction<boolean>>,
-    onUpdateAccepted: () => unknown,
-};
-
-function UpdateToast({ show, setShow, onUpdateAccepted }: UpdateToastParams) {
-    return <Toast show={show} onClose={() => setShow(false)}>
-        <Toast.Header closeButton={false}>
-            <strong>Update available!</strong>
-        </Toast.Header>
-        <Toast.Body className="d-flex flex-column">
-            An update is available for the interpreter!
-            <Button variant="primary" onClick={onUpdateAccepted} className="align-self-end">Install</Button>
-        </Toast.Body>
-    </Toast>;
-}
-
 function loadTheme() {
     const theme = localStorage.getItem("theme");
     if (theme == null) {
@@ -142,7 +112,6 @@ function Body() {
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
-    const [showUpdateToast, setShowUpdateToast] = useState(updatePending);
     const runnerRef = useRef<VyTerminalRef | null>(null);
     const snowflakesRef = useRef<Snowflakes | null>(null);
 
@@ -177,12 +146,6 @@ function Body() {
         window.addEventListener("run-vyxal", listener);
         return () => window.removeEventListener("run-vyxal", listener);
     }, [header, code, footer, flags, inputs, timeout, state]);
-
-    useEffect(() => {
-        const listener = () => setShowUpdateToast(true);
-        window.addEventListener("update-pending", listener);
-        return () => window.removeEventListener("update-pending", listener);
-    });
 
     useEffect(() => {
         if (snowing) {
@@ -232,9 +195,6 @@ function Body() {
                 }
             }} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog} setShowElementOffcanvas={setShowElementOffcanvas}
         />
-        <div className="toast-container end-0 mt-2">
-            <UpdateToast show={showUpdateToast} setShow={setShowUpdateToast} onUpdateAccepted={() => window.dispatchEvent(new Event("update-accepted"))} />
-        </div>
         <Container className="bg-body-tertiary mt-3 rounded">
             <Row>
                 <Col lg="6" className="g-0">

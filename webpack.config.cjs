@@ -5,6 +5,7 @@ const { FaviconsBundlerPlugin } = require("html-bundler-webpack-plugin/plugins")
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WorkboxPlugin = require('workbox-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 
 class MonkeyPatchPlugin {
@@ -68,20 +69,25 @@ module.exports = function (env, argv) {
                 //     }
                 // ]
             }),
-            new FaviconsBundlerPlugin({
-                enabled: "auto",
-                faviconOptions: {
-                    path: "/img/favicons",
-                    icons: {
-                        android: true,
-                        appleIcon: true,
-                        appleStartup: false,
-                        favicons: true,
-                        windows: false,
-                        yandex: false,
-                    },
-                }
+            new CopyPlugin({
+                patterns: [
+                    { from: "src/latest/assets/pwa/", to: "pwa" },
+                ],
             }),
+            // new FaviconsBundlerPlugin({
+            //     enabled: "auto",
+            //     faviconOptions: {
+            //         path: "/img/favicons",
+            //         icons: {
+            //             android: true,
+            //             appleIcon: true,
+            //             appleStartup: false,
+            //             favicons: true,
+            //             windows: false,
+            //             yandex: false,
+            //         },
+            //     }
+            // }),
             prod ? (
                 new webpack.SourceMapDevToolPlugin({
                     filename: "[file].map[query]",
@@ -95,7 +101,7 @@ module.exports = function (env, argv) {
             new WorkboxPlugin.InjectManifest({
                 swSrc: "./src/latest/js/service.ts",
                 exclude: [/\.map$/, /^manifest.*\.js$/, /\.html$/, /style.*\.css$/]
-              }),
+            }),
         ],
         resolve: {
             extensions: [".tsx", ".ts", ".js"],
@@ -167,16 +173,18 @@ module.exports = function (env, argv) {
                     },
                 },
                 {
-                    test: /\.png$/i,
-                    type: "asset/resource",
-                    generator: {
-                        filename: "assets/[name][ext]",
-                    },
-                    
-                },
-                {
                     test: /\.(png|svg|jpg|jpeg|gif)$/i,
                     type: "asset/resource",
+                    generator: {
+                        filename: "img/[name][ext]",
+                    },
+                },
+                {
+                    test: /\.ico$/,
+                    type: "asset/resource",
+                    generator: {
+                        filename: "[name][ext]"
+                    }
                 },
                 {
                     test: /\.handlebars(.md)?$/i,

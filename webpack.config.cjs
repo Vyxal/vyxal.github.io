@@ -1,7 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlBundlerPlugin = require("html-bundler-webpack-plugin");
-const { FaviconsBundlerPlugin } = require("html-bundler-webpack-plugin/plugins");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WorkboxPlugin = require('workbox-webpack-plugin');
@@ -74,20 +73,6 @@ module.exports = function (env, argv) {
                     { from: "src/latest/assets/pwa/", to: "pwa" },
                 ],
             }),
-            // new FaviconsBundlerPlugin({
-            //     enabled: "auto",
-            //     faviconOptions: {
-            //         path: "/img/favicons",
-            //         icons: {
-            //             android: true,
-            //             appleIcon: true,
-            //             appleStartup: false,
-            //             favicons: true,
-            //             windows: false,
-            //             yandex: false,
-            //         },
-            //     }
-            // }),
             prod ? (
                 new webpack.SourceMapDevToolPlugin({
                     filename: "[file].map[query]",

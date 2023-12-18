@@ -82,12 +82,14 @@ export type Element = {
 
 export type Modifier = {
     name: string,
+    symbol: string,
     description: string,
     keywords: string[],
 };
 
 export type SyntaxFeature = {
     name: string,
+    symbol: string,
     description: string,
     usage: string,
 };

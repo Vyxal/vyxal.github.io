@@ -29,7 +29,8 @@ type ModifierCardParams = {
 export function ModifierCard({ item }: ModifierCardParams) {
     return <Card className="h-100">
         <Card.Body>
-            <Card.Title>{item.name}</Card.Title>
+            <Card.Title>{item.symbol}</Card.Title>
+            <Card.Subtitle className="mb-2 text-muted">{item.name}</Card.Subtitle>
             <Card.Text>
                 {item.keywords.map((keyword, i) => <code key={i} className="code-pill">{keyword}</code>)}
             </Card.Text>

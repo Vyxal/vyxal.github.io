@@ -17,7 +17,7 @@ declare let self: ServiceWorkerGlobalScope;
 
 //@ts-expect-error Manifest injection
 const manifest: ManifestEntry[] = self.__WB_MANIFEST;
-precacheAndRoute(manifest);
+// precacheAndRoute(manifest);
 
 clientsClaim();
 self.addEventListener("message", (event) => {

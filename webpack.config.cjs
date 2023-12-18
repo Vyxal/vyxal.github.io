@@ -83,10 +83,10 @@ module.exports = function (env, argv) {
                     // exclude: [/style.*\.css$/],
                 })
             ),
-            new WorkboxPlugin.InjectManifest({
-                swSrc: "./src/latest/js/service.ts",
-                exclude: [/\.map$/, /^manifest.*\.js$/, /\.html$/, /style.*\.css$/]
-            }),
+            // new WorkboxPlugin.InjectManifest({
+            //     swSrc: "./src/latest/js/service.ts",
+            //     exclude: [/\.map$/, /^manifest.*\.js$/, /\.html$/, /style.*\.css$/]
+            // }),
         ],
         resolve: {
             extensions: [".tsx", ".ts", ".js"],

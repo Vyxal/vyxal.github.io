@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, memo } from "react";
-import { Button, FormLabel, FormText, Modal, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
-import { Theme } from "../util";
+import { Button, FormCheck, FormLabel, FormText, Modal, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
+import { Theme, isTheSeason } from "../util";
 import FormRange from "react-bootstrap/esm/FormRange";
 
 type SettingsDialogParams = {
@@ -8,11 +8,13 @@ type SettingsDialogParams = {
     setTheme: Dispatch<SetStateAction<Theme>>,
     timeout: number,
     setTimeout: Dispatch<SetStateAction<number>>,
+    snowing: boolean,
+    setSnowing: Dispatch<SetStateAction<boolean>>,
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
-export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeout, show, setShow }: SettingsDialogParams) {
+export const SettingsDialog = memo(function ({ theme, setTheme, timeout, setTimeout, snowing, setSnowing, show, setShow }: SettingsDialogParams) {
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
             <Modal.Title>Settings</Modal.Title>
@@ -24,13 +26,23 @@ export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeo
                     {(Object.values(Theme).filter(value => typeof value === 'string') as string[]).map((theme, i) => <ToggleButton key={i} id={`theme-${i}`} value={theme}>{theme}</ToggleButton>
                     )}
                 </ToggleButtonGroup>
-                <FormText>this setting is saved locally</FormText>
             </div>
-            <div>
-                <FormLabel htmlFor="timeout">Timeout</FormLabel>
+            <div className="mb-3">
+                <FormLabel htmlFor="timeout"><i className="bi bi-link-45deg"></i> Timeout</FormLabel>
                 <FormRange name="timeout" step="5" max="60" min="10" value={timeout} onChange={(event) => setTimeout(Number.parseInt(event.currentTarget.value))} />
                 <FormText>{timeout} seconds</FormText>
             </div>
+            {isTheSeason() && (
+                <FormCheck
+                    type="switch"
+                    name="seasonal-mode"
+                    checked={snowing}
+                    onChange={(event) => setSnowing(event.currentTarget.checked)}
+                    label={<><i className="bi bi-snow"></i> Seasonal decorations</>}
+                />
+            )}
+            <hr />
+            <FormText>settings with <i className="bi bi-link-45deg"></i> are saved in the permalink</FormText>
         </Modal.Body>
         <Modal.Footer>
             <Button variant="primary" onClick={() => setShow(false)}>

@@ -118,3 +118,17 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io
             sugars: new Map(Object.entries(data.sugars))
         };
     });
+
+export function isTheSeason() {
+    const now = new Date();
+    const start = new Date(now);
+    const end = new Date(now);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    start.setMonth(11, 1);
+    end.setFullYear(now.getFullYear() + 1, 1, 1);
+    if (now.getTime() > start.getTime() && now.getTime() < end.getTime()) {
+        return true;
+    }
+    return false;
+}

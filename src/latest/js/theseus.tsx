@@ -6,12 +6,13 @@ import Header from "./header";
 import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Toast, ToastContainer } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
-import { formatBytecount, Theme, VyRunnerState } from "./util";
+import { formatBytecount, isTheSeason, Theme, VyRunnerState } from "./util";
 import { VyTerminalRef } from "./runner";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
+import type Snowflakes from "magic-snowflakes";
 
 let updatePending = false;
 import("workbox-window").then(({ Workbox }) => {
@@ -84,13 +85,6 @@ export type EditorParams = { header: string, code: string, height: string, event
 const VyTerminal = lazy(() => import("./runner"));
 const Editor = lazy(() => import("./editor"));
 
-function loadTheme() {
-    const theme = localStorage.getItem("theme");
-    if (theme == null) {
-        return Theme.Dark;
-    }
-    return Theme[theme as keyof typeof Theme];
-}
 
 type UpdateToastParams = {
     show: boolean,
@@ -108,6 +102,21 @@ function UpdateToast({ show, setShow, onUpdateAccepted }: UpdateToastParams) {
             <Button variant="primary" onClick={onUpdateAccepted} className="align-self-end">Install</Button>
         </Toast.Body>
     </Toast>;
+}
+
+function loadTheme() {
+    const theme = localStorage.getItem("theme");
+    if (theme == null) {
+        return Theme.Dark;
+    }
+    return Theme[theme as keyof typeof Theme];
+}
+
+function loadSnowing() {
+    const snowing = localStorage.getItem("snowing");
+    if (snowing == "always") return true;
+    if (snowing == "yes" && isTheSeason()) return true;
+    return false;
 }
 
 type Input = {
@@ -128,6 +137,7 @@ function Body() {
     const [theme, setTheme] = useState<Theme>(loadTheme());
     const [state, setState] = useState<VyRunnerState>("idle");
     const [timeout, setTimeout] = useState<number>(10);
+    const [snowing, setSnowing] = useState<boolean>(loadSnowing());
     const [header, setHeader] = useState(link?.header ?? "");
     const [code, setCode] = useState(link?.code ?? "");
     const [footer, setFooter] = useState(link?.footer ?? "");
@@ -138,6 +148,7 @@ function Body() {
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
     const [showUpdateToast, setShowUpdateToast] = useState(updatePending);
     const runnerRef = useRef<VyTerminalRef | null>(null);
+    const snowflakesRef = useRef<Snowflakes | null>(null);
 
     useEffect(() => {
         localStorage.setItem("theme", Theme[theme]);
@@ -177,8 +188,31 @@ function Body() {
         return () => window.removeEventListener("update-pending", listener);
     });
 
+    useEffect(() => {
+        if (snowing) {
+            import("magic-snowflakes").then(({ default: Snowflakes }) => {
+                if (snowflakesRef.current == null) snowflakesRef.current = new Snowflakes();
+                snowflakesRef.current.start();
+                snowflakesRef.current.show();
+            });
+        } else {
+            snowflakesRef.current?.stop();
+            snowflakesRef.current?.hide();
+        }
+        localStorage.setItem("snowing", snowing ? "yes" : "no");
+    }, [snowing]);
+
     return <>
-        <SettingsDialog theme={theme} setTheme={setTheme} timeout={timeout} setTimeout={setTimeout} show={showSettingsDialog} setShow={setShowSettingsDialog} />
+        <SettingsDialog
+            theme={theme}
+            setTheme={setTheme}
+            timeout={timeout}
+            setTimeout={setTimeout}
+            snowing={snowing}
+            setSnowing={setSnowing}
+            show={showSettingsDialog}
+            setShow={setShowSettingsDialog}
+        />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
         <ShareDialog bytecount={formatBytecount(code, flags.literate)} code={code} flags={flags.flags.join("")} show={showShareDialog} setShow={setShowShareDialog} />
         <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />

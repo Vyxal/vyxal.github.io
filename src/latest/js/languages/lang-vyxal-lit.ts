@@ -163,7 +163,7 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
                 if (stream.eat("{")) {
                     state.structStack.push(Structure.Lambda);
                     state.structStack.push(Structure.LambdaArgs);
-                    return "definitionOperator";
+                    return "definitionKeyword";
                 }
                 if (stream.eat("[")) {
                     state.structStack.push(Structure.List);

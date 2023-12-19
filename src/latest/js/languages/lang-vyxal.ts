@@ -6,7 +6,7 @@ import { sugarTrigraphs } from "../sugar-trigraphs";
 import { Element, ELEMENT_DATA, elementFuse } from '../util';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard } from '../cards';
-import { hoverTooltip, Tooltip } from '@uiw/react-codemirror';
+import { EditorState, hoverTooltip, Tooltip } from '@uiw/react-codemirror';
 import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART } from './common';
 
 enum Mode {
@@ -111,6 +111,14 @@ class VyxalLanguage implements StreamParser<VyxalState> {
             return null;
         }));
     });
+    static stringTooltip = hoverTooltip((view, pos) => {
+        // TODO: Investigate auto-decompression in tooltips
+        const {node} = view.domAtPos(pos);
+        if (node instanceof Text) {
+            const text = node.wholeText;
+        }
+        return null;
+    });
 
 
     // Highlighting stuff
@@ -123,10 +131,6 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 stream.eatWhile(VARIABLE_NAME);
                 state.mode = Mode.Normal;
                 return "variableName";
-            case Mode.String:
-                stream.eatWhile(/[^"„”“]]/);
-                state.mode = Mode.Normal;
-                return "string";
             case Mode.LambdaArgs:
                 if (stream.eat("!")) {
                     state.mode = Mode.Normal;
@@ -157,6 +161,11 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     stream.next();
                     stream.next();
                     return "number.special";
+                }
+                if (stream.eat("\"")) {
+                    stream.eatWhile(/[^"„”“]/);
+                    stream.next();
+                    return "string";
                 }
                 if (stream.eat("#")) {
                     if (stream.eat("#")) {
@@ -221,6 +230,6 @@ class VyxalLanguage implements StreamParser<VyxalState> {
 
 export default function () {
     return new LanguageSupport(
-        StreamLanguage.define(new VyxalLanguage()), VyxalLanguage.elementTooltip
+        StreamLanguage.define(new VyxalLanguage()), [VyxalLanguage.elementTooltip, VyxalLanguage.stringTooltip]
     );
 }

@@ -71,7 +71,7 @@ const structOpeners = new Set([
 ]);
 
 enum Structure {
-    String, RawSbcs, VarUnpack, VarOp, Group, Lambda, LambdaArgs, List
+    String, RawSbcs, VarUnpack, VarOp, Group, ModGroup, Lambda, LambdaArgs, List
 }
 
 type VyxalLitState = {
@@ -87,10 +87,11 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
         const currentStruct = state.structStack.at(-1);
         switch (currentStruct) {
             case Structure.Group:
+            case Structure.ModGroup:
             case Structure.Lambda:
             case Structure.List:
             case undefined: {
-                if (currentStruct == Structure.Group) {
+                if (currentStruct == Structure.Group || currentStruct == Structure.ModGroup) {
                     if (stream.eat(")")) {
                         state.structStack.pop();
                         return "bracket";
@@ -179,9 +180,13 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
                 if (stream.match(/`(0|[1-9][0-9]*)`/)) {
                     return "controlKeyword";
                 }
-                if (stream.match(/\((.|,|:[.: ]|;[,; ])/)) {
+                if (stream.eat("(")) {
+                    if (stream.match(/(.|,|:[.: ]|;[,; ])/)) {
+                        state.structStack.push(Structure.ModGroup);
+                        return "keyword.special";
+                    }
                     state.structStack.push(Structure.Group);
-                    return "keyword.special";
+                    return "bracket";
                 }
                 stream.next();
                 return "invalid";

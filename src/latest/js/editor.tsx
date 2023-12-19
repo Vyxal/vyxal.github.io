@@ -1,14 +1,14 @@
-import { useCallback } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import langVyxal from "./languages/lang-vyxal";
+import langVyxalLit from "./languages/lang-vyxal-lit";
 import { Accordion } from "react-bootstrap";
 import { autocompletion } from "@codemirror/autocomplete";
 import { lineNumbers } from "@codemirror/view";
 import { Theme } from "./util";
 import { githubLight } from "@uiw/codemirror-theme-github";
-import { EditorParams } from "./theseus";
 
 const EXTENSIONS = [
     keymap.of([
@@ -22,28 +22,45 @@ const EXTENSIONS = [
             preventDefault: true
         }
     ]),
-    langVyxal(),
     minimalSetup,
     autocompletion(),
     lineNumbers(),
 ];
+const VYXAL = langVyxal();
+const VYXAL_LIT = langVyxalLit();
+
 const THEMES = {
     [Theme.Dark]: vscodeDark,
     [Theme.Light]: githubLight
 };
 
-export default function Editor({ header, code, height, eventKey, setCode, theme }: EditorParams) {
+type EditorParams = {
+    header: string,
+    code: string,
+    height: string,
+    eventKey: string,
+    setCode: Dispatch<SetStateAction<string>>,
+    theme: Theme,
+    literate: boolean,
+};
+
+export default function Editor({ header, code, height, eventKey, setCode, theme, literate }: EditorParams) {
     const onChange = useCallback((code: string) => {
         if (code == "lyxal") {
             window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
         }
         setCode(code);
     }, []);
+    const extensions = useMemo(() => EXTENSIONS.concat([literate ? VYXAL_LIT : VYXAL]), [literate]);
     return <Accordion.Item eventKey={eventKey}>
         <Accordion.Header>{header}</Accordion.Header>
         <Accordion.Body>
             <ReactCodeMirror
-                theme={THEMES[theme]} value={code} height={height} onChange={onChange} extensions={EXTENSIONS} 
+                theme={THEMES[theme]}
+                value={code}
+                height={height}
+                onChange={onChange}
+                extensions={extensions}
             />
         </Accordion.Body>
     </Accordion.Item>;

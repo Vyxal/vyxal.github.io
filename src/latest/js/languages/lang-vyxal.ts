@@ -1,17 +1,13 @@
-import Fuse from 'fuse.js';
 import { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
 import { CommentTokens } from "@codemirror/commands";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
-import { Element, ELEMENT_DATA } from '../util';
+import { Element, ELEMENT_DATA, elementFuse } from '../util';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard } from '../cards';
 import { hoverTooltip, Tooltip } from '@uiw/react-codemirror';
-
-const VARIABLE_NAME = /[a-zA-Z][a-zA-Z0-9_]*/;
-const NUMBER = /(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
-const MODIFIER = /[ᵈᶨ¿ᶜϩᵖⁿᵗᵡᶪᶤᵞᶳ⸠ᵒ/эᵂ∦ᵏᴴᴳ∥ᵐᵃᵉЧᶻᵛᶠᵇᵘᴿ]/; // As of Dec 7 2023
+import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART } from './common';
 
 enum Mode {
     Normal,
@@ -30,17 +26,10 @@ interface LanguageData {
 }
 
 class VyxalLanguage implements StreamParser<VyxalState> {
-    elementFuse: Fuse<Element> = new Fuse([], {
-        includeScore: true,
-        threshold: 0.4,
-        keys: ["token", "name", "keywords"],
-    });
     elements: Element[] = [];
     constructor() {
         ELEMENT_DATA.then((data) => {
             this.elements = data.elements;
-            console.log(`Loaded ${this.elements.length} elements`);
-            this.elementFuse.setCollection(this.elements);
         });
     }
     name = "vyxal3";
@@ -65,7 +54,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     elementAutocomplete(context: CompletionContext): CompletionResult | null {
         const word = context.matchBefore(/[a-zA-Z-][a-zA-Z0-9_-]*/);
         if (word != null) {
-            const results = this.elementFuse!.search(word.text);
+            const results = elementFuse.search(word.text);
             if (!results.length) {
                 return null;
             }
@@ -98,7 +87,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 };
             }
         }
-        if (context.explicit && this.elementFuse != null) {
+        if (context.explicit) {
             return this.elementAutocomplete(context);
         }
         return null;
@@ -141,17 +130,17 @@ class VyxalLanguage implements StreamParser<VyxalState> {
             case Mode.LambdaArgs:
                 if (stream.eat("!")) {
                     state.mode = Mode.Normal;
-                    return "keyword";
+                    return "keyword.special";
                 }
                 if (stream.eat("|")) {
                     state.mode = Mode.Normal;
                     return "separator";
                 }
                 if (stream.eat("*")) {
-                    return "keyword";
+                    return "keyword.special";
                 }
-                if (stream.match(/0|[1-9][0-9]*/) || stream.match(VARIABLE_NAME)) {
-                    return "propertyName";
+                if (stream.match(NUMBER_PART) || stream.match(VARIABLE_NAME)) {
+                    return "variableName.definition";
                 }
                 break;
             case Mode.Normal:
@@ -224,7 +213,6 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 if (stream.match(NUMBER)) {
                     return "number";
                 }
-                console.log("A")
         }
         stream.next();
         return "content";

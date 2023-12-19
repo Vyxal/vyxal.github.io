@@ -1,18 +1,17 @@
-
-import { Dispatch, lazy, SetStateAction, Suspense, useEffect, useRef, useState } from "react";
-
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { flagsReducer, settingsFromFlags } from "./flagsReducer";
 import Header from "./header";
 import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
-import { formatBytecount, isTheSeason, Theme, VyRunnerState } from "./util";
+import { isTheSeason, Theme, VyRunnerState } from "./util";
 import { VyTerminalRef } from "./runner";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
+import { formatBytecount } from "./bytecounter";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {
@@ -65,8 +64,6 @@ function decodeHash(hash: string): V2Permalink {
     } as V2Permalink);
 }
 
-export type EditorParams = { header: string, code: string, height: string, eventKey: string, setCode: Dispatch<SetStateAction<string>>, theme: Theme };
-
 const VyTerminal = lazy(() => import("./runner"));
 const Editor = lazy(() => import("./editor"));
 
@@ -112,6 +109,7 @@ function Body() {
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
+    const [bytecount, setBytecount] = useState("...");
     const runnerRef = useRef<VyTerminalRef | null>(null);
     const snowflakesRef = useRef<Snowflakes | null>(null);
 
@@ -161,6 +159,10 @@ function Body() {
         localStorage.setItem("snowing", snowing ? "yes" : "no");
     }, [snowing]);
 
+    useEffect(() => {
+        formatBytecount(code, flags.literate).then(setBytecount);
+    }, [code, flags]);
+
     return <>
         <SettingsDialog
             theme={theme}
@@ -173,7 +175,7 @@ function Body() {
             setShow={setShowSettingsDialog}
         />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
-        <ShareDialog bytecount={formatBytecount(code, flags.literate)} code={code} flags={flags.flags.join("")} show={showShareDialog} setShow={setShowShareDialog} />
+        <ShareDialog bytecount={bytecount} code={code} flags={flags.flags.join("")} show={showShareDialog} setShow={setShowShareDialog} />
         <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />
         <Header
             state={state} flags={flags} onRunClicked={() => {
@@ -208,9 +210,9 @@ function Body() {
                         }
                     >
                         <Accordion defaultActiveKey="1" alwaysOpen className="p-3">
-                            <Editor header="Header" height="50px" eventKey="0" code={header} setCode={setHeader} theme={theme} />
-                            <Editor header={`Code: ${formatBytecount(code, flags.literate)}`} height="100px" eventKey="1" code={code} setCode={setCode} theme={theme} />
-                            <Editor header="Footer" code={footer} height="50px" eventKey="2" setCode={setFooter} theme={theme} />
+                            <Editor header="Header" height="50px" eventKey="0" code={header} setCode={setHeader} theme={theme} literate={flags.literate} />
+                            <Editor header={`Code: ${bytecount}`} height="100px" eventKey="1" code={code} setCode={setCode} theme={theme} literate={flags.literate} />
+                            <Editor header="Footer" code={footer} height="50px" eventKey="2" setCode={setFooter} theme={theme} literate={flags.literate} />
                             <Accordion.Item eventKey="3">
                                 <Accordion.Header>Inputs</Accordion.Header>
                                 <Accordion.Body className="d-flex flex-column">

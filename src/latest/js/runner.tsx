@@ -81,7 +81,6 @@ class VyRunner extends EventTarget {
             this.terminal?.clear();
             this.worker = new Worker(
                 /* webpackChunkName: "worker" */
-                /* webpackPreload: true */
                 new URL("./worker.ts", import.meta.url)
             );
             this.worker.addEventListener("message", this.onWorkerMessage.bind(this));

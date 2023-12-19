@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { ELEMENT_DATA, Element, Modifier } from "../util";
+import { ELEMENT_DATA, Element, Modifier, elementFuse, modifierFuse } from "../util";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import Fuse from "fuse.js";
@@ -25,43 +25,6 @@ function CardSearchResults<T>({ card, results }: CardSearchResultsParams<T>) {
         )}
     </Row>;
 }
-
-const elementFuse = new Fuse<Element>([], {
-    includeScore: true,
-    threshold: 0.3,
-    keys: [
-        {
-            "name": "symbol",
-            "weight": 3
-        },
-        {
-            "name": "name",
-            "weight": 2
-        },
-        {
-            "name": "keywords",
-            "weight": 1
-        },
-    ],
-});
-const modifierFuse = new Fuse<Modifier>([], {
-    includeScore: true,
-    threshold: 0.3,
-    keys: [
-        {
-            "name": "name",
-            "weight": 2
-        },
-        {
-            "name": "keywords",
-            "weight": 1
-        },
-    ]
-});
-ELEMENT_DATA.then((data) => {
-    elementFuse.setCollection(data.elements);
-    modifierFuse.setCollection(data.modifiers);
-});
 
 type ElementOffcanvasParams = {
     show: boolean,

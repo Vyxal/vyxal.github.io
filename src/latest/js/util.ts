@@ -1,4 +1,5 @@
 // import VYCODEPAGE from "https://vyxal.github.io/Vyxal/codepage.js";
+import Fuse from "fuse.js";
 import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
 
 export type VyRunnerState = "idle" | "starting" | "running";
@@ -46,31 +47,6 @@ export interface DoneMessage {
 }
 
 export type WorkerMessage = StartedMessage | StdoutMessage | StderrMessage | WorkerNoticeMessage | DoneMessage;
-
-export function formatBytecount(code: string, literate: boolean) {
-    let bytecount: number;
-    let processedCode: string;
-    const modifiers: string[] = [];
-    if (literate) {
-        processedCode = Vyxal.getSBCSified(code);
-    } else {
-        processedCode = code;
-    }
-    if (literate) {
-        modifiers.push("literate");
-    }
-    if (![...processedCode].every((char) => CODEPAGE.has(char))) {
-        bytecount = processedCode.length;
-        modifiers.push("UTF-8");
-    } else {
-        bytecount = new Blob([processedCode]).size; // ick
-    }
-    return (
-        bytecount.toString()
-        + (modifiers.length ? ` (${modifiers.join(", ")})` : "")
-        + ` byte${bytecount == 1 ? "" : "s"}`
-    );
-}
 
 export type Element = {
     name: string,
@@ -120,6 +96,43 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io
             sugars: new Map(Object.entries(data.sugars))
         };
     });
+
+export const elementFuse = new Fuse<Element>([], {
+    includeScore: true,
+    threshold: 0.3,
+    keys: [
+        {
+            "name": "symbol",
+            "weight": 3
+        },
+        {
+            "name": "name",
+            "weight": 2
+        },
+        {
+            "name": "keywords",
+            "weight": 1
+        },
+    ],
+});
+export const modifierFuse = new Fuse<Modifier>([], {
+    includeScore: true,
+    threshold: 0.3,
+    keys: [
+        {
+            "name": "name",
+            "weight": 2
+        },
+        {
+            "name": "keywords",
+            "weight": 1
+        },
+    ]
+});
+ELEMENT_DATA.then((data) => {
+    elementFuse.setCollection(data.elements);
+    modifierFuse.setCollection(data.modifiers);
+});
 
 export function isTheSeason() {
     const now = new Date();

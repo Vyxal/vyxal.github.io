@@ -11,36 +11,6 @@ interface RunRequest {
     flags: string[],
 }
 
-interface StartedMessage {
-    type: "started",
-    workerNumber: number,
-}
-
-interface StdoutMessage {
-    type: "stdout",
-    workerNumber: number,
-    text: string,
-}
-
-interface StderrMessage {
-    type: "stderr",
-    workerNumber: number,
-    text: string,
-}
-
-interface WorkerNoticeMessage {
-    type: "worker-notice",
-    workerNumber: number,
-    text: string,
-}
-
-interface DoneMessage {
-    type: "done",
-    workerNumber: number,
-}
-
-type WorkerMessage = StartedMessage | StdoutMessage | StderrMessage | DoneMessage;
-
 self.addEventListener("message", function (message: MessageEvent<RunRequest>) {
     const request = message.data;
     console.log(`Recieved run request (workerNumber ${request.workerNumber})`);

@@ -181,7 +181,7 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
                     return "controlKeyword";
                 }
                 if (stream.eat("(")) {
-                    if (stream.match(/(.|,|:[.: ]|;[,; ])/)) {
+                    if (stream.match(/(\.|,|:[.: ]|;[,; ])/)) {
                         state.structStack.push(Structure.ModGroup);
                         return "keyword.special";
                     }

@@ -3,6 +3,8 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { RunRequest, WorkerMessage } from "./util";
 
+const MAX_BUFFER_SIZE = 20000;
+
 enum TerminateReason {
     Terminated, TimedOut
 }
@@ -14,6 +16,7 @@ class VyRunner extends EventTarget {
     private fit: FitAddon | null;
     private worker: Worker | null;
     private workerCounter = 0;
+    private outputBuffer: string[] = [];
 
     attach(element: HTMLElement) {
         if (this.terminal != null) throw new Error("Already attached");
@@ -59,6 +62,8 @@ class VyRunner extends EventTarget {
                     break;
                 case "stdout":
                     this.terminal.write(data.text);
+                    this.outputBuffer.push(data.text);
+                    this.outputBuffer.length = Math.min(this.outputBuffer.length, MAX_BUFFER_SIZE);
                     break;
                 case "stderr":
                     this.terminal.write(`\x1b[31m${data.text}\x1b[0m`);
@@ -79,6 +84,7 @@ class VyRunner extends EventTarget {
         if (this.worker == null) {
             this.workerCounter += 1;
             this.terminal?.clear();
+            this.outputBuffer.length = 0;
             this.worker = new Worker(
                 /* webpackChunkName: "worker" */
                 new URL("./worker.ts", import.meta.url)
@@ -110,6 +116,10 @@ class VyRunner extends EventTarget {
             this.dispatchEvent(this.finished);
         }
     }
+
+    getOutput() {
+        return this.outputBuffer.join("");
+    }
 }
 
 type VyTerminalParams = { onStart: () => unknown, onFinish: () => unknown };
@@ -117,6 +127,7 @@ type VyTerminalParams = { onStart: () => unknown, onFinish: () => unknown };
 export interface VyTerminalRef {
     start(code: string, flags: string[], inputs: string[], timeout: number): void,
     stop(): void,
+    getOutput(): string,
 }
 
 const runner = new VyRunner();
@@ -136,6 +147,9 @@ const VyTerminal = forwardRef(function VyTerminal(props: VyTerminalParams, ref: 
             stop() {
                 if (!runner.running) throw new Error("Attempted to call stop() while not running");
                 runner.terminate(TerminateReason.Terminated);
+            },
+            getOutput() {
+                return runner.getOutput();
             }
         };
     });
@@ -151,6 +165,6 @@ const VyTerminal = forwardRef(function VyTerminal(props: VyTerminalParams, ref: 
         };
     }, []);
 
-    return <div ref={wrapperRef} className="border m-2"></div>;
+    return <div ref={wrapperRef} className="border border-top-0 mb-2 mx-2"></div>;
 });
 export default VyTerminal;

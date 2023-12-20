@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { flagsReducer, settingsFromFlags } from "./flagsReducer";
 import Header from "./header";
-import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button } from "react-bootstrap";
+import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tabs, Tab, Nav } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { isTheSeason, Theme, VyRunnerState } from "./util";
@@ -64,9 +64,6 @@ function decodeHash(hash: string): V2Permalink {
     } as V2Permalink);
 }
 
-const VyTerminal = lazy(() => import("./runner"));
-const Editor = lazy(() => import("./editor"));
-
 function loadTheme() {
     const theme = localStorage.getItem("theme");
     if (theme == null) {
@@ -80,6 +77,60 @@ function loadSnowing() {
     if (snowing == "always") return true;
     if (snowing == "yes" && isTheSeason()) return true;
     return false;
+}
+
+const VyTerminal = lazy(() => import("./runner"));
+const Editor = lazy(() => import("./editor"));
+
+type CopyButtonParams = {
+    className?: string,
+    title: string,
+    generate: () => string,
+};
+
+function CopyButton({ className, title, generate }: CopyButtonParams) {
+    const TITLES = {
+        copy: title,
+        copied: "Copied!",
+        failed: "Failed to copy"
+    };
+    const ICONS = {
+        copy: "bi-clipboard",
+        copied: "bi-clipboard-check",
+        failed: "bi-clipboard-x"
+    };
+    const VARIANTS = {
+        copy: "outline-primary",
+        copied: "success",
+        failed: "danger"
+    };
+    const [state, setState] = useState<"copy" | "copied" | "failed">("copy");
+
+    return (
+        <Button
+            variant={VARIANTS[state]}
+            className={className}
+            title={TITLES[state]}
+            onClick={() => {
+                if (state == "copy") {
+                    // @ts-expect-error Apparently "clipboard-write" isn't a permission TS knows
+                    navigator.permissions.query({ name: "clipboard-write" }).then((perm) => {
+                        if (perm.state != "granted") {
+                            console.error("Clipboard write permission not granted, is this a secure context?");
+                            setState("failed");
+                            return;
+                        }
+                        return navigator.clipboard.writeText(generate()).then(
+                            () => setState("copied"),
+                            () => setState("failed"),
+                        );
+                    }).finally(() => window.setTimeout(() => setState("copy"), 1500));
+                }
+            }}
+        >
+            <i className={`bi ${ICONS[state]}`}></i>
+        </Button>
+    );
 }
 
 type Input = {
@@ -183,7 +234,7 @@ function Body() {
                     switch (state) {
                         case "idle":
                             setState("starting");
-                            runnerRef.current!.start(
+                            runnerRef.current.start(
                                 header + code + footer,
                                 flags.flags,
                                 inputs.map((i) => i.value),
@@ -233,17 +284,37 @@ function Body() {
                     </Suspense>
                 </Col>
                 <Col lg="6">
-                    <Suspense
-                        fallback={
-                            <div className="d-flex justify-content-center py-4 border m-2 terminal-placeholder">
-                                <Spinner animation="border" className="" role="status" variant="light">
-                                    <span className="visually-hidden">Loading...</span>
-                                </Spinner>
-                            </div>
-                        }
+                    <Tab.Container
+                        defaultActiveKey="terminal"
                     >
-                        <VyTerminal ref={runnerRef} onStart={() => setState("running")} onFinish={() => setState("idle")} />
-                    </Suspense>
+                        <Nav variant="tabs" className="m-2 mb-0 align-items-end">
+                            <Nav.Item>
+                                <Nav.Link eventKey="terminal">Terminal</Nav.Link>
+                            </Nav.Item>
+                            {/* <Nav.Item>
+                                <Nav.Link eventKey="html">HTML</Nav.Link>
+                            </Nav.Item> */}
+                            <CopyButton className="ms-auto my-1" title="Copy output" generate={() => runnerRef.current?.getOutput() ?? ""} />
+                        </Nav>
+                        <Tab.Content>
+                            <Tab.Pane eventKey="terminal">
+                                <Suspense
+                                    fallback={
+                                        <div className="d-flex justify-content-center mb-2 mx-2 border border-top-0 terminal-placeholder">
+                                            <Spinner animation="border" className="" role="status" variant="light">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </Spinner>
+                                        </div>
+                                    }
+                                >
+                                    <VyTerminal ref={runnerRef} onStart={() => setState("running")} onFinish={() => setState("idle")} />
+                                </Suspense>
+                            </Tab.Pane>
+                            {/* <Tab.Pane eventKey="html">
+
+                            </Tab.Pane> */}
+                        </Tab.Content>
+                    </Tab.Container>
                 </Col>
             </Row>
         </Container>

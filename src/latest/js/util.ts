@@ -4,6 +4,7 @@ import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
 
 export type VyRunnerState = "idle" | "starting" | "running";
 
+// TODO: Load this from the data JSON
 export const CODEPAGE = new Set(Vyxal.getCodepage() + " " + "\n");
 
 export enum Theme {

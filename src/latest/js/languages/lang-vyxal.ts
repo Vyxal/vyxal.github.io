@@ -1,6 +1,6 @@
 import { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
 import { CommentTokens } from "@codemirror/commands";
-import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
+import { Language, LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
 import { Element, ELEMENT_DATA, elementFuse, Modifier, modifierFuse } from '../util';
@@ -94,6 +94,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         return null;
     }
     static elementTooltip = hoverTooltip((view, pos) => {
+        if (syntaxTree(view.state).cursorAt(pos).name != "Document") return null;
         const hoveredChar = view.state.doc.sliceString(pos, pos + 1);
         return (ELEMENT_DATA.then((data) => {
             if (data.elementMap.has(hoveredChar)) {

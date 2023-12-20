@@ -150,3 +150,136 @@ export function isTheSeason() {
     }
     return false;
 }
+
+type UtilWorkerResponse<T> = {
+    rqid: number,
+    data: T,
+};
+
+export class UtilWorker {
+    private worker: Promise<Worker>;
+    private rqid: number = 0;
+    constructor() {
+        this.worker = new Promise((resolve) => {
+            const worker = new Worker(
+                /* webpackChunkName: "sbcs-worker" */
+                new URL("./sbcs-worker", import.meta.url)
+            );
+            const readyListener = (event: MessageEvent<unknown>) => {
+                if (event.data != "ready") throw Error("Unexpected initial message");
+                resolve(worker);
+                worker.removeEventListener("message", readyListener);
+            };
+            worker.addEventListener("message", readyListener);
+        });
+    }
+
+    private send<T>(message: object): Promise<T> {
+        return new Promise((resolve) => {
+            this.worker.then((worker) => {
+                const rqid = this.rqid++;
+                const listener = (event: MessageEvent<UtilWorkerResponse<T>>) => {
+                    if (event.data.rqid == rqid) {
+                        resolve(event.data.data);
+                        worker.removeEventListener("message", listener);
+                    }
+                };
+                worker.addEventListener("message", listener);
+                worker.postMessage({...message, rqid: rqid});
+            });
+        });
+    }
+
+    async sbcsify(code: string) {
+        return (await this.send<string>({
+            type: "sbcsify",
+            code: code,
+        }));
+    }
+
+    async formatBytecount(code: string, literate: boolean) {
+        let bytecount: number;
+        let processedCode: string;
+        const modifiers: string[] = [];
+        if (literate) {
+            processedCode = await this.sbcsify(code);
+        } else {
+            processedCode = code;
+        }
+        if (literate) {
+            modifiers.push("literate");
+        }
+        if (![...processedCode].every((char) => CODEPAGE.has(char))) {
+            bytecount = processedCode.length;
+            modifiers.push("UTF-8");
+        } else {
+            bytecount = new Blob([processedCode]).size; // ick
+        }
+        return (
+            bytecount.toString()
+            + (modifiers.length ? ` (${modifiers.join(", ")})` : "")
+            + ` byte${bytecount == 1 ? "" : "s"}`
+        );
+    }
+
+}
+
+// Disabled until webpack/webpack#17870 is fixed
+// if ("serviceWorker" in navigator) {
+//     navigator.serviceWorker.register(new URL("./service.ts", import.meta.url), { type: "classic" });
+// } else {
+//     console.warn("No service worker support detected, skipping registration.");
+// }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type V1Permalink = {
+    flags: string,
+    header: string,
+    code: string,
+    footer: string,
+    inputs: string,
+};
+export type V2Permalink = {
+    format: 2,
+    flags: string[],
+    header: string,
+    code: string,
+    footer: string,
+    inputs: string[],
+};
+export function encodeHash(header: string, code: string, footer: string, flags: string[], inputs: string[]): string {
+    return btoa(encodeURIComponent(JSON.stringify({
+        format: 2,
+        header: header,
+        code: code,
+        footer: footer,
+        flags: flags,
+        inputs: inputs
+    })));
+}
+export function decodeHash(hash: string): V2Permalink {
+    const data = JSON.parse(decodeURIComponent(atob(hash)));
+    if (data.format == 2) {
+        return (data as V2Permalink);
+    }
+    return ({
+        format: 2,
+        flags: Array.from(data.flags as string),
+        header: data.header,
+        code: data.code,
+        footer: data.footer,
+        inputs: (data.inputs as string).split("\n")
+    } as V2Permalink);
+}
+export function loadTheme() {
+    const theme = localStorage.getItem("theme");
+    if (theme == null) {
+        return Theme.Dark;
+    }
+    return Theme[theme as keyof typeof Theme];
+}
+export function loadSnowing() {
+    const snowing = localStorage.getItem("snowing");
+    if (snowing == "always") return true;
+    if (snowing == "yes" && isTheSeason()) return true;
+    return false;
+}

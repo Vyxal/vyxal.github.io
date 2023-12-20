@@ -75,6 +75,7 @@ export type ElementData = {
     elements: Element[],
     elementMap: Map<string, Element>,
     modifiers: Modifier[],
+    modifierMap: Map<string, Modifier>,
     syntax: SyntaxFeature[],
     sugars: Map<string, string>,
 };
@@ -93,6 +94,7 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io
             elements: data.elements,
             elementMap: new Map(data.elements.map((element) => [element.symbol, element])),
             modifiers: data.modifiers,
+            modifierMap: new Map(data.modifiers.map((modifier) => [modifier.symbol, modifier])),
             syntax: data.syntax,
             sugars: new Map(Object.entries(data.sugars))
         };

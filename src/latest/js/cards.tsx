@@ -3,7 +3,7 @@ import { Card, ListGroup } from "react-bootstrap";
 
 type ElementCardParams = {
     item: Element,
-    shadow?: boolean | undefined,
+    shadow?: boolean,
 };
 
 export function ElementCard({ item, shadow = undefined }: ElementCardParams) {
@@ -24,10 +24,11 @@ export function ElementCard({ item, shadow = undefined }: ElementCardParams) {
 }
 type ModifierCardParams = {
     item: Modifier,
+    shadow?: boolean,
 };
 
-export function ModifierCard({ item }: ModifierCardParams) {
-    return <Card className="h-100">
+export function ModifierCard({ item, shadow = undefined }: ModifierCardParams) {
+    return <Card border="primary" className={`h-100 ${shadow ?? false ? "shadow" : ""}`}>
         <Card.Body>
             <Card.Title>{item.symbol}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">{item.name}</Card.Subtitle>

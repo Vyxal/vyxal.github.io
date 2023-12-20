@@ -3,11 +3,12 @@ import { CommentTokens } from "@codemirror/commands";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
-import { Element, ELEMENT_DATA, elementFuse } from '../util';
+import { Element, ELEMENT_DATA, elementFuse, Modifier, modifierFuse } from '../util';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { ElementCard } from '../cards';
+import { ElementCard, ModifierCard } from '../cards';
 import { EditorState, hoverTooltip, Tooltip } from '@uiw/react-codemirror';
 import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART } from './common';
+import { FuseResult } from "fuse.js";
 
 enum Mode {
     Normal,
@@ -39,29 +40,29 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         },
         autocomplete: this.autocomplete.bind(this)
     };
-    private elementAutocompletion(element: Element): Completion {
+    private elementAutocompletion(element: Element | Modifier): Completion {
         return {
             label: element.symbol,
             detail: element.name,
             info() {
                 const container = document.createElement("div");
-                container.innerHTML = renderToStaticMarkup(ElementCard({ item: element }));
+                container.innerHTML = renderToStaticMarkup("vectorises" in element ? ElementCard({ item: element }) : ModifierCard({ item: element }));
                 return container;
             },
-            type: "method"
+            type: "vectorises" in element ? "method" : "keyword"
         };
     }
     elementAutocomplete(context: CompletionContext): CompletionResult | null {
         const word = context.matchBefore(/[a-zA-Z-][a-zA-Z0-9_-]*/);
         if (word != null) {
-            const results = elementFuse.search(word.text);
+            const results: FuseResult<Element | Modifier>[] = elementFuse.search(word.text).concat(modifierFuse.search(word.text));
             if (!results.length) {
                 return null;
             }
             return {
                 from: word.from,
                 filter: false,
-                options: results.map((result) => ({ ...this.elementAutocompletion(result.item), boost: 99 * (1 - (result.score ?? 0)) })),
+                options: results.map((result) => ({ ...this.elementAutocompletion(result.item), boost: 10 * (1 - (result.score ?? 0)) })),
                 update: (current, from, to, context) => this.elementAutocomplete(context),
             };
         }
@@ -82,7 +83,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     from: sugar.from,
                     filter: false,
                     options: [
-                        { label: desugared, detail: "sugar trigraph", type: "keyword" }
+                        { label: desugared, detail: "sugar trigraph", type: "constant" }
                     ]
                 };
             }
@@ -102,6 +103,19 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     create() {
                         const container = document.createElement("div");
                         container.innerHTML = renderToStaticMarkup(ElementCard({ item: element, shadow: true }));
+                        return {
+                            dom: container,
+                        };
+                    },
+                } as Tooltip;
+            }
+            if (data.modifierMap.has(hoveredChar)) {
+                const modifier = data.modifierMap.get(hoveredChar)!;
+                return {
+                    pos: pos,
+                    create() {
+                        const container = document.createElement("div");
+                        container.innerHTML = renderToStaticMarkup(ModifierCard({ item: modifier, shadow: true }));
                         return {
                             dom: container,
                         };

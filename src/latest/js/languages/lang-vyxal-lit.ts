@@ -1,5 +1,6 @@
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 import { NUMBER, NUMBER_PART, VARIABLE_NAME } from "./common";
+import { UtilWorker, ELEMENT_DATA, Element } from "../util";
 
 const KEYWORD = /^[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>]*/;
 
@@ -79,6 +80,14 @@ type VyxalLitState = {
 };
 
 class VyxalLitLanguage implements StreamParser<VyxalLitState> {
+    elements: Element[] = [];
+    util: UtilWorker;
+    constructor(util: UtilWorker) {
+        this.util = util;
+        ELEMENT_DATA.then((data) => {
+            this.elements = data.elements;
+        });
+    }
     name: "vyxal-lit";
     startState(): VyxalLitState {
         return { structStack: [] };
@@ -251,8 +260,9 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     }
 }
 
-export default function () {
+export default function(util: UtilWorker) {
+    const instance = new VyxalLitLanguage(util);
     return new LanguageSupport(
-        StreamLanguage.define(new VyxalLitLanguage()),
+        StreamLanguage.define(instance),
     );
 }

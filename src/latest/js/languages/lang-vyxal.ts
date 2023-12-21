@@ -1,14 +1,16 @@
-import { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
-import { CommentTokens } from "@codemirror/commands";
+import type { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
+import type { CommentTokens } from "@codemirror/commands";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
 import { Element, ELEMENT_DATA, elementFuse, Modifier, modifierFuse, UtilWorker } from '../util';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard, ModifierCard } from '../cards';
-import { hoverTooltip, Tooltip } from '@uiw/react-codemirror';
 import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART } from './common';
 import { FuseResult } from "fuse.js";
+import type { SyntaxNode } from "@lezer/common";
+import { hoverTooltip, Tooltip } from "@codemirror/view";
+import { MapMode } from "@codemirror/state";
 
 enum Mode {
     Normal,
@@ -128,30 +130,57 @@ class VyxalLanguage implements StreamParser<VyxalState> {
             return null;
         }));
     });
-    stringTooltip = hoverTooltip((view, pos) => {
-        const node = syntaxTree(view.state).cursorAt(pos).node;
-        if (node.name != "string") return null;
+
+    private makeStringTooltip(view, node: SyntaxNode): Promise<HTMLElement | null> {
+        if (node.name != "string") return Promise.resolve(null);
         const content = view.state.doc.slice(node.from, node.to).toString();
         switch (content.at(-1)) {
             case "\"": {
-                return null;
+                return Promise.resolve(null);
             }
             case "„": {
                 return this.util.decompress(content).then((decompressed) => {
-                    return {
-                        pos: pos,
-                        create() {
-                            const container = document.createElement("div");
-                            container.innerHTML = `<b>Compressed string: </b> ${decompressed}`;
-                            return {
-                                dom: container,
-                            };
-                        }
-                    };
+                    const container = document.createElement("div");
+                    container.innerHTML = `<b>Compressed string: </b> ${decompressed}`;
+                    return container;
                 });
             }
+            default:
+                return Promise.resolve(null);
         }
-        return null;
+    }
+    stringTooltip = hoverTooltip((view, pos) => {
+        const node = syntaxTree(view.state).resolve(pos);
+        return this.makeStringTooltip(view, node).then((element) => {
+            if (element != null) {
+                const container = document.createElement("div");
+                container.appendChild(element);
+                return {
+                    pos: pos,
+                    create: () => {
+                        return {
+                            dom: container,
+                            update: (update) => {
+                                if (update.changes.touchesRange(node.from, node.to)) {
+                                    const newPos = update.changes.mapPos(pos, -1, MapMode.TrackDel);
+                                    if (newPos != null) {
+                                        this.makeStringTooltip(
+                                            view,
+                                            syntaxTree(view.state).resolve(newPos)
+                                        ).then((element) => {
+                                            if (element != null) {
+                                                container.replaceChildren(element);
+                                            }
+                                        });
+                                    }
+                                }
+                            },
+                        };
+                    }
+                };
+            }
+            return null;
+        });
     });
 
 
@@ -262,7 +291,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     }
 }
 
-export default function (util: UtilWorker) {
+export default function(util: UtilWorker) {
     const instance = new VyxalLanguage(util);
     return new LanguageSupport(
         StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]

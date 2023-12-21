@@ -50,6 +50,8 @@
         "@codemirror/autocomplete": "^6.11.1",
         "@codemirror/commands": "^6.3.2",
         "@codemirror/language": "^6.9.3",
+        "@codemirror/view": "^6.22.3",
+        "@lezer/common": "^1.1.2",
         "@popperjs/core": "^2.11.8",
         "@uiw/codemirror-theme-github": "^4.21.21",
         "@uiw/codemirror-theme-vscode": "^4.21.21",

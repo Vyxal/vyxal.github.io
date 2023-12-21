@@ -26,8 +26,9 @@ const EXTENSIONS = [
     autocompletion(),
     lineNumbers(),
 ];
-const VYXAL = langVyxal(new UtilWorker());
-const VYXAL_LIT = langVyxalLit();
+const util = new UtilWorker();
+const VYXAL = langVyxal(util);
+const VYXAL_LIT = langVyxalLit(util);
 
 const THEMES = {
     [Theme.Dark]: vscodeDark,

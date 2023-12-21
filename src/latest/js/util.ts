@@ -1,11 +1,8 @@
 // import VYCODEPAGE from "https://vyxal.github.io/Vyxal/codepage.js";
 import Fuse from "fuse.js";
-import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
 
 export type VyRunnerState = "idle" | "starting" | "running";
 
-// TODO: Load this from the data JSON
-export const CODEPAGE = new Set(Vyxal.getCodepage() + " " + "\n");
 
 export enum Theme {
     Dark, Light
@@ -78,6 +75,8 @@ export type ElementData = {
     modifierMap: Map<string, Modifier>,
     syntax: SyntaxFeature[],
     sugars: Map<string, string>,
+    codepage: Set<string>,
+    version: string,
 };
 
 type RawElementData = {
@@ -85,6 +84,8 @@ type RawElementData = {
     modifiers: Modifier[],
     syntax: SyntaxFeature[],
     sugars: object,
+    codepage: string,
+    version: string,
 };
 
 export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io/Vyxal/theseus.json")
@@ -96,7 +97,9 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io
             modifiers: data.modifiers,
             modifierMap: new Map(data.modifiers.map((modifier) => [modifier.symbol, modifier])),
             syntax: data.syntax,
-            sugars: new Map(Object.entries(data.sugars))
+            sugars: new Map(Object.entries(data.sugars)),
+            codepage: new Set([...data.codepage, " ", "\n"]),
+            version: data.version,
         };
     });
 
@@ -210,6 +213,7 @@ export class UtilWorker {
         let bytecount: number;
         let processedCode: string;
         const modifiers: string[] = [];
+        const codepage = (await ELEMENT_DATA).codepage;
         if (literate) {
             processedCode = await this.sbcsify(code);
         } else {
@@ -218,7 +222,7 @@ export class UtilWorker {
         if (literate) {
             modifiers.push("literate");
         }
-        if (![...processedCode].every((char) => CODEPAGE.has(char))) {
+        if (![...processedCode].every((char) => codepage.has(char))) {
             bytecount = processedCode.length;
             modifiers.push("UTF-8");
         } else {

@@ -1,6 +1,6 @@
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import { RunRequest, WorkerMessage } from "./util";
+import { ELEMENT_DATA, RunRequest, WorkerMessage } from "./util";
 
 const MAX_BUFFER_SIZE = 20000;
 
@@ -27,9 +27,7 @@ export class VyRunner extends EventTarget {
         this.terminal.open(element);
         this.fit.fit();
         window.addEventListener("resize", this.onResize.bind(this));
-        import("https://vyxal.github.io/Vyxal/vyxal.js").then(({ Vyxal }) => {
-            this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${Vyxal.getVersion()}`);
-        });
+        ELEMENT_DATA.then((d) => this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${d.version}`));
     }
 
     private onResize() {

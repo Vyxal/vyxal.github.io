@@ -1,15 +1,14 @@
-import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, } from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { RunRequest, WorkerMessage } from "./util";
 
 const MAX_BUFFER_SIZE = 20000;
 
-enum TerminateReason {
+export enum TerminateReason {
     Terminated, TimedOut
 }
 
-class VyRunner extends EventTarget {
+export class VyRunner extends EventTarget {
     started = new Event("started");
     finished = new Event("finished");
     private terminal: Terminal | null;
@@ -87,7 +86,7 @@ class VyRunner extends EventTarget {
             this.outputBuffer.length = 0;
             this.worker = new Worker(
                 /* webpackChunkName: "worker" */
-                new URL("./worker.ts", import.meta.url)
+                new URL("./workers/runner.ts", import.meta.url)
             );
             this.worker.addEventListener("message", this.onWorkerMessage.bind(this));
             this.worker.postMessage({
@@ -121,50 +120,3 @@ class VyRunner extends EventTarget {
         return this.outputBuffer.join("");
     }
 }
-
-type VyTerminalParams = { onStart: () => unknown, onFinish: () => unknown };
-
-export interface VyTerminalRef {
-    start(code: string, flags: string[], inputs: string[], timeout: number): void,
-    stop(): void,
-    getOutput(): string,
-}
-
-const runner = new VyRunner();
-const VyTerminal = forwardRef(function VyTerminal(props: VyTerminalParams, ref: ForwardedRef<VyTerminalRef>) {
-    const wrapperRef = useRef(null);
-
-    useImperativeHandle(ref, () => {
-        return {
-            start(code: string, flags: string[], inputs: string[], timeout: number) {
-                if (runner.running) throw new Error("Attempted to call start() while already running");
-                runner.start(code, flags, inputs);
-                const timeoutHandle = window.setTimeout(() => {
-                    runner.terminate(TerminateReason.TimedOut);
-                }, timeout);
-                runner.addEventListener("finished", () => window.clearTimeout(timeoutHandle), { once: true });
-            },
-            stop() {
-                if (!runner.running) throw new Error("Attempted to call stop() while not running");
-                runner.terminate(TerminateReason.Terminated);
-            },
-            getOutput() {
-                return runner.getOutput();
-            }
-        };
-    });
-
-    useEffect(() => {
-        runner.attach(wrapperRef.current!);
-        runner.addEventListener("started", props.onStart);
-        runner.addEventListener("finished", props.onFinish);
-        return () => {
-            runner.detach();
-            runner.removeEventListener("started", props.onStart);
-            runner.removeEventListener("finished", props.onFinish);
-        };
-    }, []);
-
-    return <div ref={wrapperRef} className="border border-top-0 mb-2 mx-2"></div>;
-});
-export default VyTerminal;

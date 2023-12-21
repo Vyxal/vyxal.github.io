@@ -5,7 +5,7 @@ import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tabs
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { Theme, UtilWorker, VyRunnerState } from "./util";
-import { VyTerminalRef } from "./runner";
+import { VyTerminalRef } from "./terminal";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
@@ -13,9 +13,17 @@ import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
 import { V2Permalink, decodeHash, loadTheme, loadSnowing, encodeHash } from "./util";
 
+// Disabled until webpack/webpack#17870 is fixed
+// if ("serviceWorker" in navigator) {
+//     navigator.serviceWorker.register(new URL("./service.ts", import.meta.url), { type: "classic" });
+// } else {
+//     console.warn("No service worker support detected, skipping registration.");
+// }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const utilWorker = new UtilWorker();
 
-const VyTerminal = lazy(() => import("./runner"));
+const VyTerminal = lazy(() => import("./terminal"));
 const Editor = lazy(() => import("./editor"));
 
 type CopyButtonParams = {

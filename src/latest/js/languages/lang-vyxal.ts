@@ -1,12 +1,12 @@
 import { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
 import { CommentTokens } from "@codemirror/commands";
-import { Language, LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
+import { LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
-import { Element, ELEMENT_DATA, elementFuse, Modifier, modifierFuse } from '../util';
+import { Element, ELEMENT_DATA, elementFuse, Modifier, modifierFuse, UtilWorker } from '../util';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard, ModifierCard } from '../cards';
-import { EditorState, hoverTooltip, Tooltip } from '@uiw/react-codemirror';
+import { hoverTooltip, Tooltip } from '@uiw/react-codemirror';
 import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART } from './common';
 import { FuseResult } from "fuse.js";
 
@@ -28,7 +28,9 @@ interface LanguageData {
 
 class VyxalLanguage implements StreamParser<VyxalState> {
     elements: Element[] = [];
-    constructor() {
+    util: UtilWorker;
+    constructor(util: UtilWorker) {
+        this.util = util;
         ELEMENT_DATA.then((data) => {
             this.elements = data.elements;
         });
@@ -93,7 +95,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         }
         return null;
     }
-    static elementTooltip = hoverTooltip((view, pos) => {
+    elementTooltip = hoverTooltip((view, pos) => {
         if (syntaxTree(view.state).cursorAt(pos).name != "Document") return null;
         const hoveredChar = view.state.doc.sliceString(pos, pos + 1);
         return (ELEMENT_DATA.then((data) => {
@@ -126,11 +128,28 @@ class VyxalLanguage implements StreamParser<VyxalState> {
             return null;
         }));
     });
-    static stringTooltip = hoverTooltip((view, pos) => {
-        // TODO: Investigate auto-decompression in tooltips
-        const {node} = view.domAtPos(pos);
-        if (node instanceof Text) {
-            const text = node.wholeText;
+    stringTooltip = hoverTooltip((view, pos) => {
+        const node = syntaxTree(view.state).cursorAt(pos).node;
+        if (node.name != "string") return null;
+        const content = view.state.doc.slice(node.from, node.to).toString();
+        switch (content.at(-1)) {
+            case "\"": {
+                return null;
+            }
+            case "„": {
+                return this.util.decompress(content).then((decompressed) => {
+                    return {
+                        pos: pos,
+                        create() {
+                            const container = document.createElement("div");
+                            container.innerHTML = `<b>Compressed string: </b> ${decompressed}`;
+                            return {
+                                dom: container,
+                            };
+                        }
+                    };
+                });
+            }
         }
         return null;
     });
@@ -243,8 +262,9 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     }
 }
 
-export default function () {
+export default function (util: UtilWorker) {
+    const instance = new VyxalLanguage(util);
     return new LanguageSupport(
-        StreamLanguage.define(new VyxalLanguage()), [VyxalLanguage.elementTooltip, VyxalLanguage.stringTooltip]
+        StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]
     );
 }

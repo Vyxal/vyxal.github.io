@@ -157,20 +157,22 @@ type UtilWorkerResponse<T> = {
 };
 
 export class UtilWorker {
-    private worker: Promise<Worker>;
+    private worker: Promise<SharedWorker>;
     private rqid: number = 0;
     constructor() {
         this.worker = new Promise((resolve) => {
-            const worker = new Worker(
-                /* webpackChunkName: "sbcs-worker" */
-                new URL("./sbcs-worker", import.meta.url)
+            const worker = new SharedWorker(
+                /* webpackChunkName: "util-worker" */
+                new URL("./workers/util", import.meta.url),
+                { name: "util-worker" }
             );
             const readyListener = (event: MessageEvent<unknown>) => {
                 if (event.data != "ready") throw Error("Unexpected initial message");
                 resolve(worker);
-                worker.removeEventListener("message", readyListener);
+                worker.port.removeEventListener("message", readyListener);
             };
-            worker.addEventListener("message", readyListener);
+            worker.port.start();
+            worker.port.addEventListener("message", readyListener);
         });
     }
 
@@ -181,11 +183,11 @@ export class UtilWorker {
                 const listener = (event: MessageEvent<UtilWorkerResponse<T>>) => {
                     if (event.data.rqid == rqid) {
                         resolve(event.data.data);
-                        worker.removeEventListener("message", listener);
+                        worker.port.removeEventListener("message", listener);
                     }
                 };
-                worker.addEventListener("message", listener);
-                worker.postMessage({...message, rqid: rqid});
+                worker.port.addEventListener("message", listener);
+                worker.port.postMessage({...message, rqid: rqid});
             });
         });
     }
@@ -194,6 +196,13 @@ export class UtilWorker {
         return (await this.send<string>({
             type: "sbcsify",
             code: code,
+        }));
+    }
+
+    async decompress(compressed: string) {
+        return (await this.send<string>({
+            type: "decompress",
+            text: compressed,
         }));
     }
 
@@ -224,12 +233,6 @@ export class UtilWorker {
 
 }
 
-// Disabled until webpack/webpack#17870 is fixed
-// if ("serviceWorker" in navigator) {
-//     navigator.serviceWorker.register(new URL("./service.ts", import.meta.url), { type: "classic" });
-// } else {
-//     console.warn("No service worker support detected, skipping registration.");
-// }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type V1Permalink = {
     flags: string,

@@ -7,7 +7,7 @@ import langVyxalLit from "./languages/lang-vyxal-lit";
 import { Accordion } from "react-bootstrap";
 import { autocompletion } from "@codemirror/autocomplete";
 import { lineNumbers } from "@codemirror/view";
-import { Theme } from "./util";
+import { Theme, UtilWorker } from "./util";
 import { githubLight } from "@uiw/codemirror-theme-github";
 
 const EXTENSIONS = [
@@ -26,7 +26,7 @@ const EXTENSIONS = [
     autocompletion(),
     lineNumbers(),
 ];
-const VYXAL = langVyxal();
+const VYXAL = langVyxal(new UtilWorker());
 const VYXAL_LIT = langVyxalLit();
 
 const THEMES = {

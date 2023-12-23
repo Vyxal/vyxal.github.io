@@ -2,7 +2,8 @@ import type { CompletionContext, CompletionResult } from "@codemirror/autocomple
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
-import { ELEMENT_DATA, UtilWorker } from '../util';
+import { ELEMENT_DATA } from "../util/element-data";
+import { UtilWorker } from "../util/util-worker";
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard, ModifierCard } from '../cards';
 import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART, elementAutocomplete, LanguageData } from './common';

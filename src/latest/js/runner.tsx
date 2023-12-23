@@ -1,6 +1,7 @@
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import { ELEMENT_DATA, RunRequest, WorkerMessage } from "./util";
+import { RunRequest, WorkerMessage } from "./util/worker-types";
+import { ELEMENT_DATA } from "./util/element-data";
 
 const MAX_BUFFER_SIZE = 20000;
 

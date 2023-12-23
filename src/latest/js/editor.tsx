@@ -7,7 +7,8 @@ import langVyxalLit from "./languages/lang-vyxal-lit";
 import { Accordion } from "react-bootstrap";
 import { autocompletion } from "@codemirror/autocomplete";
 import { lineNumbers } from "@codemirror/view";
-import { Theme, UtilWorker } from "./util";
+import { Theme } from "./util/misc";
+import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
 
 const EXTENSIONS = [

@@ -1,6 +1,7 @@
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 import { NUMBER, NUMBER_PART, VARIABLE_NAME, KEYWORD, elementAutocomplete, LanguageData } from "./common";
-import { UtilWorker, ELEMENT_DATA, Element } from "../util";
+import { ELEMENT_DATA, Element } from "../util/element-data";
+import { UtilWorker } from "../util/util-worker";
 import type { CompletionContext } from "@codemirror/autocomplete";
 
 // Data is accurate as of Dec 19 2023

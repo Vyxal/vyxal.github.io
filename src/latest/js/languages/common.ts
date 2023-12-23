@@ -3,7 +3,7 @@ import type { FuseResult } from "fuse.js";
 import type { CommentTokens } from "@codemirror/commands";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ElementCard, ModifierCard } from "../cards";
-import { elementFuse, modifierFuse, Element, Modifier, ELEMENT_DATA } from "../util";
+import { elementFuse, modifierFuse, Element, Modifier, ELEMENT_DATA } from "../util/element-data";
 
 export interface LanguageData {
     commentTokens?: CommentTokens,

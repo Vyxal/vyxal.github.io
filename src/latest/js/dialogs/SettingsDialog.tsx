@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, memo } from "react";
 import { Button, FormCheck, FormLabel, FormText, Modal, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
-import { Theme, isTheSeason } from "../util";
+import { Theme, isTheSeason } from "../util/misc";
 import FormRange from "react-bootstrap/esm/FormRange";
 
 type SettingsDialogParams = {

@@ -4,14 +4,17 @@ import Header from "./header";
 import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tabs, Tab, Nav } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
-import { Theme, UtilWorker, VyRunnerState } from "./util";
+import { Theme, VyRunnerState } from "./util/misc";
+import { UtilWorker } from "./util/util-worker";
 import { VyTerminalRef } from "./terminal";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
-import { V2Permalink, decodeHash, loadTheme, loadSnowing, encodeHash } from "./util";
+import { loadTheme, loadSnowing } from "./util/misc";
+import { V2Permalink } from "./util/permalink";
+import { decodeHash, encodeHash } from "./util/permalink";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {

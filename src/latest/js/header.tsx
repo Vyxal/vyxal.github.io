@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { Button, Container, InputGroup, Nav, Navbar, Spinner } from "react-bootstrap";
 
 import { InterpreterFlagSettings } from "./flagsReducer";
-import { VyRunnerState } from "./util";
+import { VyRunnerState } from "./util/misc";
 
 import logo from "../assets/logo-64.png";
 

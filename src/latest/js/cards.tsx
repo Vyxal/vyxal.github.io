@@ -1,4 +1,4 @@
-import { Element, Modifier } from "./util";
+import { Element, Modifier } from "./util/element-data";
 import { Card, ListGroup } from "react-bootstrap";
 
 type ElementCardParams = {

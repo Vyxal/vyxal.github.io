@@ -4,7 +4,7 @@ export interface RunRequest {
     workerNumber: number,
     code: string,
     inputs: string[],
-    flags: string[],
+    flags: string[]
 }
 
 export interface StartedMessage {

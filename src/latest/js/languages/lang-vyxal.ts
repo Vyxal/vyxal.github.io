@@ -1,13 +1,11 @@
-import type { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
-import type { CommentTokens } from "@codemirror/commands";
+import type { CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
-import { Element, ELEMENT_DATA, elementFuse, Modifier, modifierFuse, UtilWorker } from '../util';
+import { ELEMENT_DATA, UtilWorker } from '../util';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard, ModifierCard } from '../cards';
-import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART } from './common';
-import { FuseResult } from "fuse.js";
+import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART, elementAutocomplete, LanguageData } from './common';
 import type { SyntaxNode } from "@lezer/common";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { MapMode } from "@codemirror/state";
@@ -23,19 +21,10 @@ type VyxalState = {
     mode: Mode,
 };
 
-interface LanguageData {
-    commentTokens?: CommentTokens,
-    autocomplete?: CompletionSource,
-}
-
 class VyxalLanguage implements StreamParser<VyxalState> {
-    elements: Element[] = [];
     util: UtilWorker;
     constructor(util: UtilWorker) {
         this.util = util;
-        ELEMENT_DATA.then((data) => {
-            this.elements = data.elements;
-        });
     }
     name = "vyxal3";
     languageData: LanguageData = {
@@ -44,58 +33,24 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         },
         autocomplete: this.autocomplete.bind(this)
     };
-    private elementAutocompletion(element: Element | Modifier): Completion {
-        return {
-            label: element.symbol,
-            detail: element.name,
-            info() {
-                const container = document.createElement("div");
-                container.innerHTML = renderToStaticMarkup("vectorises" in element ? ElementCard({ item: element }) : ModifierCard({ item: element }));
-                return container;
-            },
-            type: "vectorises" in element ? "method" : "keyword"
-        };
-    }
-    elementAutocomplete(context: CompletionContext): CompletionResult | null {
-        const word = context.matchBefore(/[a-zA-Z-][a-zA-Z0-9_-]*/);
-        if (word != null) {
-            const results: FuseResult<Element | Modifier>[] = elementFuse.search(word.text).concat(modifierFuse.search(word.text));
-            if (!results.length) {
-                return null;
-            }
-            return {
-                from: word.from,
-                filter: false,
-                options: results.map((result) => ({ ...this.elementAutocompletion(result.item), boost: 10 * (1 - (result.score ?? 0)) })),
-                update: (current, from, to, context) => this.elementAutocomplete(context),
-            };
-        }
-        return {
-            from: context.pos,
-            to: context.pos,
-            filter: false,
-            options: this.elements.map(this.elementAutocompletion),
-            update: (current, from, to, context) => this.elementAutocomplete(context),
-        };
-    }
-    autocomplete(context: CompletionContext): CompletionResult | null {
+    autocomplete(context: CompletionContext): Promise<CompletionResult | null> {
         const sugar = context.matchBefore(/#[,.^](.)/);
         if (sugar != null) {
             const desugared = sugarTrigraphs[sugar.text];
             if (typeof desugared == "string") {
-                return {
+                return Promise.resolve({
                     from: sugar.from,
                     filter: false,
                     options: [
                         { label: desugared, detail: "sugar trigraph", type: "constant" }
                     ]
-                };
+                });
             }
         }
         if (context.explicit) {
-            return this.elementAutocomplete(context);
+            return elementAutocomplete(context, false);
         }
-        return null;
+        return Promise.resolve(null);
     }
     elementTooltip = hoverTooltip((view, pos) => {
         if (syntaxTree(view.state).cursorAt(pos).name != "Document") return null;

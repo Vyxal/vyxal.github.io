@@ -1,8 +1,7 @@
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
-import { NUMBER, NUMBER_PART, VARIABLE_NAME } from "./common";
+import { NUMBER, NUMBER_PART, VARIABLE_NAME, KEYWORD, elementAutocomplete, LanguageData } from "./common";
 import { UtilWorker, ELEMENT_DATA, Element } from "../util";
-
-const KEYWORD = /^[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>]*/;
+import type { CompletionContext } from "@codemirror/autocomplete";
 
 // Data is accurate as of Dec 19 2023
 const endKeywords = new Set([
@@ -88,7 +87,19 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
             this.elements = data.elements;
         });
     }
-    name: "vyxal-lit";
+    name: "vyxal3-lit";
+    languageData: LanguageData = {
+        commentTokens: {
+            line: "##"
+        },
+        autocomplete: this.autocomplete.bind(this)
+    };
+
+    autocomplete(context: CompletionContext) {
+        return elementAutocomplete(context, true);
+    }
+
+    // highlighting
     startState(): VyxalLitState {
         return { structStack: [] };
     }

@@ -22,6 +22,7 @@ export class VyRunner extends EventTarget {
         if (this.terminal != null) throw new Error("Already attached");
         this.terminal = new Terminal({
             scrollback: 1000,
+            convertEol: true,
         });
         this.fit = new FitAddon();
         this.terminal.loadAddon(this.fit);

@@ -1,16 +1,16 @@
 declare module 'https://vyxal.github.io/Vyxal/vyxal.js' {
     interface Element {
-        symbol: string;
-        name: string;
-        keywords: Array<string>;
-        vectorises: boolean;
-        overloads: Array<string>;
+        symbol: string,
+        name: string,
+        keywords: Array<string>,
+        vectorises: boolean,
+        overloads: Array<string>,
     }
     interface Modifier {
-        symbol: string;
-        name: string;
-        description: string;
-        keywords: Array<string>;
+        symbol: string,
+        name: string,
+        description: string,
+        keywords: Array<string>,
     }
     namespace Vyxal {
         function execute(

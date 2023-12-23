@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { flagsReducer, settingsFromFlags } from "./flagsReducer";
 import Header from "./header";
-import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tabs, Tab, Nav } from "react-bootstrap";
+import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tab, Nav } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { Theme, VyRunnerState } from "./util/misc";

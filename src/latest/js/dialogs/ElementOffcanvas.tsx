@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ELEMENT_DATA, Element, Modifier, elementFuse, modifierFuse } from "../util/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
-import Fuse from "fuse.js";
 import { ElementCard, ModifierCard } from "../cards";
 
 type CardSearchResultsParams<T> = {

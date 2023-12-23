@@ -2,45 +2,45 @@ import Fuse from "fuse.js";
 
 
 export type Element = {
-    name: string;
-    symbol: string;
-    keywords: string[];
-    overloads: string[];
-    vectorises: boolean;
+    name: string,
+    symbol: string,
+    keywords: string[],
+    overloads: string[],
+    vectorises: boolean,
 };
 
 export type Modifier = {
-    name: string;
-    symbol: string;
-    description: string;
-    keywords: string[];
-    overloads: string[];
+    name: string,
+    symbol: string,
+    description: string,
+    keywords: string[],
+    overloads: string[],
 };
 
 export type SyntaxFeature = {
-    name: string;
-    symbol: string;
-    description: string;
-    usage: string;
+    name: string,
+    symbol: string,
+    description: string,
+    usage: string,
 };
 
 export type ElementData = {
-    elements: Element[];
-    elementMap: Map<string, Element>;
-    modifiers: Modifier[];
-    modifierMap: Map<string, Modifier>;
-    syntax: SyntaxFeature[];
-    sugars: Map<string, string>;
-    codepage: Set<string>;
-    version: string;
+    elements: Element[],
+    elementMap: Map<string, Element>,
+    modifiers: Modifier[],
+    modifierMap: Map<string, Modifier>,
+    syntax: SyntaxFeature[],
+    sugars: Map<string, string>,
+    codepage: Set<string>,
+    version: string,
 };
 type RawElementData = {
-    elements: Element[];
-    modifiers: Modifier[];
-    syntax: SyntaxFeature[];
-    sugars: object;
-    codepage: string;
-    version: string;
+    elements: Element[],
+    modifiers: Modifier[],
+    syntax: SyntaxFeature[],
+    sugars: object,
+    codepage: string,
+    version: string,
 };
 
 export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io/Vyxal/theseus.json")

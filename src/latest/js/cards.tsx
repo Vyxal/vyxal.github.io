@@ -37,5 +37,10 @@ export function ModifierCard({ item, shadow = undefined }: ModifierCardParams) {
             </Card.Text>
             <Card.Text>{item.description}</Card.Text>
         </Card.Body>
+        <ListGroup variant="flush">
+            {item.overloads.map((overload, i) => {
+                return <ListGroup.Item className="font-monospace" key={i}>{overload}</ListGroup.Item>;
+            })}
+        </ListGroup>
     </Card>;
 }

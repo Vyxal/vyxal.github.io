@@ -59,6 +59,7 @@ export type Modifier = {
     symbol: string,
     description: string,
     keywords: string[],
+    overloads: string[],
 };
 
 export type SyntaxFeature = {

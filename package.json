@@ -67,7 +67,7 @@
         "immer": "^10.0.3",
         "magic-snowflakes": "^6.3.0",
         "react": "^18.2.0",
-        "react-bootstrap": "^2.9.1",
+        "react-bootstrap": "^2.9.2",
         "react-dom": "^18.2.0",
         "react-popper": "^2.3.0",
         "use-immer": "^0.9.0",

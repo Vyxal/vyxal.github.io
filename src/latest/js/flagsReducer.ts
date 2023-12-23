@@ -1,21 +1,12 @@
 export enum EndPrintMode {
     Default, TopJoinNewlines, TopJoinSpaces, TopSquish,
     Sum, DeepSum,
+    LogicalNot,
     MaximumTop, MinimumTop, LengthTop,
     StackLength, StackSum, StackJoinSpaces,
     Force, None
 }
 
-export interface InterpreterFlagSettings {
-    flags: string[],
-    presetStack: boolean,
-    startRangeAtZero: boolean,
-    offsetRangeByOne: boolean,
-    literate: boolean,
-    rangify: boolean,
-    fullTrace: boolean,
-    endPrintMode: EndPrintMode,
-}
 
 export interface ChangeFlagValue {
     type: "setting",
@@ -37,6 +28,7 @@ export const END_PRINT_MODES = new Map([
     ["j", EndPrintMode.TopJoinNewlines],
     ["s", EndPrintMode.Sum],
     ["d", EndPrintMode.DeepSum],
+    ["¬", EndPrintMode.LogicalNot],
     ["O", EndPrintMode.None],
     ["o", EndPrintMode.Force],
     ["!", EndPrintMode.StackLength],
@@ -52,6 +44,7 @@ export const END_PRINT_NAMES = new Map([
     ["j", "Join top of stack with newlines"],
     ["s", "Sum top of stack"],
     ["d", "Flatten and sum top of stack"],
+    ["¬", "Apply logical NOT to the top of the stack"],
     ["O", "Do nothing"],
     ["o", `"Force"`],
     ["!", "Length of stack"],
@@ -64,6 +57,19 @@ export const END_PRINT_NAMES = new Map([
 ]);
 export const END_PRINT_FLAGS = new Map(Array.from(END_PRINT_MODES, a => [a[1], a[0]]));
 
+export interface InterpreterFlagSettings {
+    flags: string[],
+    presetStack: boolean,
+    startRangeAtZero: boolean,
+    offsetRangeByOne: boolean,
+    literate: boolean,
+    rangify: boolean,
+    fullTrace: boolean,
+    limitPrint: boolean,
+    dontEvalInputs: boolean,
+    endPrintMode: EndPrintMode,
+}
+
 export const INITIAL_FLAGS: InterpreterFlagSettings = {
     flags: [],
     presetStack: false,
@@ -72,6 +78,8 @@ export const INITIAL_FLAGS: InterpreterFlagSettings = {
     literate: false,
     rangify: false,
     fullTrace: false,
+    limitPrint: false,
+    dontEvalInputs: false,
     endPrintMode: EndPrintMode.Default
 };
 
@@ -103,6 +111,12 @@ export function settingsFromFlags(flags: string[]) {
                 break;
             case "X":
                 settings.fullTrace = true;
+                break;
+            case "…":
+                settings.limitPrint = true;
+                break;
+            case "Ṡ":
+                settings.dontEvalInputs = true;
                 break;
             default:
                 settings.endPrintMode = END_PRINT_MODES.get(flag) ?? EndPrintMode.Default;

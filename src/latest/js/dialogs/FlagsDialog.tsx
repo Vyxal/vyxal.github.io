@@ -40,6 +40,12 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
             <BooleanSwitch parameter="fullTrace" flags={flags} setFlags={setFlags}>
                 Full traceback information
             </BooleanSwitch>
+            <BooleanSwitch parameter="limitPrint" flags={flags} setFlags={setFlags}>
+                Limit printing
+            </BooleanSwitch>
+            <BooleanSwitch parameter="dontEvalInputs" flags={flags} setFlags={setFlags}>
+                Don't evaluate inputs
+            </BooleanSwitch>
             <hr className="mt-1" />
             <div>
                 <label htmlFor="end-print-mode">End print mode:</label>

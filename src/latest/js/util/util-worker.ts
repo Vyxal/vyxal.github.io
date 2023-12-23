@@ -2,8 +2,8 @@ import { ELEMENT_DATA } from "./element-data";
 
 
 type UtilWorkerResponse<T> = {
-    rqid: number;
-    data: T;
+    rqid: number,
+    data: T,
 };
 
 export class UtilWorker {
@@ -13,7 +13,7 @@ export class UtilWorker {
         this.worker = new Promise((resolve) => {
             const worker = new SharedWorker(
                 /* webpackChunkName: "util-worker" */
-                new URL("./workers/util", import.meta.url),
+                new URL("../workers/util", import.meta.url),
                 { name: "util-worker" }
             );
             const readyListener = (event: MessageEvent<unknown>) => {

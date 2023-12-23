@@ -35,13 +35,13 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                             <i className="bi bi-flag-fill"></i>
                         </Button>
                     </InputGroup>
-                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowShareDialog(true)}>
+                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowShareDialog(true)} title="Share code">
                         <i className="bi bi-share"></i>
                     </Button>
                     <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowSettingsDialog(true)} title="Settings">
                         <i className="bi bi-gear"></i>
                     </Button>
-                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowElementOffcanvas(true)} title="Elements">
+                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowElementOffcanvas(true)} title="Elements and documentation">
                         <i className="bi bi-journal-code"></i>
                     </Button>
                 </Nav>

@@ -22,6 +22,7 @@
         "@babel/preset-env": "^7.23.5",
         "@babel/preset-react": "^7.23.3",
         "@babel/preset-typescript": "^7.23.3",
+        "@microsoft/eslint-formatter-sarif": "^3.0.0",
         "@stylistic/eslint-plugin": "^1.5.1",
         "@stylistic/eslint-plugin-ts": "^1.5.1",
         "@types/react": "^18.2.42",

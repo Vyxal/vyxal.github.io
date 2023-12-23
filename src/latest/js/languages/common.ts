@@ -15,7 +15,7 @@ export const VARIABLE_NAME = /^[a-zA-Z][a-zA-Z0-9_]*/;
 export const NUMBER = /^(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
 // TODO: Load this from theseus.json
 export const MODIFIER = /[ᵈᶨ¿ᶜϩᵖⁿᵗᵡᶪᶤᵞᶳ⸠ᵒ/эᵂ∦ᵏᴴᴳ∥ᵐᵃᵉЧᶻᵛᶠᵇᵘᴿ]/; // As of Dec 7 2023
-export const KEYWORD = /^[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>]*/;
+export const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>]*/;
 
 
 function elementCompletion(element: Element | Modifier, literate: boolean): Completion {

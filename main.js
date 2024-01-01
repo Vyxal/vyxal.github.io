@@ -122,6 +122,7 @@ function shareOptions(shareType) {
         case "post-template":
             if (flags.includes("l")) {
                 flagAppendage = flagAppendage.replace("l", "")
+                if (flagAppendage === "``") { flagAppendage = "";}
                 code = Vyxal.getSBCSified(code)
                 len = code.length
             }

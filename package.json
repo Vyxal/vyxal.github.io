@@ -21,7 +21,7 @@
         "@microsoft/eslint-formatter-sarif": "^3.0.0",
         "@stylistic/eslint-plugin": "^1.5.1",
         "@stylistic/eslint-plugin-ts": "^1.5.1",
-        "@types/react": "^18.2.45",
+        "@types/react": "^18.2.47",
         "@types/react-bootstrap": "^0.32.35",
         "@types/react-dom": "^18.2.18",
         "@typescript-eslint/eslint-plugin": "^6.17.0",

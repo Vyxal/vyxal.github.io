@@ -18,9 +18,9 @@ class MonkeyPatchPlugin {
             (compilation, { normalModuleFactory }) => {
                 normalModuleFactory.hooks.resolve
                     .tap("MonkeyPatchPlugin", (data) => {
-                        const match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*).txt/.exec(data.request)
-                        if (match && this.enabled) {
-                            data.request = path.join("/", this.basePath, match.groups[1])
+                        const match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*\.txt)/.exec(data.request)
+                        if (match != null && this.enabled) {
+                            data.request = path.join("/", this.basePath, match[1])
                         }
                     })
             }

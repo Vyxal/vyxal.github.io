@@ -41,7 +41,7 @@
     },
     "dependencies": {
         "@codemirror/autocomplete": "^6.11.1",
-        "@codemirror/commands": "^6.3.2",
+        "@codemirror/commands": "^6.3.3",
         "@codemirror/language": "^6.9.3",
         "@codemirror/view": "^6.23.0",
         "@lezer/common": "^1.1.2",

@@ -1,4 +1,10 @@
 declare module 'https://vyxal.github.io/Vyxal/vyxal.js' {
+    interface JSToken {
+        tokenType: string,
+        value: string,
+        startOffset: number,
+        endOffset: number,
+    }
     interface Element {
         symbol: string,
         name: string,
@@ -26,9 +32,11 @@ declare module 'https://vyxal.github.io/Vyxal/vyxal.js' {
         function decompress(compressed: string): string;
         function getSBCSified(code: string): string;
         function getCodepage(): string;
-        function getElements(): Array<Element>;
-        function getModifiers(): Array<Modifier>;
+        function getElements(): Element[];
+        function getModifiers(): Modifier[];
         function getVersion(): string;
+        function lexSBCS(code: string): JSToken[];
+        function lexLiterate(code: string): JSToken[];
     }
 }
 

@@ -1,10 +1,24 @@
 import { Dispatch, SetStateAction } from "react";
-import { Button, Container, InputGroup, Nav, Navbar, Spinner } from "react-bootstrap";
+import { Button, ButtonGroup, Container, Dropdown, InputGroup, Nav, Navbar, Spinner } from "react-bootstrap";
 
 import { InterpreterFlagSettings } from "./flagsReducer";
 import { VyRunnerState } from "./util/misc";
 
 import logo from "../assets/logo-64.png";
+
+type ShowDialogButtonArgs = {
+    shower: (boolean) => unknown,
+    title: string,
+    icon: string,
+};
+
+function ShowDialogButton({ shower, title, icon }: ShowDialogButtonArgs) {
+    return (
+        <Button variant="outline-secondary me-md-3 me-2" onClick={() => shower(true)} title={title}>
+            <i className={`bi ${icon}`}></i>
+        </Button>
+    );
+}
 
 type HeaderArgs = {
     state: VyRunnerState,
@@ -19,12 +33,12 @@ type HeaderArgs = {
 export default function Header({ state, onRunClicked, flags, setShowFlagsDialog, setShowSettingsDialog, setShowShareDialog, setShowElementOffcanvas }: HeaderArgs) {
     return (
         <Navbar className="bg-body-tertiary flex-wrap">
-            <Container>
+            <Container className="justify-content-start">
                 <Navbar.Brand>
-                    <img src={logo} width="32" height="32" className="rounded me-2" alt="Vyxal woogle" /> Vyxal 3
+                    <img src={logo} width="32" height="32" className="rounded me-2" alt="Vyxal woogle" />
+                    <span className="d-none d-sm-inline">Vyxal 3</span>
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Nav className="me-auto me-md-0">
+                <Nav className="me-auto me-md-0 d-none d-sm-flex">
                     <InputGroup className="me-md-3 me-2">
                         {
                             flags.flags.length > 0 ? (
@@ -35,16 +49,36 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                             <i className="bi bi-flag-fill"></i>
                         </Button>
                     </InputGroup>
-                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowShareDialog(true)} title="Share code">
-                        <i className="bi bi-share"></i>
-                    </Button>
-                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowSettingsDialog(true)} title="Settings">
-                        <i className="bi bi-gear"></i>
-                    </Button>
-                    <Button variant="outline-secondary me-md-3 me-2" onClick={() => setShowElementOffcanvas(true)} title="Elements and documentation">
-                        <i className="bi bi-journal-code"></i>
-                    </Button>
+                    <ShowDialogButton shower={setShowShareDialog} icon="bi-share" title="Share code" />
+                    <ShowDialogButton shower={setShowSettingsDialog} icon="bi-gear" title="Settings" />
+                    <ShowDialogButton shower={setShowElementOffcanvas} icon="bi-journal-code" title="Elements and documentation" />
                 </Nav>
+                <div className="d-sm-none me-auto">
+                    <InputGroup>
+                        {
+                            flags.flags.length > 0 ? (
+                                <span className="form-control font-monospace">-{flags.flags.join("")}</span>
+                            ) : null
+                        }
+                        <Dropdown as={ButtonGroup}>
+                            <Button variant="outline-secondary" onClick={() => setShowFlagsDialog(true)} title="Flags">
+                                <i className="bi bi-flag-fill"></i>
+                            </Button>
+                            <Dropdown.Toggle split id="toggle-mober-menu" variant="outline-secondary" />
+                            <Dropdown.Menu>
+                                <Dropdown.Item as="button" onClick={() => setShowShareDialog(true)}>
+                                    Share code
+                                </Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={() => setShowSettingsDialog(true)}>
+                                    Settings
+                                </Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={() => setShowElementOffcanvas(true)}>
+                                    Elements and documentation
+                                </Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </InputGroup>
+                </div>
                 <Nav className="me-md-auto me-0 justify-self-end">
                     <Button
                         variant={{ "idle": "primary", "starting": "warning", "running": "danger" }[state]}

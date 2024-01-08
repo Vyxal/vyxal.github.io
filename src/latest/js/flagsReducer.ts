@@ -119,7 +119,9 @@ export function settingsFromFlags(flags: string[]) {
                 settings.dontEvalInputs = true;
                 break;
             default:
-                settings.endPrintMode = END_PRINT_MODES.get(flag) ?? EndPrintMode.Default;
+                if (END_PRINT_MODES.has(flag)) {
+                    settings.endPrintMode = END_PRINT_MODES.get(flag) ?? EndPrintMode.Default;
+                }
         }
     }
     return settings;
@@ -130,29 +132,31 @@ export function flagsReducer(settings: InterpreterFlagSettings, action: FlagsAct
         case "setting":
             settings.flags = [];
             if (action.setting == "endPrintMode" && action.value != DEFAULT_SENTINEL) {
-                settings[action.setting] = END_PRINT_MODES.get(action.value as string) ?? EndPrintMode.Default;
-                settings.flags.push(action.value as string);
+                settings.endPrintMode = END_PRINT_MODES.get(action.value as string) ?? EndPrintMode.Default;
             } else {
                 settings[action.setting] = action.value;
-                if (settings.presetStack) {
-                    settings.flags.push("H");
-                }
-                if (settings.startRangeAtZero && settings.offsetRangeByOne) {
-                    settings.flags.push("Ṁ");
-                } else if (settings.startRangeAtZero) {
-                    settings.flags.push("M");
-                } else if (settings.offsetRangeByOne) {
-                    settings.flags.push("m");
-                }
-                if (settings.literate) {
-                    settings.flags.push("l");
-                }
-                if (settings.rangify) {
-                    settings.flags.push("R");
-                }
-                if (settings.fullTrace) {
-                    settings.flags.push("X");
-                }
+            }
+            if (settings.presetStack) {
+                settings.flags.push("H");
+            }
+            if (settings.startRangeAtZero && settings.offsetRangeByOne) {
+                settings.flags.push("Ṁ");
+            } else if (settings.startRangeAtZero) {
+                settings.flags.push("M");
+            } else if (settings.offsetRangeByOne) {
+                settings.flags.push("m");
+            }
+            if (settings.literate) {
+                settings.flags.push("l");
+            }
+            if (settings.rangify) {
+                settings.flags.push("R");
+            }
+            if (settings.fullTrace) {
+                settings.flags.push("X");
+            }
+            if (settings.endPrintMode != EndPrintMode.Default) {
+                settings.flags.push(END_PRINT_FLAGS.get(settings.endPrintMode)!);
             }
             break;
         case "flag":

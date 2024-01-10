@@ -27,7 +27,7 @@ import { decodeHash, encodeHash } from "./util/permalink";
 const utilWorker = new UtilWorker();
 
 const VyTerminal = lazy(() => import("./terminal"));
-const Editor = lazy(() => import("./editor"));
+const Editor = lazy(() => import("./editor").then((i) => i.default()).then((component) => ({ default: component })));
 
 type CopyButtonParams = {
     className?: string,

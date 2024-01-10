@@ -2,11 +2,11 @@ import type { CompletionContext, CompletionResult } from "@codemirror/autocomple
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
 
 import { sugarTrigraphs } from "../sugar-trigraphs";
-import { ELEMENT_DATA } from "../util/element-data";
+import type { ElementData } from "../util/element-data";
 import { UtilWorker } from "../util/util-worker";
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ElementCard, ModifierCard } from '../cards';
-import { VARIABLE_NAME, MODIFIER, NUMBER, NUMBER_PART, elementAutocomplete, LanguageData } from './common';
+import { VARIABLE_NAME, NUMBER, NUMBER_PART, elementAutocomplete, LanguageData } from './common';
 import type { SyntaxNode } from "@lezer/common";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { MapMode } from "@codemirror/state";
@@ -24,8 +24,10 @@ type VyxalState = {
 
 class VyxalLanguage implements StreamParser<VyxalState> {
     util: UtilWorker;
-    constructor(util: UtilWorker) {
+    elementData: ElementData;
+    constructor(util: UtilWorker, elementData: ElementData) {
         this.util = util;
+        this.elementData = elementData;
     }
     name = "vyxal3";
     languageData: LanguageData = {
@@ -56,35 +58,33 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     elementTooltip = hoverTooltip((view, pos) => {
         if (syntaxTree(view.state).cursorAt(pos).name != "Document") return null;
         const hoveredChar = view.state.doc.sliceString(pos, pos + 1);
-        return (ELEMENT_DATA.then((data) => {
-            if (data.elementMap.has(hoveredChar)) {
-                const element = data.elementMap.get(hoveredChar)!;
-                return {
-                    pos: pos,
-                    create() {
-                        const container = document.createElement("div");
-                        container.innerHTML = renderToStaticMarkup(ElementCard({ item: element, shadow: true }));
-                        return {
-                            dom: container,
-                        };
-                    },
-                } as Tooltip;
-            }
-            if (data.modifierMap.has(hoveredChar)) {
-                const modifier = data.modifierMap.get(hoveredChar)!;
-                return {
-                    pos: pos,
-                    create() {
-                        const container = document.createElement("div");
-                        container.innerHTML = renderToStaticMarkup(ModifierCard({ item: modifier, shadow: true }));
-                        return {
-                            dom: container,
-                        };
-                    },
-                } as Tooltip;
-            }
-            return null;
-        }));
+        if (this.elementData.elementMap.has(hoveredChar)) {
+            const element = this.elementData.elementMap.get(hoveredChar)!;
+            return {
+                pos: pos,
+                create() {
+                    const container = document.createElement("div");
+                    container.innerHTML = renderToStaticMarkup(ElementCard({ item: element, shadow: true }));
+                    return {
+                        dom: container,
+                    };
+                },
+            } as Tooltip;
+        }
+        if (this.elementData.modifierMap.has(hoveredChar)) {
+            const modifier = this.elementData.modifierMap.get(hoveredChar)!;
+            return {
+                pos: pos,
+                create() {
+                    const container = document.createElement("div");
+                    container.innerHTML = renderToStaticMarkup(ModifierCard({ item: modifier, shadow: true }));
+                    return {
+                        dom: container,
+                    };
+                },
+            } as Tooltip;
+        }
+        return null;
     });
 
     private makeStringTooltip(view, node: SyntaxNode): Promise<HTMLElement | null> {
@@ -139,12 +139,11 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         });
     });
 
-
     // Highlighting stuff
     startState(): VyxalState {
         return { mode: Mode.Normal };
     }
-    token(stream: StringStream, state: VyxalState): string | null {
+    token = function(stream: StringStream, state: VyxalState): string | null {
         switch (state.mode) {
             case Mode.VariableOp:
                 stream.eatWhile(VARIABLE_NAME);
@@ -217,7 +216,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     stream.next();
                     return "propertyName.function.special";
                 }
-                if (stream.eat(MODIFIER)) {
+                if (stream.eat((char) => this.elementData.modifierMap.has(char))) {
                     return "modifier";
                 }
                 if (stream.eat("λ")) {
@@ -244,11 +243,11 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         }
         stream.next();
         return "content";
-    }
+    }.bind(this); // why is this a thing that I have to do
 }
 
-export default function(util: UtilWorker) {
-    const instance = new VyxalLanguage(util);
+export default function(util: UtilWorker, data: ElementData) {
+    const instance = new VyxalLanguage(util, data);
     return new LanguageSupport(
         StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]
     );

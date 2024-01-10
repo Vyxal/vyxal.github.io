@@ -113,7 +113,7 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                                 }, []).map((row) => (
                                     <tr>
                                         {
-                                            row.map((glyph) => <td>{glyph}</td>)
+                                            row.map((glyph) => <td key={glyph}>{glyph}</td>)
                                         }
                                     </tr>
                                 ))

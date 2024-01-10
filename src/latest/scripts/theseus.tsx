@@ -213,16 +213,16 @@ function Body() {
                             <Editor header="Footer" code={footer} height="50px" eventKey="2" setCode={setFooter} theme={theme} literate={flags.literate} />
                             <Accordion.Item eventKey="3">
                                 <Accordion.Header>Inputs</Accordion.Header>
-                                <Accordion.Body className="d-flex flex-column">
+                                <Accordion.Body className="d-flex flex-wrap">
                                     {inputs.map((input) => {
-                                        return <InputGroup className="mb-2" key={input.id}>
+                                        return <InputGroup className="mb-2 program-input p-1" key={input.id}>
                                             <Form.Control placeholder="Input" value={input.value} onChange={(event) => setInputs(inputs.map((item) => item.id == input.id ? { id: item.id, value: event.currentTarget.value } : item))} />
                                             <Button variant="outline-danger" title="Delete input" onClick={() => setInputs(inputs.filter((item) => item.id != input.id))}>
                                                 <i className="bi bi-trash2"></i>
                                             </Button>
                                         </InputGroup>;
                                     })}
-                                    <Button variant="outline-primary" title="Add input" onClick={() => setInputs([...inputs, { id: inputId++, value: "" }])} className="align-self-end">
+                                    <Button variant="outline-primary" title="Add input" onClick={() => setInputs([...inputs, { id: inputId++, value: "" }])} className="m-1 align-self-start">
                                         <i className="bi bi-plus-circle"></i>
                                     </Button>
                                 </Accordion.Body>

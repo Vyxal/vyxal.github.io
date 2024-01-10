@@ -24,6 +24,12 @@ code.code-pill {
     word-break: break-word;
 }
 
+@include media-breakpoint-up(md) {
+    .program-input {
+        width: 33.33% !important;
+    }
+}
+
 // Layout & components
 @import "~bootstrap/scss/root";
 @import "~bootstrap/scss/reboot";

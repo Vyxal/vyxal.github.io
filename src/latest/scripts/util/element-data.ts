@@ -32,6 +32,7 @@ export type ElementData = {
     syntax: SyntaxFeature[],
     sugars: Map<string, string>,
     codepage: Set<string>,
+    codepageRaw: string[],
     version: string,
 };
 type RawElementData = {
@@ -54,6 +55,7 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io
             syntax: data.syntax,
             sugars: new Map(Object.entries(data.sugars)),
             codepage: new Set([...data.codepage, " ", "\n"]),
+            codepageRaw: [...data.codepage],
             version: data.version,
         };
     });

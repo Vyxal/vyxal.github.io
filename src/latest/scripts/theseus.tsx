@@ -247,7 +247,7 @@ function Body() {
                             <Tab.Pane eventKey="terminal">
                                 <Suspense
                                     fallback={
-                                        <div className="d-flex justify-content-center mb-2 mx-2 border border-top-0 terminal-placeholder">
+                                        <div className="d-flex justify-content-center mb-2 mx-2 pt-2 border border-top-0 terminal-placeholder">
                                             <Spinner animation="border" className="" role="status" variant="light">
                                                 <span className="visually-hidden">Loading...</span>
                                             </Spinner>

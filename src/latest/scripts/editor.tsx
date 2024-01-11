@@ -48,7 +48,7 @@ type EditorParams = {
 export default function Editor() {
     return ELEMENT_DATA.then((data) => {
         const VYXAL = langVyxal(util, data);
-        const VYXAL_LIT = langVyxalLit(util);
+        const VYXAL_LIT = langVyxalLit(util, data);
         return function({ header, code, height, eventKey, setCode, theme, literate }: EditorParams) {
             const onChange = useCallback((code: string) => {
                 if (code == "lyxal") {

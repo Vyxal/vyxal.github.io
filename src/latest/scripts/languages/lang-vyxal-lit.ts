@@ -1,6 +1,6 @@
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
 import { NUMBER, NUMBER_PART, VARIABLE_NAME, KEYWORD, elementAutocomplete, LanguageData } from "./common";
-import { ELEMENT_DATA, Element } from "../util/element-data";
+import type { Element, ElementData } from "../util/element-data";
 import { UtilWorker } from "../util/util-worker";
 import type { CompletionContext } from "@codemirror/autocomplete";
 
@@ -82,11 +82,12 @@ type VyxalLitState = {
 class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     elements: Element[] = [];
     util: UtilWorker;
-    constructor(util: UtilWorker) {
+    elementData: ElementData;
+    modifierKeywords: Set<string>;
+    constructor(util: UtilWorker, elementData: ElementData) {
         this.util = util;
-        ELEMENT_DATA.then((data) => {
-            this.elements = data.elements;
-        });
+        this.elementData = elementData;
+        this.modifierKeywords = new Set(this.elementData.modifiers.flatMap((m) => m.keywords));
     }
     name: "vyxal3-lit";
     languageData: LanguageData = {
@@ -104,7 +105,7 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     startState(): VyxalLitState {
         return { structStack: [] };
     }
-    token(stream: StringStream, state: VyxalLitState): string | null {
+    token = function(stream: StringStream, state: VyxalLitState): string | null {
         const currentStruct = state.structStack.at(-1);
         switch (currentStruct) {
             case Structure.Group:
@@ -142,6 +143,9 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
                     }
                     if (lambdaOpeners.has(kw)) {
                         return "definitionKeyword";
+                    }
+                    if (this.modifierKeywords.has(kw)) {
+                        return "modifier";
                     }
                     return "content";
                 }
@@ -269,11 +273,11 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
         }
         stream.next();
         return "content";
-    }
+    }.bind(this);
 }
 
-export default function(util: UtilWorker) {
-    const instance = new VyxalLitLanguage(util);
+export default function(util: UtilWorker, elementData: ElementData) {
+    const instance = new VyxalLitLanguage(util, elementData);
     return new LanguageSupport(
         StreamLanguage.define(instance),
     );

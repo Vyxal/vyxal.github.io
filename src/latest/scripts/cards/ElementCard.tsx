@@ -2,8 +2,8 @@ import { Element } from "../util/element-data";
 import { Card, ListGroup } from "react-bootstrap";
 
 type ElementCardParams = {
-    item: Element;
-    shadow?: boolean;
+    item: Element,
+    shadow?: boolean,
 };
 
 export function ElementCard({ item, shadow = undefined }: ElementCardParams) {

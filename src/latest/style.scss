@@ -24,6 +24,10 @@ code.code-pill {
     word-break: break-word;
 }
 
+.btn.btn-primary {
+    color: white !important;
+}
+
 @include media-breakpoint-up(md) {
     .program-input {
         width: 33.33% !important;

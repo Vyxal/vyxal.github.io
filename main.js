@@ -105,7 +105,7 @@ function shareOptions(shareType) {
     const url = generateURL()
     const flags = document.getElementById("flag").value
     let flagAppendage = ""
-    const flagsThatMatter = flags.replace(/[5bBT<]/g, "");
+    const flagsThatMatter = flags.replace(/[5bBT<l]/g, "");
     if (flagsThatMatter) {
         flagAppendage = " `" + flagsThatMatter + "`"
     }

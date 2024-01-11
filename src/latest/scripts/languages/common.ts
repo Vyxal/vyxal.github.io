@@ -14,6 +14,7 @@ export const NUMBER_PART = /^0|[1-9][0-9]*/;
 export const VARIABLE_NAME = /^[a-zA-Z][a-zA-Z0-9_]*/;
 export const NUMBER = /^(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
 export const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
+const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
 
 
 function elementCompletion(element: Element | Modifier, literate: boolean): Completion {
@@ -30,8 +31,9 @@ function elementCompletion(element: Element | Modifier, literate: boolean): Comp
 }
 
 function syncElementAutocomplete(context: CompletionContext, literate: boolean): CompletionResult | null {
-    const word = context.matchBefore(KEYWORD);
+    const word = context.matchBefore(PREFIXED_KEYWORD);
     if (word != null) {
+        word.text = word.text.trimStart();
         const results: FuseResult<Element | Modifier>[] = elementFuse.search(word.text).concat(modifierFuse.search(word.text));
         if (!results.length) {
             return null;
@@ -48,15 +50,19 @@ function syncElementAutocomplete(context: CompletionContext, literate: boolean):
 
 
 export function elementAutocomplete(context: CompletionContext, literate: boolean): Promise<CompletionResult | null> {
+    console.log(context);
     const sync = syncElementAutocomplete(context, literate);
     if (sync != null) return Promise.resolve(sync);
-    return ELEMENT_DATA.then((data) => {
-        return {
-            from: context.pos,
-            to: context.pos,
-            filter: false,
-            options: data.elements.map((e) => elementCompletion(e, literate)),
-            update: (current, from, to, context) => syncElementAutocomplete(context, literate)
-        };
-    });   
+    if (context.explicit) {
+        return ELEMENT_DATA.then((data) => {
+            return {
+                from: context.pos,
+                to: context.pos,
+                filter: false,
+                options: data.elements.map((e) => elementCompletion(e, literate)),
+                update: (current, from, to, context) => syncElementAutocomplete(context, literate)
+            };
+        });
+    }
+    return Promise.resolve(null);
 }

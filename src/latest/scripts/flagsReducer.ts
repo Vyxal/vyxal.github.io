@@ -68,6 +68,7 @@ export interface InterpreterFlagSettings {
     limitPrint: boolean,
     dontEvalInputs: boolean,
     endPrintMode: EndPrintMode,
+    defaultArity: 1 | 2 | 3,
 }
 
 export const INITIAL_FLAGS: InterpreterFlagSettings = {
@@ -80,7 +81,8 @@ export const INITIAL_FLAGS: InterpreterFlagSettings = {
     fullTrace: false,
     limitPrint: false,
     dontEvalInputs: false,
-    endPrintMode: EndPrintMode.Default
+    endPrintMode: EndPrintMode.Default,
+    defaultArity: 1,
 };
 
 export function settingsFromFlags(flags: string[]) {
@@ -118,6 +120,12 @@ export function settingsFromFlags(flags: string[]) {
             case "Ṡ":
                 settings.dontEvalInputs = true;
                 break;
+            case "2":
+                settings.defaultArity = 2;
+                break;
+            case "3":
+                settings.defaultArity = 3;
+                break;
             default:
                 if (END_PRINT_MODES.has(flag)) {
                     settings.endPrintMode = END_PRINT_MODES.get(flag) ?? EndPrintMode.Default;
@@ -154,6 +162,9 @@ export function flagsReducer(settings: InterpreterFlagSettings, action: FlagsAct
             }
             if (settings.fullTrace) {
                 settings.flags.push("X");
+            }
+            if (settings.defaultArity != 1) {
+                settings.flags.push(settings.defaultArity.toString());
             }
             if (settings.endPrintMode != EndPrintMode.Default) {
                 settings.flags.push(END_PRINT_FLAGS.get(settings.endPrintMode)!);

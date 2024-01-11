@@ -46,7 +46,19 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
             <BooleanSwitch parameter="dontEvalInputs" flags={flags} setFlags={setFlags}>
                 Don't evaluate inputs
             </BooleanSwitch>
-            <hr className="mt-1" />
+            <div>
+                <label htmlFor="default-arity">Default arity:</label>
+                <FormSelect
+                    name="default-arity"
+                    className="d-inline ms-2 w-auto"
+                    value={flags.defaultArity}
+                    onChange={(event) => setFlags({ type: "setting", setting: "defaultArity", value: Number.parseInt(event.currentTarget.value) })}
+                >
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </FormSelect>
+            </div>
             <div>
                 <label htmlFor="end-print-mode">End print mode:</label>
                 <FormSelect

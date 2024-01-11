@@ -50,10 +50,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 });
             }
         }
-        if (context.explicit) {
-            return elementAutocomplete(context, false);
-        }
-        return Promise.resolve(null);
+        return elementAutocomplete(context, false);
     }
     elementTooltip = hoverTooltip((view, pos) => {
         if (syntaxTree(view.state).cursorAt(pos).name != "Document") return null;

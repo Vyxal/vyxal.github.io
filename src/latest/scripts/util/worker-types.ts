@@ -7,6 +7,11 @@ export interface RunRequest {
     flags: string[],
 }
 
+export interface ReadyMessage {
+    type: "ready",
+    workerNumber: number,
+}
+
 export interface StartedMessage {
     type: "started",
     workerNumber: number,
@@ -35,4 +40,4 @@ export interface DoneMessage {
     workerNumber: number,
 }
 
-export type WorkerMessage = StartedMessage | StdoutMessage | StderrMessage | WorkerNoticeMessage | DoneMessage;
+export type WorkerMessage = ReadyMessage | StartedMessage | StdoutMessage | StderrMessage | WorkerNoticeMessage | DoneMessage;

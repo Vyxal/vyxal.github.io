@@ -16,16 +16,15 @@ const VyTerminal = forwardRef(function VyTerminal(props: VyTerminalParams, ref: 
     useImperativeHandle(ref, () => {
         return {
             start(code: string, flags: string[], inputs: string[], timeout: number) {
-                if (runner.running) throw new Error("Attempted to call start() while already running");
-                runner.start(code, flags, inputs);
-                const timeoutHandle = window.setTimeout(() => {
-                    runner.terminate(TerminateReason.TimedOut);
-                }, timeout);
-                runner.addEventListener("finished", () => window.clearTimeout(timeoutHandle), { once: true });
+                return runner.start(code, flags, inputs).then(() => {
+                    const timeoutHandle = window.setTimeout(() => {
+                        runner.terminate(TerminateReason.TimedOut);
+                    }, timeout);
+                    runner.addEventListener("finished", () => window.clearTimeout(timeoutHandle), { once: true });
+                });
             },
             stop() {
-                if (!runner.running) throw new Error("Attempted to call stop() while not running");
-                runner.terminate(TerminateReason.Terminated);
+                return runner.terminate(TerminateReason.Terminated);
             },
             getOutput() {
                 return runner.getOutput();

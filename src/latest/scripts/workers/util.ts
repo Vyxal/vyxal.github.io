@@ -29,7 +29,7 @@ declare const self: SharedWorkerGlobalScope;
 const vyxal = Promise.all([
     import("https://vyxal.github.io/Vyxal/vyxal.js"),
     fetch(ShortDictionary, { cache: "force-cache" }).then((response) => response.text()),
-    fetch(LongDictionary, { cache: "force-cache" }).then((response) => response.text())
+    fetch(LongDictionary, { cache: "force-cache" }).then((response) => response.text()),
 ]);
 
 console.log("Utility worker loaded");

@@ -16,7 +16,7 @@ enum Mode {
     Normal,
     VariableOp,
     String,
-    LambdaArgs
+    LambdaArgs,
 }
 
 type VyxalState = {
@@ -33,9 +33,9 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     name = "vyxal3";
     languageData: LanguageData = {
         commentTokens: {
-            line: "##"
+            line: "##",
         },
-        autocomplete: this.autocomplete.bind(this)
+        autocomplete: this.autocomplete.bind(this),
     };
     autocomplete(context: CompletionContext): Promise<CompletionResult | null> {
         const sugar = context.matchBefore(/#[,.^](.)/);
@@ -46,8 +46,8 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     from: sugar.from,
                     filter: false,
                     options: [
-                        { label: desugared, detail: "sugar trigraph", type: "constant" }
-                    ]
+                        { label: desugared, detail: "sugar trigraph", type: "constant" },
+                    ],
                 });
             }
         }
@@ -130,7 +130,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                                 }
                             },
                         };
-                    }
+                    },
                 };
             }
             return null;

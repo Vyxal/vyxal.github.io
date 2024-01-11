@@ -5,7 +5,7 @@ export function encodeHash(header: string, code: string, footer: string, flags: 
         code: code,
         footer: footer,
         flags: flags,
-        inputs: inputs
+        inputs: inputs,
     })));
 }
 export function decodeHash(hash: string): V2Permalink {
@@ -19,7 +19,7 @@ export function decodeHash(hash: string): V2Permalink {
         header: data.header,
         code: data.code,
         footer: data.footer,
-        inputs: (data.inputs as string).split("\n")
+        inputs: (data.inputs as string).split("\n"),
     } as V2Permalink);
 }// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type V1Permalink = {

@@ -1,7 +1,7 @@
 export type VyRunnerState = "idle" | "starting" | "running";
 
 export enum Theme {
-    Dark, Light
+    Dark, Light,
 }
 
 export function isTheSeason() {

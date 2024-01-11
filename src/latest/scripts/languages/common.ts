@@ -27,7 +27,7 @@ function elementCompletion(element: Element | Modifier, literate: boolean): Comp
             container.innerHTML = renderToStaticMarkup("vectorises" in element ? ElementCard({ item: element }) : ModifierCard({ item: element }));
             return container;
         },
-        type: "vectorises" in element ? "method" : "keyword"
+        type: "vectorises" in element ? "method" : "keyword",
     };
 }
 
@@ -61,7 +61,7 @@ export function elementAutocomplete(context: CompletionContext, literate: boolea
                 to: context.pos,
                 filter: false,
                 options: data.elements.map((e) => elementCompletion(e, literate)),
-                update: (current, from, to, context) => syncElementAutocomplete(context, literate)
+                update: (current, from, to, context) => syncElementAutocomplete(context, literate),
             };
         });
     }

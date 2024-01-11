@@ -26,7 +26,7 @@ self.addEventListener("message", function (message: MessageEvent<RunRequest>) {
     dictPromise.then(() => {
         this.postMessage({
             type: "started",
-            workerNumber: request.workerNumber
+            workerNumber: request.workerNumber,
         });
         Vyxal.execute(
             request.code,
@@ -36,25 +36,25 @@ self.addEventListener("message", function (message: MessageEvent<RunRequest>) {
                 this.postMessage({
                     type: "stdout",
                     text: line,
-                    workerNumber: request.workerNumber
+                    workerNumber: request.workerNumber,
                 });
             },
             (line: string) => {
                 this.postMessage({
                     type: "stderr",
                     text: line,
-                    workerNumber: request.workerNumber
+                    workerNumber: request.workerNumber,
                 });
             }
         );
         console.log(`Execution complete! (workerNumber ${request.workerNumber})`);
         this.postMessage({
             type: "done",
-            workerNumber: request.workerNumber
+            workerNumber: request.workerNumber,
         });
     });
 });
 
 self.postMessage({
-    type: "ready"
+    type: "ready",
 });

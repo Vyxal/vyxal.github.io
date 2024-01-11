@@ -68,11 +68,11 @@ const structOpeners = new Set([
     "exists<",
     "relation<",
     "generate-from<",
-    "generate<"
+    "generate<",
 ]);
 
 enum Structure {
-    String, RawSbcs, VarUnpack, VarOp, Group, ModGroup, Lambda, LambdaArgs, List
+    String, RawSbcs, VarUnpack, VarOp, Group, ModGroup, Lambda, LambdaArgs, List,
 }
 
 type VyxalLitState = {
@@ -92,9 +92,9 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     name: "vyxal3-lit";
     languageData: LanguageData = {
         commentTokens: {
-            line: "##"
+            line: "##",
         },
-        autocomplete: this.autocomplete.bind(this)
+        autocomplete: this.autocomplete.bind(this),
     };
 
     autocomplete(context: CompletionContext) {

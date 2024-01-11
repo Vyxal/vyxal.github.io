@@ -4,7 +4,7 @@ export enum EndPrintMode {
     LogicalNot,
     MaximumTop, MinimumTop, LengthTop,
     StackLength, StackSum, StackJoinSpaces,
-    Force, None
+    Force, None,
 }
 
 
@@ -88,7 +88,7 @@ export const INITIAL_FLAGS: InterpreterFlagSettings = {
 export function settingsFromFlags(flags: string[]) {
     const settings = {
         ...INITIAL_FLAGS,
-        flags: flags.filter((flag) => flag != DEFAULT_SENTINEL)
+        flags: flags.filter((flag) => flag != DEFAULT_SENTINEL),
     };
     for (const flag of flags) {
         switch (flag) {

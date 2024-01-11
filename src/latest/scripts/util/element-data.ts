@@ -66,15 +66,15 @@ export const elementFuse = new Fuse<Element>([], {
     keys: [
         {
             "name": "symbol",
-            "weight": 3
+            "weight": 3,
         },
         {
             "name": "name",
-            "weight": 2
+            "weight": 2,
         },
         {
             "name": "keywords",
-            "weight": 1
+            "weight": 1,
         },
     ],
 });
@@ -84,13 +84,13 @@ export const modifierFuse = new Fuse<Modifier>([], {
     keys: [
         {
             "name": "name",
-            "weight": 2
+            "weight": 2,
         },
         {
             "name": "keywords",
-            "weight": 1
+            "weight": 1,
         },
-    ]
+    ],
 });
 ELEMENT_DATA.then((data) => {
     elementFuse.setCollection(data.elements);

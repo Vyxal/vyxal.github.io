@@ -2,7 +2,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ELEMENT_DATA, Element, Modifier, elementFuse, modifierFuse } from "../util/element-data";
 import { Card, Col, Collapse, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
-import { ElementCard, ModifierCard } from "../cards";
+import { ModifierCard } from "../cards/ModifierCard";
+import { ElementCard } from "../cards/ElementCard";
 
 type CardSearchResultsParams<T> = {
     card: ({ item }: { item: T }) => JSX.Element,

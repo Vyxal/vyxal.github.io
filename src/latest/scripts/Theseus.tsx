@@ -1,12 +1,12 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { flagsReducer, settingsFromFlags } from "./flagsReducer";
-import Header from "./header";
+import Header from "./Header";
 import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tab, Nav } from "react-bootstrap";
 import { useImmerReducer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { Theme, VyRunnerState } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
-import { VyTerminalRef } from "./terminal";
+import { VyTerminalRef } from "./VyTerminal";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
@@ -26,8 +26,8 @@ import { decodeHash, encodeHash } from "./util/permalink";
 
 const utilWorker = new UtilWorker();
 
-const VyTerminal = lazy(() => import("./terminal"));
-const Editor = lazy(() => import("./editor").then((i) => i.default()).then((component) => ({ default: component })));
+const VyTerminal = lazy(() => import("./VyTerminal"));
+const Editor = lazy(() => import("./Editor").then((i) => i.default()).then((component) => ({ default: component })));
 
 type CopyButtonParams = {
     className?: string,
@@ -87,7 +87,7 @@ type Input = {
 
 let inputId = 0;
 
-function Body() {
+function Theseus() {
     let link: V2Permalink | null;
     if (window.location.hash.length) {
         link = decodeHash(window.location.hash.slice(1));
@@ -269,4 +269,4 @@ function Body() {
 }
 
 const root = createRoot(document.getElementById("react-container")!);
-root.render(<Body />);
+root.render(<Theseus />);

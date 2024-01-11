@@ -163,6 +163,12 @@ export function flagsReducer(settings: InterpreterFlagSettings, action: FlagsAct
             if (settings.fullTrace) {
                 settings.flags.push("X");
             }
+            if (settings.limitPrint) {
+                settings.flags.push("…");
+            }
+            if (settings.dontEvalInputs) {
+                settings.flags.push("Ṡ");
+            }
             if (settings.defaultArity != 1) {
                 settings.flags.push(settings.defaultArity.toString());
             }

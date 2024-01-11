@@ -23,6 +23,9 @@ module.exports = {
         "@stylistic/jsx-tag-spacing": "warn",
         "@stylistic/jsx-first-prop-new-line": ["warn", "multiline"],
         "@stylistic/indent": ["error", 4],
+        "@stylistic/comma-dangle": ["error", "always-multiline"],
+        "@stylistic/brace-style": "error",
+        
     },
     root: true,
 };

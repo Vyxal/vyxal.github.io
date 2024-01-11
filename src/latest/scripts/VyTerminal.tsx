@@ -1,4 +1,4 @@
-import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, } from "react";
+import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { VyRunner, TerminateReason } from "./runner";
 
 type VyTerminalParams = { onStart: () => unknown, onFinish: () => unknown };
@@ -28,7 +28,7 @@ const VyTerminal = forwardRef(function VyTerminal(props: VyTerminalParams, ref: 
             },
             getOutput() {
                 return runner.getOutput();
-            }
+            },
         };
     });
 

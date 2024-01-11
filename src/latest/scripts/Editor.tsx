@@ -21,8 +21,8 @@ const EXTENSIONS = [
                 window.dispatchEvent(new Event("run-vyxal")); // dubious
                 return true;
             },
-            preventDefault: true
-        }
+            preventDefault: true,
+        },
     ]),
     minimalSetup,
     autocompletion(),
@@ -32,7 +32,7 @@ const util = new UtilWorker();
 
 const THEMES = {
     [Theme.Dark]: vscodeDark,
-    [Theme.Light]: githubLight
+    [Theme.Light]: githubLight,
 };
 
 type EditorParams = {

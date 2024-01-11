@@ -39,17 +39,17 @@ function CopyButton({ className, title, generate }: CopyButtonParams) {
     const TITLES = {
         copy: title,
         copied: "Copied!",
-        failed: "Failed to copy"
+        failed: "Failed to copy",
     };
     const ICONS = {
         copy: "bi-clipboard",
         copied: "bi-clipboard-check",
-        failed: "bi-clipboard-x"
+        failed: "bi-clipboard-x",
     };
     const VARIANTS = {
         copy: "outline-primary",
         copied: "success",
-        failed: "danger"
+        failed: "danger",
     };
     const [state, setState] = useState<"copy" | "copied" | "failed">("copy");
 

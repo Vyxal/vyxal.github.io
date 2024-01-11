@@ -2,8 +2,8 @@ import { Modifier } from "./util/element-data";
 import { Card, ListGroup } from "react-bootstrap";
 
 type ModifierCardParams = {
-    item: Modifier;
-    shadow?: boolean;
+    item: Modifier,
+    shadow?: boolean,
 };
 
 export function ModifierCard({ item, shadow = undefined }: ModifierCardParams) {

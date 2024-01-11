@@ -99,7 +99,7 @@ export function BooleanSwitch({ parameter, flags, setFlags, children }: BooleanS
                 setFlags({
                     type: "setting",
                     setting: parameter,
-                    value: event.currentTarget.checked
+                    value: event.currentTarget.checked,
                 } as ChangeFlagValue);
             }}
         />

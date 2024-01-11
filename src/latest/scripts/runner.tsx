@@ -6,7 +6,7 @@ import { ELEMENT_DATA } from "./util/element-data";
 const MAX_BUFFER_SIZE = 20000;
 
 export enum TerminateReason {
-    Terminated, TimedOut
+    Terminated, TimedOut,
 }
 
 export class VyRunner extends EventTarget {
@@ -119,7 +119,7 @@ export class VyRunner extends EventTarget {
                 code: code,
                 flags: flags,
                 inputs: inputs,
-                workerNumber: this.workerCounter
+                workerNumber: this.workerCounter,
             } as RunRequest);
         });
     }

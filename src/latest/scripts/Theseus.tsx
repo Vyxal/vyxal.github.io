@@ -132,7 +132,9 @@ function Theseus() {
 
     useEffect(() => {
         const listener = () => {
-            if (state != "idle") return;
+            if (state != "idle") {
+                return;
+            }
             runnerRef.current?.start(
                 header + code + footer,
                 flags.flags,
@@ -147,7 +149,9 @@ function Theseus() {
     useEffect(() => {
         if (snowing) {
             import("magic-snowflakes").then(({ default: Snowflakes }) => {
-                if (snowflakesRef.current == null) snowflakesRef.current = new Snowflakes();
+                if (snowflakesRef.current == null) {
+                    snowflakesRef.current = new Snowflakes();
+                }
                 snowflakesRef.current.start();
                 snowflakesRef.current.show();
             });

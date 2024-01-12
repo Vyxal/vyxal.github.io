@@ -17,7 +17,9 @@ const EXTENSIONS = [
         {
             key: "Shift-Enter",
             run: (view) => {
-                if (view.state.doc.length <= 0) return false;
+                if (view.state.doc.length <= 0) {
+                    return false;
+                }
                 window.dispatchEvent(new Event("run-vyxal")); // dubious
                 return true;
             },

@@ -20,7 +20,7 @@ const dictPromise = Promise.all([
     Vyxal.setLongDict(responses[0]);
 });
 
-self.addEventListener("message", function (message: MessageEvent<RunRequest>) {
+self.addEventListener("message", function(message: MessageEvent<RunRequest>) {
     const request = message.data;
     console.log(`Recieved run request (workerNumber ${request.workerNumber})`);
     dictPromise.then(() => {

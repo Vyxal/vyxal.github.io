@@ -39,7 +39,7 @@ self.addEventListener("connect", (e) => {
         Vyxal.setShortDict(short);
         Vyxal.setLongDict(long);
         const port = e.ports[0];
-        port.addEventListener("message", function (event: MessageEvent<Request>) {
+        port.addEventListener("message", function(event: MessageEvent<Request>) {
             const rq = event.data;
             switch (rq.type) {
                 case "sbcsify":

@@ -17,7 +17,9 @@ export class UtilWorker {
                 { name: "util-worker" }
             );
             const readyListener = (event: MessageEvent<unknown>) => {
-                if (event.data != "ready") throw Error("Unexpected initial message");
+                if (event.data != "ready") {
+                    throw Error("Unexpected initial message");
+                }
                 resolve(worker);
                 worker.port.removeEventListener("message", readyListener);
             };

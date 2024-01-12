@@ -28,7 +28,11 @@ export function loadTheme() {
 
 export function loadSnowing() {
     const snowing = localStorage.getItem("snowing");
-    if (snowing == "always") return true;
-    if (snowing == "yes" && isTheSeason()) return true;
+    if (snowing == "always") {
+        return true;
+    }
+    if (snowing == "yes" && isTheSeason()) {
+        return true;
+    }
     return false;
 }

@@ -54,7 +54,9 @@ function syncElementAutocomplete(context: CompletionContext, literate: boolean):
 export function elementAutocomplete(context: CompletionContext, literate: boolean): Promise<CompletionResult | null> {
     console.log(context);
     const sync = syncElementAutocomplete(context, literate);
-    if (sync != null) return Promise.resolve(sync);
+    if (sync != null) {
+        return Promise.resolve(sync);
+    }
     if (context.explicit) {
         return ELEMENT_DATA.then((data) => {
             return {

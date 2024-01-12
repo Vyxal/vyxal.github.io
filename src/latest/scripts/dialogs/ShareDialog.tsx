@@ -30,7 +30,9 @@ function CopyButton({ generate, children }: CopyButtonParams) {
     }
 
     function copy() {
-        if (state != "label") return;
+        if (state != "label") {
+            return;
+        }
         // @ts-expect-error Apparently "clipboard-write" isn't a permission TS knows
         navigator.permissions.query({ name: "clipboard-write" }).then((perm) => {
             if (perm.state != "granted") {
@@ -69,7 +71,7 @@ function ShareDialogBody() {
     return import(/* webpackPrefetch: true */ "handlebars").then((Handlebars) => {
         const cgcc = Handlebars.compile<Template>(CGCCTemplate);
         const cmc = Handlebars.compile<Template>(CMCTemplate);
-        return function ({ bytecount, code, flags }: ShareDialogParams) {
+        return function({ bytecount, code, flags }: ShareDialogParams) {
             function generateCGCC() {
                 return cgcc({
                     bytecount: bytecount,

@@ -14,7 +14,7 @@ type SettingsDialogParams = {
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
-export const SettingsDialog = memo(function ({ theme, setTheme, timeout, setTimeout, snowing, setSnowing, show, setShow }: SettingsDialogParams) {
+export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeout, snowing, setSnowing, show, setShow }: SettingsDialogParams) {
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
             <Modal.Title>Settings</Modal.Title>

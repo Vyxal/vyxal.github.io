@@ -15,6 +15,7 @@ import type Snowflakes from "magic-snowflakes";
 import { loadTheme, loadSnowing } from "./util/misc";
 import { V2Permalink } from "./util/permalink";
 import { decodeHash, encodeHash } from "./util/permalink";
+import HtmlView from "./HtmlView";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {
@@ -238,9 +239,9 @@ function Theseus() {
                             <Nav.Item>
                                 <Nav.Link eventKey="terminal">Terminal</Nav.Link>
                             </Nav.Item>
-                            {/* <Nav.Item>
+                            <Nav.Item>
                                 <Nav.Link eventKey="html">HTML</Nav.Link>
-                            </Nav.Item> */}
+                            </Nav.Item>
                             <CopyButton className="ms-auto my-1" title="Copy output" generate={() => runnerRef.current?.getOutput() ?? ""} />
                         </Nav>
                         <Tab.Content>
@@ -257,9 +258,9 @@ function Theseus() {
                                     <VyTerminal ref={runnerRef} onStart={() => setState("running")} onFinish={() => setState("idle")} />
                                 </Suspense>
                             </Tab.Pane>
-                            {/* <Tab.Pane eventKey="html">
-
-                            </Tab.Pane> */}
+                            <Tab.Pane eventKey="html">
+                                <HtmlView getOutput={runnerRef.current?.getOutput} />
+                            </Tab.Pane>
                         </Tab.Content>
                     </Tab.Container>
                 </Col>

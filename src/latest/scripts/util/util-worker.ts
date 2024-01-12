@@ -37,7 +37,7 @@ export class UtilWorker {
                 console.warn("Shared Workers are unavailable, starting fallback worker instead");
                 console.warn("Use Firefox for Android instead of Chrome, dammit");
                 const worker = new Worker(
-                    /* webpackChunkName: "util-worker" */
+                    /* webpackChunkName: "util-fallback" */
                     new URL("../workers/util-fallback", import.meta.url),
                     { name: "util-worker" }
                 );

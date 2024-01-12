@@ -213,6 +213,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 } else if (stream.match(VARIABLE_NAME)) {
                     return "variableName.definition";
                 }
+                break;
             case Mode.ExtensionMethodArgType:
                 if (stream.eat("|")) {
                     state.mode = Mode.ExtensionMethodArgName;
@@ -220,7 +221,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 } else if (stream.match(VARIABLE_NAME)) {
                     return "variableName.definition";
                 }
-
+                break;
             case Mode.Normal:
                 if (stream.eat("'")) {
                     stream.next();

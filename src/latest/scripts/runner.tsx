@@ -25,7 +25,9 @@ export class VyRunner extends EventTarget {
     }
 
     attach(element: HTMLElement) {
-        if (this.terminal != null) throw new Error("Already attached");
+        if (this.terminal != null) {
+            throw new Error("Already attached");
+        }
         this.terminal = new Terminal({
             scrollback: 1000,
             convertEol: true,
@@ -44,7 +46,9 @@ export class VyRunner extends EventTarget {
     }
 
     detach() {
-        if (this.terminal == null) throw new Error("Not attached");
+        if (this.terminal == null) {
+            throw new Error("Not attached");
+        }
         this.terminal!.dispose();
         this.terminal = null;
         this.fit = null;
@@ -110,7 +114,9 @@ export class VyRunner extends EventTarget {
 
     start(code: string, flags: string[], inputs: string[]) {
         return this.worker.then((worker) => {
-            if (this._state == "running") throw new Error("Attempted to start while running");
+            if (this._state == "running") {
+                throw new Error("Attempted to start while running");
+            }
             this.workerCounter += 1;
             this.terminal?.clear();
             this.outputBuffer.length = 0;
@@ -125,7 +131,9 @@ export class VyRunner extends EventTarget {
     }
 
     terminate(reason: TerminateReason = TerminateReason.Terminated) {
-        if (this._state != "running") throw new Error("Attempted to terminate worker while not running");
+        if (this._state != "running") {
+            throw new Error("Attempted to terminate worker while not running");
+        }
         console.log("Terminating worker");
         this.worker.then((worker) => {
             this._state = "booting";

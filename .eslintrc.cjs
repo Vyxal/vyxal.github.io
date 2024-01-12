@@ -8,6 +8,8 @@ module.exports = {
         "@stylistic/jsx"
     ],
     rules: {
+        "camelcase": "warn",
+        "curly": "warn",
         "@typescript-eslint/no-unused-vars": "warn",
         "@stylistic/member-delimiter-style": ["warn", {
             "multiline": {
@@ -25,7 +27,8 @@ module.exports = {
         "@stylistic/indent": ["error", 4],
         "@stylistic/comma-dangle": ["error", "always-multiline"],
         "@stylistic/brace-style": "error",
-        
+        "@stylistic/space-before-function-paren": ["error", "never"],
+        "@stylistic/keyword-spacing": "error",
     },
     root: true,
 };

@@ -60,7 +60,9 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         return elementAutocomplete(context, false);
     }
     elementTooltip = hoverTooltip((view, pos) => {
-        if (syntaxTree(view.state).cursorAt(pos).name != "Document") return null;
+        if (syntaxTree(view.state).cursorAt(pos).name != "Document") {
+            return null;
+        }
         const hoveredChar = view.state.doc.sliceString(pos, pos + 1);
         if (this.elementData.elementMap.has(hoveredChar)) {
             const element = this.elementData.elementMap.get(hoveredChar)!;
@@ -92,7 +94,9 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     });
 
     private makeStringTooltip(view, node: SyntaxNode): Promise<HTMLElement | null> {
-        if (node.name != "string") return Promise.resolve(null);
+        if (node.name != "string") {
+            return Promise.resolve(null);
+        }
         const content = view.state.doc.slice(node.from, node.to).toString();
         switch (content.at(-1)) {
             case "\"": {
@@ -147,7 +151,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     startState(): VyxalState {
         return { mode: Mode.Normal };
     }
-    token = function (stream: StringStream, state: VyxalState): string | null {
+    token = function(stream: StringStream, state: VyxalState): string | null {
         switch (state.mode) {
             case Mode.VariableOp:
                 stream.eatWhile(VARIABLE_NAME);
@@ -247,7 +251,9 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                         stream.skipToEnd();
                         return "comment";
                     }
-                    if (stream.eat(/[[\]{]/)) return "bracket";
+                    if (stream.eat(/[[\]{]/)) {
+                        return "bracket";
+                    }
                     if (stream.eat(/[.,^]/)) {
                         stream.next();
                         return "macroName";
@@ -323,7 +329,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     }.bind(this); // why is this a thing that I have to do
 }
 
-export default function (util: UtilWorker, data: ElementData) {
+export default function(util: UtilWorker, data: ElementData) {
     const instance = new VyxalLanguage(util, data);
     return new LanguageSupport(
         StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]

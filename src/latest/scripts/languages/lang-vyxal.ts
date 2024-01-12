@@ -1,7 +1,6 @@
 import type { CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
 
-import { sugarTrigraphs } from "../sugar-trigraphs";
 import type { ElementData } from "../util/element-data";
 import { UtilWorker } from "../util/util-worker";
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -46,7 +45,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     autocomplete(context: CompletionContext): Promise<CompletionResult | null> {
         const sugar = context.matchBefore(/#[,.^](.)/);
         if (sugar != null) {
-            const desugared = sugarTrigraphs[sugar.text];
+            const desugared = this.elementData.sugars.get(sugar.text);
             if (typeof desugared == "string") {
                 return Promise.resolve({
                     from: sugar.from,

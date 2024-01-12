@@ -1,6 +1,6 @@
 declare module "*.txt" {
-    let LongDictionary: string;
-    export = LongDictionary;
+    let content: string;
+    export = content;
 }
 declare module "*.png" {
     const url: string;

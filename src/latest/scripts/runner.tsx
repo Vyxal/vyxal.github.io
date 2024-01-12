@@ -2,6 +2,7 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { RunRequest, WorkerMessage } from "./util/worker-types";
 import { ELEMENT_DATA } from "./util/element-data";
+import splash from "../assets/splash.txt";
 
 const MAX_BUFFER_SIZE = 20000;
 
@@ -37,7 +38,11 @@ export class VyRunner extends EventTarget {
         this.terminal.open(element);
         this.fit.fit();
         window.addEventListener("resize", this.onResize.bind(this));
-        ELEMENT_DATA.then((d) => this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${d.version}`));
+        Promise.all([ELEMENT_DATA, fetch(splash).then((r) => r.text())]).then(([elementData, splashes]) => {
+            const splashList = splashes.split("\n");
+            this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${elementData.version}`);
+            this.terminal!.writeln(`\x1b[2;3m${splashList[Math.floor(Math.random() * splashList.length)]}\x1b[0m`);
+        });
         console.log("Terminal attached");
     }
 

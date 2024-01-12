@@ -7,7 +7,7 @@ import { UtilWorker } from "../util/util-worker";
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
-import { VARIABLE_NAME, NUMBER, NUMBER_PART, elementAutocomplete, LanguageData } from './common';
+import { VARIABLE_NAME, VARIABLE_LIST, NUMBER, NUMBER_PART, elementAutocomplete, LanguageData } from './common';
 import type { SyntaxNode } from "@lezer/common";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { MapMode } from "@codemirror/state";
@@ -17,6 +17,12 @@ enum Mode {
     VariableOp,
     String,
     LambdaArgs,
+    CustomDefinitionName,
+    CustomDefinitionArgs,
+    RecordDefinitionName,
+    ExtensionMethodName,
+    ExtensionMethodArgName,
+    ExtensionMethodArgType
 }
 
 type VyxalState = {
@@ -141,7 +147,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     startState(): VyxalState {
         return { mode: Mode.Normal };
     }
-    token = function(stream: StringStream, state: VyxalState): string | null {
+    token = function (stream: StringStream, state: VyxalState): string | null {
         switch (state.mode) {
             case Mode.VariableOp:
                 stream.eatWhile(VARIABLE_NAME);
@@ -163,6 +169,59 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     return "variableName.definition";
                 }
                 break;
+            case Mode.CustomDefinitionName:
+                if (stream.eat(/[*@]/)) {
+                    state.mode = Mode.CustomDefinitionArgs;
+                    if (stream.match(VARIABLE_NAME)) {
+                        return "variableName.definition";
+                    } else {
+                        return "keyword.special";
+                    }
+                }
+                break;
+            case Mode.CustomDefinitionArgs:
+                if (stream.eat("|")) {
+                    return "separator";
+                } else if (stream.eatWhile(VARIABLE_LIST)) {
+                    state.mode = Mode.Normal;
+                    return "variableName.definition";
+                }
+                break;
+
+            case Mode.RecordDefinitionName:
+                if (stream.eat("|")) {
+                    state.mode = Mode.Normal
+                    return "separator";
+                }
+                else if (stream.match(VARIABLE_NAME)) {
+                    return "variableName.definition";
+                }
+                break;
+
+            case Mode.ExtensionMethodName:
+                if (stream.match(VARIABLE_NAME)) {
+                    return "variableName.definition";
+                }
+                if (stream.eat("|")) {
+                    state.mode = Mode.ExtensionMethodArgName;
+                    return "separator";
+                }
+                break;
+            case Mode.ExtensionMethodArgName:
+                if (stream.eat("|")) {
+                    state.mode = Mode.ExtensionMethodArgType;
+                    return "separator";
+                } else if (stream.match(VARIABLE_NAME)) {
+                    return "variableName.definition";
+                }
+            case Mode.ExtensionMethodArgType:
+                if (stream.eat("|")) {
+                    state.mode = Mode.ExtensionMethodArgName;
+                    return "separator";
+                } else if (stream.match(VARIABLE_NAME)) {
+                    return "variableName.definition";
+                }
+
             case Mode.Normal:
                 if (stream.eat("'")) {
                     stream.next();
@@ -189,9 +248,21 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                         return "comment";
                     }
                     if (stream.eat(/[[\]{]/)) return "bracket";
-                    if (stream.eat(/[.,^:]/)) {
+                    if (stream.eat(/[.,^]/)) {
                         stream.next();
                         return "macroName";
+                    }
+                    if (stream.eat("::")) {
+                        state.mode = Mode.CustomDefinitionName;
+                        return "keyword";
+                    }
+                    if (stream.eat(":R")) {
+                        state.mode = Mode.RecordDefinitionName;
+                        return "keyword";
+                    }
+                    if (stream.eat(":>>")) {
+                        state.mode = Mode.ExtensionMethodName;
+                        return "keyword";
                     }
                     if (stream.eat("$")) {
                         state.mode = Mode.VariableOp;
@@ -202,6 +273,14 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                         return "definitionOperator";
                     }
                     if (stream.eat(">")) {
+                        state.mode = Mode.VariableOp;
+                        return "definitionOperator.special";
+                    }
+                    if (stream.eat(":@")) {
+                        state.mode = Mode.VariableOp;
+                        return "definitionOperator.special";
+                    }
+                    if (stream.eat(":`")) {
                         state.mode = Mode.VariableOp;
                         return "definitionOperator.special";
                     }
@@ -244,7 +323,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     }.bind(this); // why is this a thing that I have to do
 }
 
-export default function(util: UtilWorker, data: ElementData) {
+export default function (util: UtilWorker, data: ElementData) {
     const instance = new VyxalLanguage(util, data);
     return new LanguageSupport(
         StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]

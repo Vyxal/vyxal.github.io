@@ -34,6 +34,14 @@ const branchKeywords = new Set([
     "no?",
     "=>",
     "from",
+    "as",
+    "with",
+    "given",
+    ":and:",
+    "has",
+    "does",
+    "using",
+    "on",
 ]);
 
 const lambdaOpeners = new Set([
@@ -105,7 +113,7 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     startState(): VyxalLitState {
         return { structStack: [] };
     }
-    token = function(stream: StringStream, state: VyxalLitState): string | null {
+    token = function (stream: StringStream, state: VyxalLitState): string | null {
         const currentStruct = state.structStack.at(-1);
         switch (currentStruct) {
             case Structure.Group:
@@ -276,7 +284,7 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     }.bind(this);
 }
 
-export default function(util: UtilWorker, elementData: ElementData) {
+export default function (util: UtilWorker, elementData: ElementData) {
     const instance = new VyxalLitLanguage(util, elementData);
     return new LanguageSupport(
         StreamLanguage.define(instance),

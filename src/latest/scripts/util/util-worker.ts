@@ -72,10 +72,10 @@ export class UtilWorker {
             modifiers.push("literate");
         }
         if (![...processedCode].every((char) => codepage.has(char))) {
-            bytecount = processedCode.length;
+            bytecount = new Blob([processedCode]).size; // ick
             modifiers.push("UTF-8");
         } else {
-            bytecount = new Blob([processedCode]).size; // ick
+            bytecount = processedCode.length;
         }
         return (
             bytecount.toString()

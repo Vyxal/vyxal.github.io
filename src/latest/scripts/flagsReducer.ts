@@ -139,7 +139,7 @@ export function flagsReducer(settings: InterpreterFlagSettings, action: FlagsAct
     switch (action.type) {
         case "setting":
             settings.flags = [];
-            if (action.setting == "endPrintMode" && action.value != DEFAULT_SENTINEL) {
+            if (action.setting == "endPrintMode") {
                 settings.endPrintMode = END_PRINT_MODES.get(action.value as string) ?? EndPrintMode.Default;
             } else {
                 settings[action.setting] = action.value;

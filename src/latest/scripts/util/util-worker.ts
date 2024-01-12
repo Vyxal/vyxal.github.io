@@ -6,25 +6,50 @@ type UtilWorkerResponse<T> = {
     data: T,
 };
 
+type MessageListener = (event: MessageEvent<never>) => unknown;
+type ThingThatLooksLikeAWorker = {
+    addEventListener: (type: "message", listener: MessageListener) => void,
+    removeEventListener: (type: "message", listener: MessageListener) => void,
+    postMessage: (message: unknown) => void,
+};
+
 export class UtilWorker {
-    private worker: Promise<SharedWorker>;
+    private worker: Promise<ThingThatLooksLikeAWorker>;
     private rqid: number = 0;
     constructor() {
         this.worker = new Promise((resolve) => {
-            const worker = new SharedWorker(
-                /* webpackChunkName: "util-worker" */
-                new URL("../workers/util", import.meta.url),
-                { name: "util-worker" }
-            );
-            const readyListener = (event: MessageEvent<unknown>) => {
-                if (event.data != "ready") {
-                    throw Error("Unexpected initial message");
-                }
-                resolve(worker);
-                worker.port.removeEventListener("message", readyListener);
-            };
-            worker.port.start();
-            worker.port.addEventListener("message", readyListener);
+            if (window.SharedWorker) {
+                const worker = new SharedWorker(
+                    /* webpackChunkName: "util-worker" */
+                    new URL("../workers/util", import.meta.url),
+                    { name: "util-worker" }
+                );
+                const readyListener = (event: MessageEvent<unknown>) => {
+                    if (event.data != "ready") {
+                        throw Error("Unexpected initial message");
+                    }
+                    resolve(worker.port);
+                    worker.port.removeEventListener("message", readyListener);
+                };
+                worker.port.start();
+                worker.port.addEventListener("message", readyListener);
+            } else {
+                console.warn("Shared Workers are unavailable, starting fallback worker instead");
+                console.warn("Use Firefox for Android instead of Chrome, dammit");
+                const worker = new Worker(
+                    /* webpackChunkName: "util-worker" */
+                    new URL("../workers/util-fallback", import.meta.url),
+                    { name: "util-worker" }
+                );
+                const readyListener = (event: MessageEvent<unknown>) => {
+                    if (event.data != "ready") {
+                        throw Error("Unexpected initial message");
+                    }
+                    resolve(worker);
+                    worker.removeEventListener("message", readyListener);
+                };
+                worker.addEventListener("message", readyListener);
+            }
         });
     }
 
@@ -35,11 +60,11 @@ export class UtilWorker {
                 const listener = (event: MessageEvent<UtilWorkerResponse<T>>) => {
                     if (event.data.rqid == rqid) {
                         resolve(event.data.data);
-                        worker.port.removeEventListener("message", listener);
+                        worker.removeEventListener("message", listener);
                     }
                 };
-                worker.port.addEventListener("message", listener);
-                worker.port.postMessage({ ...message, rqid: rqid });
+                worker.addEventListener("message", listener);
+                worker.postMessage({ ...message, rqid: rqid });
             });
         });
     }

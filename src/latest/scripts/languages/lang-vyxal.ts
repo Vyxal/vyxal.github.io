@@ -22,7 +22,7 @@ enum Mode {
     RecordDefinitionName,
     ExtensionMethodName,
     ExtensionMethodArgName,
-    ExtensionMethodArgType
+    ExtensionMethodArgType,
 }
 
 type VyxalState = {
@@ -190,10 +190,9 @@ class VyxalLanguage implements StreamParser<VyxalState> {
 
             case Mode.RecordDefinitionName:
                 if (stream.eat("|")) {
-                    state.mode = Mode.Normal
+                    state.mode = Mode.Normal;
                     return "separator";
-                }
-                else if (stream.match(VARIABLE_NAME)) {
+                } else if (stream.match(VARIABLE_NAME)) {
                     return "variableName.definition";
                 }
                 break;

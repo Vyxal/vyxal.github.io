@@ -173,6 +173,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 }
                 break;
             case Mode.CustomDefinitionName:
+                stream.eatSpace();
                 if (stream.eat(/[*@]/)) {
                     state.mode = Mode.CustomDefinitionArgs;
                     if (stream.match(VARIABLE_NAME)) {
@@ -183,6 +184,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 }
                 break;
             case Mode.CustomDefinitionArgs:
+                stream.eatSpace();
                 if (stream.eat("|")) {
                     return "separator";
                 } else if (stream.eatWhile(VARIABLE_LIST)) {
@@ -192,6 +194,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 break;
 
             case Mode.RecordDefinitionName:
+                stream.eatSpace();
                 if (stream.eat("|")) {
                     state.mode = Mode.Normal;
                     return "separator";
@@ -257,17 +260,28 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                         stream.next();
                         return "macroName";
                     }
-                    if (stream.eat("::")) {
-                        state.mode = Mode.CustomDefinitionName;
-                        return "keyword";
-                    }
-                    if (stream.eat(":R")) {
-                        state.mode = Mode.RecordDefinitionName;
-                        return "keyword";
-                    }
-                    if (stream.eat(":>>")) {
-                        state.mode = Mode.ExtensionMethodName;
-                        return "keyword";
+                    if (stream.eat(":")) {
+                        if (stream.eat(":")) {
+                            state.mode = Mode.CustomDefinitionName;
+                            return "keyword";
+                        }
+                        if (stream.eat("R")) {
+                            state.mode = Mode.RecordDefinitionName;
+                            return "keyword";
+                        }
+                        if (stream.match(">>")) {
+                            state.mode = Mode.ExtensionMethodName;
+                            return "keyword";
+                        }
+                        if (stream.eat("@")) {
+                            state.mode = Mode.VariableOp;
+                            return "definitionOperator.special";
+                        }
+                        if (stream.eat("`")) {
+                            state.mode = Mode.VariableOp;
+                            return "definitionOperator.special";
+                        }
+                        return "invalid";
                     }
                     if (stream.eat("$")) {
                         state.mode = Mode.VariableOp;
@@ -278,14 +292,6 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                         return "definitionOperator";
                     }
                     if (stream.eat(">")) {
-                        state.mode = Mode.VariableOp;
-                        return "definitionOperator.special";
-                    }
-                    if (stream.eat(":@")) {
-                        state.mode = Mode.VariableOp;
-                        return "definitionOperator.special";
-                    }
-                    if (stream.eat(":`")) {
                         state.mode = Mode.VariableOp;
                         return "definitionOperator.special";
                     }

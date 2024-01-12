@@ -1,4 +1,4 @@
-import { Button, FormSelect, Modal } from "react-bootstrap";
+import { Button, FormSelect, InputGroup, Modal } from "react-bootstrap";
 import { FormLabel } from "react-bootstrap";
 import { ChangeFlagValue, ChangeFlags, END_PRINT_FLAGS, END_PRINT_MODES, END_PRINT_NAMES, InterpreterFlagSettings } from "../flagsReducer";
 import { Dispatch, ReactNode, SetStateAction, memo } from "react";
@@ -46,11 +46,13 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
             <BooleanSwitch parameter="dontEvalInputs" flags={flags} setFlags={setFlags}>
                 Don't evaluate inputs
             </BooleanSwitch>
-            <div>
-                <label htmlFor="default-arity">Default arity:</label>
+            <InputGroup className="mb-3">
+                <InputGroup.Text>
+                    <label htmlFor="default-arity">Default arity:</label>
+                </InputGroup.Text>
                 <FormSelect
                     name="default-arity"
-                    className="d-inline ms-2 w-auto"
+                    className="d-inline w-auto"
                     value={flags.defaultArity}
                     onChange={(event) => setFlags({ type: "setting", setting: "defaultArity", value: Number.parseInt(event.currentTarget.value) })}
                 >
@@ -58,12 +60,14 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
                     <option value="2">2</option>
                     <option value="3">3</option>
                 </FormSelect>
-            </div>
-            <div>
-                <label htmlFor="end-print-mode">End print mode:</label>
+            </InputGroup>
+            <InputGroup className="flex-nowrap">
+                <InputGroup.Text>
+                    <label htmlFor="end-print-mode">End print mode:</label>
+                </InputGroup.Text>
                 <FormSelect
                     name="end-print-mode"
-                    className="d-inline ms-2 w-auto"
+                    className="d-inline w-auto"
                     value={END_PRINT_FLAGS.get(flags.endPrintMode)}
                     onChange={(event) => setFlags({ type: "setting", setting: "endPrintMode", value: event.currentTarget.value })}
                 >
@@ -71,7 +75,7 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
                         return <option key={flag} value={flag}>{END_PRINT_NAMES.get(flag)}</option>;
                     })}
                 </FormSelect>
-            </div>
+            </InputGroup>
         </Modal.Body>
         <Modal.Footer>
             <Button variant="primary" onClick={() => setShow(false)}>

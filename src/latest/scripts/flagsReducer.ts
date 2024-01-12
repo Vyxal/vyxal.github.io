@@ -44,7 +44,7 @@ export const END_PRINT_NAMES = new Map([
     ["j", "Join top of stack with newlines"],
     ["s", "Sum top of stack"],
     ["d", "Flatten and sum top of stack"],
-    ["¬", "Apply logical NOT to the top of the stack"],
+    ["¬", "Logical NOT of top of stack"],
     ["O", "Do nothing"],
     ["o", `"Force"`],
     ["!", "Length of stack"],

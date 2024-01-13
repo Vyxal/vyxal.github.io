@@ -151,7 +151,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     startState(): VyxalState {
         return { mode: Mode.Normal };
     }
-    token = function (stream: StringStream, state: VyxalState): string | null {
+    token = function(stream: StringStream, state: VyxalState): string | null {
         switch (state.mode) {
             case Mode.VariableOp:
                 stream.eatWhile(VARIABLE_NAME);
@@ -351,7 +351,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     }.bind(this); // why is this a thing that I have to do
 }
 
-export default function (util: UtilWorker, data: ElementData) {
+export default function(util: UtilWorker, data: ElementData) {
     const instance = new VyxalLanguage(util, data);
     return new LanguageSupport(
         StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]

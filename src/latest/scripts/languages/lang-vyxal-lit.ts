@@ -1,5 +1,5 @@
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
-import { NUMBER, NUMBER_PART, VARIABLE_NAME, KEYWORD, elementAutocomplete, LanguageData } from "./common";
+import { NUMBER, VARIABLE_LIST, NUMBER_PART, VARIABLE_NAME, KEYWORD, elementAutocomplete, LanguageData } from "./common";
 import type { Element, ElementData } from "../util/element-data";
 import { UtilWorker } from "../util/util-worker";
 import type { CompletionContext } from "@codemirror/autocomplete";
@@ -80,7 +80,7 @@ const structOpeners = new Set([
 ]);
 
 enum Structure {
-    String, RawSbcs, VarUnpack, VarOp, Group, ModGroup, Lambda, LambdaArgs, List,
+    String, RawSbcs, VarUnpack, VarOp, Group, ModGroup, Lambda, LambdaArgs, List, Record, ExtensionMethod, Definition, ElementName, VariableName
 }
 
 type VyxalLitState = {
@@ -113,13 +113,55 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     startState(): VyxalLitState {
         return { structStack: [] };
     }
-    token = function(stream: StringStream, state: VyxalLitState): string | null {
+    token = function (stream: StringStream, state: VyxalLitState): string | null {
         const currentStruct = state.structStack.at(-1);
         switch (currentStruct) {
+            case Structure.ElementName: {
+                stream.eatSpace();
+                if (stream.eat("@")) {
+                    state.structStack.push(Structure.LambdaArgs)
+                    if (stream.match(VARIABLE_NAME)) {
+                        return "variableName.definition";
+                    } else {
+                        return "keyword.special";
+                    }
+                } else if (stream.eat("*")) {
+                    state.structStack.push(Structure.LambdaArgs)
+                    state.structStack.push(Structure.LambdaArgs)
+                    if (stream.match(VARIABLE_NAME)) {
+                        return "variableName.definition";
+                    } else {
+                        return "keyword.special";
+                    }
+                } else {
+                    state.structStack.push(Structure.VariableName)
+                    state.structStack.push(Structure.VariableName)
+                }
+            }
+                break;
+            case Structure.VariableName:
+                if (stream.match(VARIABLE_NAME)) {
+                    state.structStack.pop();
+                    return "variableName.definition";
+                } else if (stream.eat("}")) {
+                    // Pop all remaining variable name structures
+                    while (state.structStack.at(-1) != Structure.VariableName) {
+                        state.structStack.pop();
+                    }
+                    // and then the extension method structure
+                    state.structStack.pop();
+                } else {
+                    stream.next();
+                    return "invalid";
+                }
+                break;
             case Structure.Group:
             case Structure.ModGroup:
             case Structure.Lambda:
             case Structure.List:
+            case Structure.Record:
+            case Structure.ExtensionMethod:
+            case Structure.Definition:
             case undefined: {
                 if (currentStruct == Structure.Group || currentStruct == Structure.ModGroup) {
                     if (stream.eat(")")) {
@@ -127,7 +169,7 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
                         return "bracket";
                     }
                 }
-                if (currentStruct == Structure.Lambda) {
+                if (currentStruct == Structure.Lambda || currentStruct == Structure.Definition || currentStruct == Structure.ExtensionMethod || currentStruct == Structure.Record) {
                     if (stream.eat("}")) {
                         state.structStack.pop();
                         return "bracket";
@@ -221,6 +263,30 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
                     state.structStack.push(Structure.Group);
                     return "bracket";
                 }
+                if (stream.eat("define")) {
+                    state.structStack.push(Structure.ElementName);
+                    state.structStack.push(Structure.LambdaArgs)
+                    state.structStack.push(Structure.Definition);
+                    return "keyword";
+                }
+                if (stream.eat("record")) {
+                    state.structStack.push(Structure.Record);
+                    return "keyword";
+                }
+                if (stream.match("extension")) {
+                    state.structStack.push(Structure.ExtensionMethod);
+                    return "keyword";
+                }
+                if (stream.eat("$@")) {
+                    if (stream.match(VARIABLE_NAME)) {
+                        return "definitionOperator.special";
+                    }
+                }
+                if (stream.eat("$:")) {
+                    if (stream.match(VARIABLE_NAME)) {
+                        return "definitionOperator.special";
+                    }
+                }
                 stream.next();
                 return "invalid";
             }
@@ -284,7 +350,7 @@ class VyxalLitLanguage implements StreamParser<VyxalLitState> {
     }.bind(this);
 }
 
-export default function(util: UtilWorker, elementData: ElementData) {
+export default function (util: UtilWorker, elementData: ElementData) {
     const instance = new VyxalLitLanguage(util, elementData);
     return new LanguageSupport(
         StreamLanguage.define(instance),

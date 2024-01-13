@@ -17,7 +17,8 @@ enum Mode {
     String,
     LambdaArgs,
     CustomDefinitionName,
-    CustomDefinitionArgs,
+    CustomDefinitionElementArgs,
+    CustomDefinitionModifierArgs,
     RecordDefinitionName,
     ExtensionMethodName,
     ExtensionMethodArgName,
@@ -150,7 +151,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     startState(): VyxalState {
         return { mode: Mode.Normal };
     }
-    token = function(stream: StringStream, state: VyxalState): string | null {
+    token = function (stream: StringStream, state: VyxalState): string | null {
         switch (state.mode) {
             case Mode.VariableOp:
                 stream.eatWhile(VARIABLE_NAME);
@@ -174,8 +175,15 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 break;
             case Mode.CustomDefinitionName:
                 stream.eatSpace();
-                if (stream.eat(/[*@]/)) {
-                    state.mode = Mode.CustomDefinitionArgs;
+                if (stream.eat("@")) {
+                    state.mode = Mode.CustomDefinitionElementArgs;
+                    if (stream.match(VARIABLE_NAME)) {
+                        return "variableName.definition";
+                    } else {
+                        return "keyword.special";
+                    }
+                } else if (stream.eat("*")) {
+                    state.mode = Mode.CustomDefinitionModifierArgs;
                     if (stream.match(VARIABLE_NAME)) {
                         return "variableName.definition";
                     } else {
@@ -183,12 +191,21 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                     }
                 }
                 break;
-            case Mode.CustomDefinitionArgs:
+            case Mode.CustomDefinitionElementArgs:
                 stream.eatSpace();
                 if (stream.eat("|")) {
                     return "separator";
                 } else if (stream.eatWhile(VARIABLE_LIST)) {
                     state.mode = Mode.Normal;
+                    return "variableName.definition";
+                }
+                break;
+            case Mode.CustomDefinitionModifierArgs:
+                stream.eatSpace();
+                if (stream.eat("|")) {
+                    return "separator";
+                } else if (stream.eatWhile(VARIABLE_LIST)) {
+                    state.mode = Mode.CustomDefinitionElementArgs;
                     return "variableName.definition";
                 }
                 break;
@@ -334,7 +351,7 @@ class VyxalLanguage implements StreamParser<VyxalState> {
     }.bind(this); // why is this a thing that I have to do
 }
 
-export default function(util: UtilWorker, data: ElementData) {
+export default function (util: UtilWorker, data: ElementData) {
     const instance = new VyxalLanguage(util, data);
     return new LanguageSupport(
         StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]

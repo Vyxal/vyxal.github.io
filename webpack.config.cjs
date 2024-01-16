@@ -152,6 +152,10 @@ module.exports = function (env, argv) {
                     type: "asset/resource"
                 },
                 {
+                    resourceQuery: /raw/,
+                    type: "asset/source",
+                },
+                {
                     test: /\.(woff2|woff)$/,
                     type: "asset/resource",
                     generator: {

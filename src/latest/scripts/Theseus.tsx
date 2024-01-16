@@ -13,10 +13,12 @@ import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
 import { loadTheme, loadSnowing } from "./util/misc";
-import { V2Permalink } from "./util/permalink";
+import { compatible, V2Permalink } from "./util/permalink";
 import { decodeHash, encodeHash } from "./util/permalink";
 import HtmlView from "./HtmlView";
 import { CopyButton } from "./CopyButton";
+import { ELEMENT_DATA } from "./util/element-data";
+import { IncompatibleDialog, IncompatibleInfo } from "./dialogs/IncompatibleDialog";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {
@@ -59,6 +61,7 @@ function Theseus() {
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
     const [bytecount, setBytecount] = useState("...");
+    const [incompatible, setIncompatible] = useState<IncompatibleInfo>(undefined);
     const runnerRef = useRef<VyTerminalRef | null>(null);
     const snowflakesRef = useRef<Snowflakes | null>(null);
 
@@ -75,9 +78,18 @@ function Theseus() {
     }, [theme]);
 
     useEffect(() => {
-        window.location.hash = encodeHash(
-            header, code, footer, flags.flags, inputs.map((input) => input.value)
-        );
+        ELEMENT_DATA.then((d) => {
+            if (link?.version != null && !compatible(link.version)) {
+                setIncompatible({
+                    latestVersion: d.version,
+                    targetVersion: link.version,
+                });
+            } else {
+                window.location.hash = encodeHash(
+                    header, code, footer, flags.flags, inputs.map((input) => input.value), d.version
+                );
+            }
+        });
     }, [header, code, footer, flags, inputs]);
 
     useEffect(() => {
@@ -129,6 +141,7 @@ function Theseus() {
         />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
         <ShareDialog bytecount={bytecount} code={code} flags={flags.flags.join("")} show={showShareDialog} setShow={setShowShareDialog} />
+        <IncompatibleDialog data={incompatible} />
         <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />
         <Header
             state={state} flags={flags} onRunClicked={() => {

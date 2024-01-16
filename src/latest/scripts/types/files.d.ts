@@ -10,6 +10,10 @@ declare module "*.json" {
     const url: string;
     export = url;
 }
+declare module "*.json?raw" {
+    const content: string;
+    export = content;
+}
 declare module "*.handlebars.md" {
     const content: string;
     export = content;

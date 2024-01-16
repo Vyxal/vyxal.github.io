@@ -1,4 +1,11 @@
-export function encodeHash(header: string, code: string, footer: string, flags: string[], inputs: string[]): string {
+import compat from "../../assets/compat.json?raw";
+
+export function compatible(permalinkVersion: string) {
+    console.log(compat)
+    return JSON.parse(compat)[permalinkVersion] == true;
+}
+
+export function encodeHash(header: string, code: string, footer: string, flags: string[], inputs: string[], version: string): string {
     return btoa(encodeURIComponent(JSON.stringify({
         format: 2,
         header: header,
@@ -6,8 +13,10 @@ export function encodeHash(header: string, code: string, footer: string, flags: 
         footer: footer,
         flags: flags,
         inputs: inputs,
+        version: version,
     })));
 }
+
 export function decodeHash(hash: string): V2Permalink {
     const data = JSON.parse(decodeURIComponent(atob(hash)));
     if (data.format == 2) {
@@ -20,8 +29,11 @@ export function decodeHash(hash: string): V2Permalink {
         code: data.code,
         footer: data.footer,
         inputs: (data.inputs as string).split("\n"),
+        version: data.version,
     } as V2Permalink);
-}// eslint-disable-next-line @typescript-eslint/no-unused-vars
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type V1Permalink = {
     flags: string,
     header: string,
@@ -29,6 +41,7 @@ type V1Permalink = {
     footer: string,
     inputs: string,
 };
+
 export type V2Permalink = {
     format: 2,
     flags: string[],
@@ -36,5 +49,6 @@ export type V2Permalink = {
     code: string,
     footer: string,
     inputs: string[],
+    version: string | undefined,
 };
 

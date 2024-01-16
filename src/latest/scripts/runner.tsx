@@ -66,6 +66,7 @@ export class VyRunner extends EventTarget {
 
     private spawnWorker() {
         console.log("Spawning new worker");
+        this.workerCounter += 1;
         return new Promise<Worker>((resolve) => {
             const worker = new Worker(
                 /* webpackChunkName: "worker" */
@@ -74,6 +75,7 @@ export class VyRunner extends EventTarget {
             const listener = (event: MessageEvent<WorkerMessage>) => {
                 if (event.data.type == "ready") {
                     resolve(worker);
+                    worker.addEventListener("message", this.onWorkerMessage.bind(this));
                     worker.removeEventListener("message", listener);
                     console.log("Worker is ready");
                 }
@@ -122,10 +124,8 @@ export class VyRunner extends EventTarget {
             if (this._state == "running") {
                 throw new Error("Attempted to start while running");
             }
-            this.workerCounter += 1;
             this.terminal?.clear();
             this.outputBuffer.length = 0;
-            worker.addEventListener("message", this.onWorkerMessage.bind(this));
             worker.postMessage({
                 code: code,
                 flags: flags,

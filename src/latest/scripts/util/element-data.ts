@@ -1,6 +1,5 @@
 import Fuse from "fuse.js";
 
-
 export type Element = {
     name: string,
     symbol: string,
@@ -44,7 +43,8 @@ type RawElementData = {
     version: string,
 };
 
-export const ELEMENT_DATA: Promise<ElementData> = fetch("https://vyxal.github.io/Vyxal/theseus.json")
+// @ts-expect-error DATA_URI gets replaced by Webpack
+export const ELEMENT_DATA: Promise<ElementData> = fetch(DATA_URI)
     .then((response) => response.json())
     .then((data: RawElementData) => {
         return {

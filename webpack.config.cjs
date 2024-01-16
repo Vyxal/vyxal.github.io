@@ -6,6 +6,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 // const WorkboxPlugin = require('workbox-webpack-plugin');
 // const CopyPlugin = require("copy-webpack-plugin");
 
+const LATEST_DATA_URI = "https://vyxal.github.io/Vyxal/theseus.json"
 
 class MonkeyPatchPlugin {
     constructor(basePath, enabled) {
@@ -18,7 +19,7 @@ class MonkeyPatchPlugin {
             (compilation, { normalModuleFactory }) => {
                 normalModuleFactory.hooks.resolve
                     .tap("MonkeyPatchPlugin", (data) => {
-                        const match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*\.txt)/.exec(data.request)
+                        const match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*\.(txt|json))/.exec(data.request)
                         if (match != null && this.enabled) {
                             data.request = path.join("/", this.basePath, match[1])
                         }
@@ -39,7 +40,7 @@ module.exports = function (env, argv) {
             buildHttp: {
                 allowedUris: ["https://vyxal.github.io"],
                 cacheLocation: false,
-                frozen: false, // the docs can"t tell ME what to do!
+                frozen: false, // the docs can't tell ME what to do!
             }
         },
         plugins: [
@@ -83,6 +84,9 @@ module.exports = function (env, argv) {
                     // exclude: [/style.*\.css$/],
                 })
             ),
+            new webpack.DefinePlugin({
+                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join("/", env["vy-archive"], "theseus.json") : LATEST_DATA_URI)
+            })
             // new WorkboxPlugin.InjectManifest({
             //     swSrc: "./src/latest/js/service.ts",
             //     exclude: [/\.map$/, /^manifest.*\.js$/, /\.html$/, /style.*\.css$/]
@@ -90,9 +94,6 @@ module.exports = function (env, argv) {
         ],
         resolve: {
             extensions: [".tsx", ".ts", ".js"],
-            alias: {
-                "https://vyxal.github.io/Vyxal/ShortDictionary.txt": "https://vyxal.github.io/Vyxal/sus.txt"
-            }
         },
         externals: [
             function ({ context, request, dependencyType, contextInfo, getResolve }, callback) {

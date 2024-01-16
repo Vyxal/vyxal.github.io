@@ -67,7 +67,7 @@ function ShareDialogBody() {
                         <Nav.Item>
                             <Nav.Link eventKey="cmc">CMC response</Nav.Link>
                         </Nav.Item>
-                        <CopyButton className="ms-auto my-1" title="Copy output" generate={() => content} />
+                        <CopyButton className="ms-auto my-1" title="Copy text" generate={() => content} />
                     </Nav>
                     <pre className="bg-dark-subtle p-2 text-wrap">
                         <code>

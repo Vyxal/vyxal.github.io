@@ -1,4 +1,4 @@
-import compat from "../../assets/compat.json?raw";
+import compat from "../../data/compat.json?raw";
 
 export function compatible(permalinkVersion: string) {
     return JSON.parse(compat)[permalinkVersion] == true;

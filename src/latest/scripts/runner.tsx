@@ -2,7 +2,7 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import { RunRequest, WorkerMessage } from "./util/worker-types";
 import { ELEMENT_DATA } from "./util/element-data";
-import splash from "../assets/splash.txt";
+import splash from "../data/splash.txt";
 
 const MAX_BUFFER_SIZE = 20000;
 

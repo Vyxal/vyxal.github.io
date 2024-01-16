@@ -16,6 +16,7 @@ import { loadTheme, loadSnowing } from "./util/misc";
 import { V2Permalink } from "./util/permalink";
 import { decodeHash, encodeHash } from "./util/permalink";
 import HtmlView from "./HtmlView";
+import { CopyButton } from "./CopyButton";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {
@@ -29,57 +30,6 @@ const utilWorker = new UtilWorker();
 
 const VyTerminal = lazy(() => import("./VyTerminal"));
 const Editor = lazy(() => import("./Editor").then((i) => i.default()).then((component) => ({ default: component })));
-
-type CopyButtonParams = {
-    className?: string,
-    title: string,
-    generate: () => string,
-};
-
-function CopyButton({ className, title, generate }: CopyButtonParams) {
-    const TITLES = {
-        copy: title,
-        copied: "Copied!",
-        failed: "Failed to copy",
-    };
-    const ICONS = {
-        copy: "bi-clipboard",
-        copied: "bi-clipboard-check",
-        failed: "bi-clipboard-x",
-    };
-    const VARIANTS = {
-        copy: "outline-primary",
-        copied: "success",
-        failed: "danger",
-    };
-    const [state, setState] = useState<"copy" | "copied" | "failed">("copy");
-
-    return (
-        <Button
-            variant={VARIANTS[state]}
-            className={className}
-            title={TITLES[state]}
-            onClick={() => {
-                if (state == "copy") {
-                    // @ts-expect-error Apparently "clipboard-write" isn't a permission TS knows
-                    navigator.permissions.query({ name: "clipboard-write" }).then((perm) => {
-                        if (perm.state != "granted") {
-                            console.error("Clipboard write permission not granted, is this a secure context?");
-                            setState("failed");
-                            return;
-                        }
-                        return navigator.clipboard.writeText(generate()).then(
-                            () => setState("copied"),
-                            () => setState("failed"),
-                        );
-                    }).finally(() => window.setTimeout(() => setState("copy"), 1500));
-                }
-            }}
-        >
-            <i className={`bi ${ICONS[state]}`}></i>
-        </Button>
-    );
-}
 
 type Input = {
     id: number,

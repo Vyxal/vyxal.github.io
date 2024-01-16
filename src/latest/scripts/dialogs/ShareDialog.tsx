@@ -1,56 +1,9 @@
-import { Dispatch, ReactNode, SetStateAction, Suspense, lazy, useState } from "react";
-import { Button, Modal, Spinner } from "react-bootstrap";
+import { Dispatch, SetStateAction, Suspense, lazy, useEffect, useState } from "react";
+import { Modal, Nav, Spinner } from "react-bootstrap";
 
 import CGCCTemplate from "../../templates/cgcc.handlebars.md";
 import CMCTemplate from "../../templates/cmc.handlebars.md";
-
-type CopyButtonParams = {
-    generate: () => string,
-    children: ReactNode,
-};
-
-function CopyButton({ generate, children }: CopyButtonParams) {
-    const [state, setState] = useState<"label" | "copied" | "error">("label");
-
-    let body: string | ReactNode;
-    let variant: string;
-    switch (state) {
-        case "label":
-            body = children;
-            variant = "primary";
-            break;
-        case "copied":
-            body = "Copied!";
-            variant = "success";
-            break;
-        case "error":
-            body = "Failed to copy";
-            variant = "danger";
-            break;
-    }
-
-    function copy() {
-        if (state != "label") {
-            return;
-        }
-        // @ts-expect-error Apparently "clipboard-write" isn't a permission TS knows
-        navigator.permissions.query({ name: "clipboard-write" }).then((perm) => {
-            if (perm.state != "granted") {
-                console.error("Clipboard write permission not granted, is this a secure context?");
-                setState("error");
-                return;
-            }
-            return navigator.clipboard.writeText(generate()).then(
-                () => setState("copied"),
-                () => setState("error"),
-            );
-        }).finally(() => window.setTimeout(() => setState("label"), 1000));
-    }
-
-    return <Button variant={variant} onClick={copy} className="d-block m-2">
-        {body}
-    </Button>;
-}
+import { CopyButton } from "../CopyButton";
 
 type ShareDialogParams = {
     bytecount: string,
@@ -72,37 +25,55 @@ function ShareDialogBody() {
         const cgcc = Handlebars.compile<Template>(CGCCTemplate);
         const cmc = Handlebars.compile<Template>(CMCTemplate);
         return function({ bytecount, code, flags }: ShareDialogParams) {
-            function generateCGCC() {
-                return cgcc({
-                    bytecount: bytecount,
-                    code: code,
-                    link: window.location.toString(),
-                    flags: flags.length ? flags : undefined,
-                });
-            }
-            function generateCMC() {
-                return cmc({
-                    bytecount: bytecount,
-                    code: code,
-                    link: window.location.toString(),
-                    flags: flags.length ? flags : undefined,
-                });
-            }
-            function generateLink() {
-                return `[Vyxal It Online!](${window.location.toString()})`;
-            }
+            const [key, setKey] = useState("link");
+            const [content, setContent] = useState("");
+
+            useEffect(() => {
+                switch (key) {
+                    case "link": {
+                        setContent(`[Vyxal It Online!](${window.location.toString()})`);
+                        break;
+                    }
+                    case "cgcc": {
+                        setContent(cgcc({
+                            bytecount: bytecount,
+                            code: code,
+                            link: window.location.toString(),
+                            flags: flags.length ? flags : undefined,
+                        }));
+                        break;
+                    }
+                    case "cmc": {
+                        setContent(cmc({
+                            bytecount: bytecount,
+                            code: code,
+                            link: window.location.toString(),
+                            flags: flags.length ? flags : undefined,
+                        }));
+                        break;
+                    }
+                }
+            }, [key]);
 
             return <>
                 <Modal.Body>
-                    <CopyButton generate={generateCGCC}>
-                        Copy CGCC answer
-                    </CopyButton>
-                    <CopyButton generate={generateCMC}>
-                        Copy CMC response
-                    </CopyButton>
-                    <CopyButton generate={generateLink}>
-                        Copy short link
-                    </CopyButton>
+                    <Nav variant="tabs" className="align-items-end" defaultActiveKey={key} onSelect={(k) => setKey(k!)}>
+                        <Nav.Item>
+                            <Nav.Link eventKey="link">Link</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="cgcc">CGCC answer</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="cmc">CMC response</Nav.Link>
+                        </Nav.Item>
+                        <CopyButton className="ms-auto my-1" title="Copy output" generate={() => content} />
+                    </Nav>
+                    <pre className="bg-dark-subtle p-2 text-wrap">
+                        <code>
+                            {content}
+                        </code>
+                    </pre>
                 </Modal.Body>
             </>;
         };

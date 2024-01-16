@@ -1,7 +1,7 @@
 import compat from "../../assets/compat.json?raw";
 
 export function compatible(permalinkVersion: string) {
-    console.log(compat)
+    console.log(compat);
     return JSON.parse(compat)[permalinkVersion] == true;
 }
 

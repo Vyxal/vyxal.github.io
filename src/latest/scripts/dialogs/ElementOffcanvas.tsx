@@ -111,8 +111,8 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                                     resultArray[chunkIndex].push(item);
 
                                     return resultArray;
-                                }, []).map((row) => (
-                                    <tr>
+                                }, []).map((row, index) => (
+                                    <tr key={index}>
                                         {
                                             row.map((glyph) => <td key={glyph}>{glyph}</td>)
                                         }

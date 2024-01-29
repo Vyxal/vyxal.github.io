@@ -40,11 +40,11 @@
         "webpack-dev-server": "^4.15.1"
     },
     "dependencies": {
-        "@codemirror/autocomplete": "^6.11.1",
+        "@codemirror/autocomplete": "^6.12.0",
         "@codemirror/commands": "^6.3.3",
         "@codemirror/language": "^6.10.0",
-        "@codemirror/view": "^6.23.0",
-        "@lezer/common": "^1.2.0",
+        "@codemirror/view": "^6.23.1",
+        "@lezer/common": "^1.2.1",
         "@popperjs/core": "^2.11.8",
         "@uiw/codemirror-theme-github": "^4.21.21",
         "@uiw/codemirror-theme-vscode": "^4.21.21",
@@ -57,7 +57,7 @@
         "immer": "^10.0.3",
         "magic-snowflakes": "^6.3.0",
         "react": "^18.2.0",
-        "react-bootstrap": "^2.9.2",
+        "react-bootstrap": "^2.10.0",
         "react-dom": "^18.2.0",
         "react-popper": "^2.3.0",
         "use-immer": "^0.9.0",

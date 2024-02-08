@@ -3,7 +3,7 @@ import { FormLabel } from "react-bootstrap";
 import { Dispatch, SetStateAction, memo, useContext } from "react";
 import { ElementDataContext } from "../util/element-data";
 import { Updater } from "use-immer";
-import { Flags, serializeFlags } from "../flags";
+import { Flags, deserializeFlags, serializeFlags } from "../flags";
 
 export type FlagsDialogParams = {
     flags: Flags,
@@ -20,10 +20,16 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
             <Modal.Title>Flags</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <div className="mb-3">
-                <span className="form-control font-monospace">
-                    {flagSet.size > 0 ? `-${[...flagSet.values()].join("")}` : " "}
-                </span>
+            <div className="input-group mb-3">
+                <span className="input-group-text">-</span>
+                <input
+                    type="text"
+                    className="form-control font-monospace"
+                    value={flagSet.size > 0 ? [...flagSet.values()].join("") : ""}
+                    onChange={(event) => {
+                        setFlags(deserializeFlags(flagDefs, new Set(event.target.value)));
+                    }}
+                />
             </div>
             {
                 [...flagDefs.values()].map((def) => {

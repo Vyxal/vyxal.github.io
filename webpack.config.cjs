@@ -3,8 +3,11 @@ const webpack = require("webpack");
 const HtmlBundlerPlugin = require("html-bundler-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const { GitRevisionPlugin } = require('git-revision-webpack-plugin')
 // const WorkboxPlugin = require('workbox-webpack-plugin');
 // const CopyPlugin = require("copy-webpack-plugin");
+
+const gitRevisionPlugin = new GitRevisionPlugin()
 
 const LATEST_DATA_URI = "https://vyxal.github.io/Vyxal/theseus.json"
 
@@ -85,6 +88,7 @@ module.exports = function (env, argv) {
                 })
             ),
             new webpack.DefinePlugin({
+                VERSION: JSON.stringify(gitRevisionPlugin.version()),
                 DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join("/", env["vy-archive"], "theseus.json") : LATEST_DATA_URI)
             })
             // new WorkboxPlugin.InjectManifest({

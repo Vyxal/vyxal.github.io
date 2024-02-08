@@ -45,6 +45,8 @@ export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeo
             <FormText>settings with <i className="bi bi-link-45deg"></i> are saved in the permalink</FormText>
         </Modal.Body>
         <Modal.Footer>
+            {/* @ts-expect-error VERSION gets replaced by Webpack */}
+            <span class="me-auto form-text font-monospace">{VERSION}</span>
             <Button variant="primary" onClick={() => setShow(false)}>
                 Close
             </Button>

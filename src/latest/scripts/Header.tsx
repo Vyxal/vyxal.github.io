@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Button, ButtonGroup, Container, Dropdown, InputGroup, Nav, Navbar, Spinner } from "react-bootstrap";
 
-import { InterpreterFlagSettings } from "./flagsReducer";
 import { VyRunnerState } from "./util/misc";
 
 import logo from "../assets/logo-64.png";
@@ -23,7 +22,7 @@ function ShowDialogButton({ shower, title, icon }: ShowDialogButtonArgs) {
 type HeaderArgs = {
     state: VyRunnerState,
     onRunClicked: () => unknown,
-    flags: InterpreterFlagSettings,
+    flags: Set<string>,
     setShowFlagsDialog: Dispatch<SetStateAction<boolean>>,
     setShowSettingsDialog: Dispatch<SetStateAction<boolean>>,
     setShowShareDialog: Dispatch<SetStateAction<boolean>>,
@@ -41,8 +40,8 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                 <Nav className="me-auto me-md-0 d-none d-sm-flex">
                     <InputGroup className="me-md-3 me-2">
                         {
-                            flags.flags.length > 0 ? (
-                                <span className="form-control font-monospace">-{flags.flags.join("")}</span>
+                            flags.size > 0 ? (
+                                <span className="form-control font-monospace">-{[...flags].join("")}</span>
                             ) : null
                         }
                         <Button variant="outline-secondary" onClick={() => setShowFlagsDialog(true)} title="Flags">
@@ -56,8 +55,8 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                 <div className="d-sm-none me-auto">
                     <InputGroup>
                         {
-                            flags.flags.length > 0 ? (
-                                <span className="form-control font-monospace">-{flags.flags.join("")}</span>
+                            flags.size > 0 ? (
+                                <span className="form-control font-monospace">-{[...flags].join("")}</span>
                             ) : null
                         }
                         <Dropdown as={ButtonGroup}>

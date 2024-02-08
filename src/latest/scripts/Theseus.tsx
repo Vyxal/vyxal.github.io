@@ -1,14 +1,12 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { flagsReducer, settingsFromFlags } from "./flagsReducer";
+import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
 import Header from "./Header";
 import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tab, Nav } from "react-bootstrap";
-import { useImmerReducer } from "use-immer";
+import { useImmer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { Theme, VyRunnerState } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { VyTerminalRef } from "./VyTerminal";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
-import { FlagsDialog } from "./dialogs/FlagsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
@@ -17,8 +15,11 @@ import { compatible, V2Permalink } from "./util/permalink";
 import { decodeHash, encodeHash } from "./util/permalink";
 import HtmlView from "./HtmlView";
 import { CopyButton } from "./CopyButton";
-import { ELEMENT_DATA } from "./util/element-data";
+import { ELEMENT_DATA, ElementDataContext } from "./util/element-data";
 import { IncompatibleDialog, IncompatibleInfo } from "./dialogs/IncompatibleDialog";
+import { deserializeFlags, Flags, serializeFlags } from "./flags";
+import { FlagsDialog } from "./dialogs/FlagsDialog";
+import { enableMapSet } from "immer";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {
@@ -31,7 +32,7 @@ import { IncompatibleDialog, IncompatibleInfo } from "./dialogs/IncompatibleDial
 const utilWorker = new UtilWorker();
 
 const VyTerminal = lazy(() => import("./VyTerminal"));
-const Editor = lazy(() => import("./Editor").then((i) => i.default()).then((component) => ({ default: component })));
+const Editor = lazy(() => import("./Editor").then((i) => ELEMENT_DATA.then(i.default).then((component) => ({ default: component }))));
 
 type Input = {
     id: number,
@@ -40,6 +41,9 @@ type Input = {
 
 let inputId = 0;
 
+// TODO: Don't hardcode this
+const LITERATE_MODE_FLAG_NAME = "Literate mode";
+
 function Theseus() {
     let link: V2Permalink | null;
     if (window.location.hash.length) {
@@ -47,7 +51,9 @@ function Theseus() {
     } else {
         link = null;
     }
-    const [flags, setFlags] = useImmerReducer(flagsReducer, settingsFromFlags(link?.flags ?? []));
+    const elementData = useContext(ElementDataContext)!;
+    const [flags, setFlags] = useImmer<Flags>(deserializeFlags(elementData.flagDefs, new Set(link?.flags ?? [])));
+    const literate = flags.get(LITERATE_MODE_FLAG_NAME) == true;
     const [theme, setTheme] = useState<Theme>(loadTheme());
     const [state, setState] = useState<VyRunnerState>("idle");
     const [timeout, setTimeout] = useState<number>(10);
@@ -78,18 +84,16 @@ function Theseus() {
     }, [theme]);
 
     useEffect(() => {
-        ELEMENT_DATA.then((d) => {
-            if (link?.version != null && !compatible(link.version)) {
-                setIncompatible({
-                    latestVersion: d.version,
-                    targetVersion: link.version,
-                });
-            } else {
-                window.location.hash = encodeHash(
-                    header, code, footer, flags.flags, inputs.map((input) => input.value), d.version
-                );
-            }
-        });
+        if (link?.version != null && !compatible(link.version)) {
+            setIncompatible({
+                latestVersion: elementData.version,
+                targetVersion: link.version,
+            });
+        } else {
+            window.location.hash = encodeHash(
+                header, code, footer, [...serializeFlags(elementData.flagDefs, flags)], inputs.map((input) => input.value), elementData.version
+            );
+        }
     }, [header, code, footer, flags, inputs]);
 
     useEffect(() => {
@@ -99,7 +103,7 @@ function Theseus() {
             }
             runnerRef.current?.start(
                 header + code + footer,
-                flags.flags,
+                [...serializeFlags(elementData.flagDefs, flags)],
                 inputs.map((i) => i.value),
                 timeout * 1000
             );
@@ -125,7 +129,7 @@ function Theseus() {
     }, [snowing]);
 
     useEffect(() => {
-        utilWorker.formatBytecount(code, flags.literate).then(setBytecount);
+        utilWorker.formatBytecount(code, literate).then(setBytecount);
     }, [code, flags]);
 
     return <>
@@ -140,18 +144,18 @@ function Theseus() {
             setShow={setShowSettingsDialog}
         />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
-        <ShareDialog bytecount={bytecount} code={code} flags={flags.flags.join("")} show={showShareDialog} setShow={setShowShareDialog} />
+        <ShareDialog bytecount={bytecount} code={code} flags={[...serializeFlags(elementData.flagDefs, flags)].join("")} show={showShareDialog} setShow={setShowShareDialog} />
         <IncompatibleDialog data={incompatible} />
         <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />
         <Header
-            state={state} flags={flags} onRunClicked={() => {
+            state={state} flags={serializeFlags(elementData.flagDefs, flags)} onRunClicked={() => {
                 if (runnerRef.current != null) {
                     switch (state) {
                         case "idle":
                             setState("starting");
                             runnerRef.current.start(
                                 header + code + footer,
-                                flags.flags,
+                                [...serializeFlags(elementData.flagDefs, flags)],
                                 inputs.map((i) => i.value),
                                 timeout * 1000
                             );
@@ -176,9 +180,9 @@ function Theseus() {
                         }
                     >
                         <Accordion defaultActiveKey="1" alwaysOpen className="p-3">
-                            <Editor header="Header" height="50px" eventKey="0" code={header} setCode={setHeader} theme={theme} literate={flags.literate} />
-                            <Editor header={`Code: ${bytecount}`} height="100px" eventKey="1" code={code} setCode={setCode} theme={theme} literate={flags.literate} />
-                            <Editor header="Footer" code={footer} height="50px" eventKey="2" setCode={setFooter} theme={theme} literate={flags.literate} />
+                            <Editor header="Header" height="50px" eventKey="0" code={header} setCode={setHeader} theme={theme} literate={literate} />
+                            <Editor header={`Code: ${bytecount}`} height="100px" eventKey="1" code={code} setCode={setCode} theme={theme} literate={literate} />
+                            <Editor header="Footer" code={footer} height="50px" eventKey="2" setCode={setFooter} theme={theme} literate={literate} />
                             <Accordion.Item eventKey="3">
                                 <Accordion.Header>Inputs</Accordion.Header>
                                 <Accordion.Body className="d-flex flex-wrap">
@@ -236,5 +240,12 @@ function Theseus() {
     </>;
 }
 
-const root = createRoot(document.getElementById("react-container")!);
-root.render(<Theseus />);
+ELEMENT_DATA.then((data) => {
+    enableMapSet();
+    const root = createRoot(document.getElementById("react-container")!);
+    root.render(
+        <ElementDataContext.Provider value={data}>
+            <Theseus />
+        </ElementDataContext.Provider>
+    );
+});

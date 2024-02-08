@@ -1,16 +1,20 @@
 import { Button, FormSelect, InputGroup, Modal } from "react-bootstrap";
 import { FormLabel } from "react-bootstrap";
-import { ChangeFlagValue, ChangeFlags, END_PRINT_FLAGS, END_PRINT_MODES, END_PRINT_NAMES, InterpreterFlagSettings } from "../flagsReducer";
-import { Dispatch, ReactNode, SetStateAction, memo } from "react";
+import { Dispatch, SetStateAction, memo, useContext } from "react";
+import { ElementDataContext } from "../util/element-data";
+import { Updater } from "use-immer";
+import { Flags, serializeFlags } from "../flags";
 
 export type FlagsDialogParams = {
-    flags: InterpreterFlagSettings,
-    setFlags: Dispatch<ChangeFlagValue | ChangeFlags>,
+    flags: Flags,
+    setFlags: Updater<Flags>,
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
 export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: FlagsDialogParams) {
+    const { flagDefs } = useContext(ElementDataContext)!;
+    const flagSet = serializeFlags(flagDefs, flags);
     return <Modal show={show} onHide={() => setShow(false)} fullscreen="sm-down">
         <Modal.Header closeButton>
             <Modal.Title>Flags</Modal.Title>
@@ -18,10 +22,22 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
         <Modal.Body>
             <div className="mb-3">
                 <span className="form-control font-monospace">
-                    {flags.flags.length > 0 ? `-${flags.flags.join("")}` : " "}
+                    {flagSet.size > 0 ? `-${[...flagSet.values()].join("")}` : " "}
                 </span>
             </div>
-            <BooleanSwitch parameter="literate" flags={flags} setFlags={setFlags}>
+            {
+                [...flagDefs.values()].map((def) => {
+                    switch (def.type) {
+                        case "boolean": {
+                            return <BooleanSwitch parameter={def.name} flags={flags} setFlags={setFlags} />;
+                        }
+                        case "choice": {
+                            return <ChoiceDropdown parameter={def.name} choices={def.choices} flags={flags} setFlags={setFlags} />;
+                        }
+                    }
+                })
+            }
+            {/* <BooleanSwitch parameter="literate" flags={flags} setFlags={setFlags}>
                 Literate mode
             </BooleanSwitch>
             <hr className="mt-1" />
@@ -75,7 +91,7 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
                         return <option key={flag} value={flag}>{END_PRINT_NAMES.get(flag)}</option>;
                     })}
                 </FormSelect>
-            </InputGroup>
+            </InputGroup> */}
         </Modal.Body>
         <Modal.Footer>
             <Button variant="primary" onClick={() => setShow(false)}>
@@ -84,31 +100,58 @@ export const FlagsDialog = memo(function({ flags, setFlags, show, setShow }: Fla
         </Modal.Footer>
     </Modal>;
 });
-export type BooleanSwitchParams = {
+
+type BooleanSwitchParams = {
     parameter: string,
-    flags: InterpreterFlagSettings,
-    setFlags: Dispatch<ChangeFlagValue | ChangeFlags>,
-    children: ReactNode,
+    flags: Flags,
+    setFlags: Updater<Flags>,
 };
 
-export function BooleanSwitch({ parameter, flags, setFlags, children }: BooleanSwitchParams) {
+function BooleanSwitch({ parameter, flags, setFlags }: BooleanSwitchParams) {
     return <div className="form-check form-switch">
         <input
             className="form-check-input"
             type="checkbox"
             role="switch"
             id={parameter + "Switch"}
-            checked={flags[parameter]}
+            checked={flags.get(parameter) == true}
             onChange={(event) => {
-                setFlags({
-                    type: "setting",
-                    setting: parameter,
-                    value: event.currentTarget.checked,
-                } as ChangeFlagValue);
+                setFlags((flags) => {
+                    flags.set(parameter, event.target.checked);
+                });
             }}
         />
         <FormLabel htmlFor={parameter + "Switch"}>
-            {children}
+            {parameter}
         </FormLabel>
     </div>;
+}
+
+type ChoiceDropdownParams = {
+    parameter: string,
+    choices: Map<string, string>,
+    flags: Flags,
+    setFlags: Updater<Flags>,
+};
+
+function ChoiceDropdown({ parameter, choices, flags, setFlags }: ChoiceDropdownParams) {
+    return <InputGroup className="flex-nowrap mb-3">
+        <InputGroup.Text>
+            <label htmlFor={parameter}>{parameter}:</label>
+        </InputGroup.Text>
+        <FormSelect
+            name={parameter}
+            className="d-inline w-auto"
+            value={flags.get(parameter) as string}
+            onChange={(event) => {
+                setFlags((flags) => {
+                    flags.set(parameter, event.target.value);
+                });
+            }}
+        >
+            {[...choices.entries()].map(([flag, choice]) => {
+                return <option key={flag} value={choice}>{choice}</option>;
+            })}
+        </FormSelect>
+    </InputGroup>;
 }

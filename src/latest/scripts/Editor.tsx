@@ -10,7 +10,7 @@ import { lineNumbers } from "@codemirror/view";
 import { Theme } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
-import { ELEMENT_DATA } from "./util/element-data";
+import type { ElementData } from "./util/element-data";
 
 const EXTENSIONS = [
     keymap.of([
@@ -47,30 +47,28 @@ type EditorParams = {
     literate: boolean,
 };
 
-export default function Editor() {
-    return ELEMENT_DATA.then((data) => {
-        const VYXAL = langVyxal(util, data);
-        const VYXAL_LIT = langVyxalLit(util, data);
-        return function({ header, code, height, eventKey, setCode, theme, literate }: EditorParams) {
-            const onChange = useCallback((code: string) => {
-                if (code == "lyxal") {
-                    window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-                }
-                setCode(code);
-            }, []);
-            const extensions = useMemo(() => EXTENSIONS.concat([literate ? VYXAL_LIT : VYXAL]), [literate]);
-            return <Accordion.Item eventKey={eventKey}>
-                <Accordion.Header>{header}</Accordion.Header>
-                <Accordion.Body>
-                    <ReactCodeMirror
-                        theme={THEMES[theme]}
-                        value={code}
-                        height={height}
-                        onChange={onChange}
-                        extensions={extensions}
-                    />
-                </Accordion.Body>
-            </Accordion.Item>;
-        };
-    });
+export default function Editor(data: ElementData) {
+    const VYXAL = langVyxal(util, data);
+    const VYXAL_LIT = langVyxalLit(util, data);
+    return function({ header, code, height, eventKey, setCode, theme, literate }: EditorParams) {
+        const onChange = useCallback((code: string) => {
+            if (code == "lyxal") {
+                window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+            }
+            setCode(code);
+        }, []);
+        const extensions = useMemo(() => EXTENSIONS.concat([literate ? VYXAL_LIT : VYXAL]), [literate]);
+        return <Accordion.Item eventKey={eventKey}>
+            <Accordion.Header>{header}</Accordion.Header>
+            <Accordion.Body>
+                <ReactCodeMirror
+                    theme={THEMES[theme]}
+                    value={code}
+                    height={height}
+                    onChange={onChange}
+                    extensions={extensions}
+                />
+            </Accordion.Body>
+        </Accordion.Item>;
+    };
 }

@@ -33,7 +33,7 @@ function elementCompletion(element: Element | Modifier, literate: boolean): Comp
 }
 
 function syncElementAutocomplete(context: CompletionContext, literate: boolean): CompletionResult | null {
-    const word = context.matchBefore(PREFIXED_KEYWORD);
+    const word = context.matchBefore(literate ? KEYWORD : PREFIXED_KEYWORD);
     if (word != null) {
         word.text = word.text.trimStart();
         const results: FuseResult<Element | Modifier>[] = elementFuse.search(word.text).concat(modifierFuse.search(word.text));

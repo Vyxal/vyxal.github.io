@@ -1,18 +1,25 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { ELEMENT_DATA, Element, Modifier, elementFuse, modifierFuse } from "../util/element-data";
-import { Card, Col, Collapse, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { ELEMENT_DATA, ElementDataContext, elementFuse, modifierFuse } from "../util/element-data";
+import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
+import Fuse from "fuse.js";
 
 type CardSearchResultsParams<T> = {
     card: ({ item }: { item: T }) => JSX.Element,
-    results: T[],
+    fuse: Fuse<T>,
+    defaults: T[],
 };
 
-function CardSearch<T>({ card, results }: CardSearchResultsParams<T>) {
+function CardSearch<T>({ card, fuse, defaults }: CardSearchResultsParams<T>) {
+    const [query, setQuery] = useState("");
+
+    const results = query.length ? fuse.search(query).map((result) => result.item) : defaults;
+
     return <>
-        <Row xs={1} md={2} className="g-4 align-items-stretch">
+        <Form.Control type="search" placeholder="Search..." value={query} onChange={(event) => setQuery(event.currentTarget.value)} className="" />
+        <Row xs={1} md={2} className="g-4 mt-0 overflow-y-scroll align-items-stretch">
             {results.length ? (
                 results.map((item, i) => {
                     return <Col key={i}>
@@ -34,32 +41,9 @@ type ElementOffcanvasParams = {
 };
 
 export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
-    const [query, setQuery] = useState("");
-    const [elementResults, setElementResults] = useState<Element[]>([]);
-    const [modifierResults, setModifierResults] = useState<Modifier[]>([]);
+    const elementData = useContext(ElementDataContext)!;
     const [tab, setTab] = useState("elements");
-    const [showSearch, setShowSearch] = useState(true);
     const [codepage, setCodepage] = useState<string[]>([]);
-
-    useEffect(() => {
-        switch (tab) {
-            case "elements":
-                if (query.length) {
-                    setElementResults(elementFuse.search(query).map((result) => result.item));
-                } else {
-                    ELEMENT_DATA.then((data) => setElementResults(data.elements));
-                }
-                break;
-            case "modifiers":
-                if (query.length) {
-                    setModifierResults(modifierFuse.search(query).map((result) => result.item));
-                } else {
-                    ELEMENT_DATA.then((data) => setModifierResults(data.modifiers));
-                }
-                break;
-        }
-        setShowSearch(tab != "codepage");
-    }, [query, tab]);
 
     useEffect(() => {
         ELEMENT_DATA.then((data) => setCodepage(data.codepageRaw));
@@ -80,49 +64,38 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                     </Nav.Item>
                 </Nav>
             </Offcanvas.Header>
-            <div className="border-bottom">
-                <Collapse in={showSearch}>
-                    <div>
-                        <div className="m-3">
-                            <Form.Control type="search" placeholder="Search..." value={query} onChange={(event) => setQuery(event.currentTarget.value)} className="" />
-                        </div>
-                    </div>
-                </Collapse>
-            </div>
-            <Offcanvas.Body>
-                <Tab.Content>
-                    <Tab.Pane eventKey="elements">
-                        <CardSearch card={ElementCard} results={elementResults} />
-                    </Tab.Pane>
-                    <Tab.Pane eventKey="modifiers">
-                        <CardSearch card={ModifierCard} results={modifierResults} />
-                    </Tab.Pane>
-                    <Tab.Pane eventKey="codepage">
-                        <table className="table">
-                            {
-                                // https://stackoverflow.com/a/37826698/14743122
-                                codepage.reduce<string[][]>((resultArray, item, index) => {
-                                    const chunkIndex = Math.floor(index / 16);
+            <Tab.Content className="offcanvas-body overflow-y-hidden">
+                <Tab.Pane eventKey="elements" className="element-offcanvas-tab-pane">
+                    <CardSearch card={ElementCard} fuse={elementFuse} defaults={elementData.elements} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="modifiers" className="element-offcanvas-tab-pane">
+                    <CardSearch card={ModifierCard} fuse={modifierFuse} defaults={elementData.modifiers} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="codepage">
+                    <table className="table">
+                        {
+                            // https://stackoverflow.com/a/37826698/14743122
+                            codepage.reduce<string[][]>((resultArray, item, index) => {
+                                const chunkIndex = Math.floor(index / 16);
 
-                                    if (!resultArray[chunkIndex]) {
-                                        resultArray[chunkIndex] = []; // start a new chunk
+                                if (!resultArray[chunkIndex]) {
+                                    resultArray[chunkIndex] = []; // start a new chunk
+                                }
+
+                                resultArray[chunkIndex].push(item);
+
+                                return resultArray;
+                            }, []).map((row, index) => (
+                                <tr key={index}>
+                                    {
+                                        row.map((glyph) => <td key={glyph}>{glyph}</td>)
                                     }
-
-                                    resultArray[chunkIndex].push(item);
-
-                                    return resultArray;
-                                }, []).map((row, index) => (
-                                    <tr key={index}>
-                                        {
-                                            row.map((glyph) => <td key={glyph}>{glyph}</td>)
-                                        }
-                                    </tr>
-                                ))
-                            }
-                        </table>
-                    </Tab.Pane>
-                </Tab.Content>
-            </Offcanvas.Body>
+                                </tr>
+                            ))
+                        }
+                    </table>
+                </Tab.Pane>
+            </Tab.Content>
         </Tab.Container>
     </Offcanvas>;
 }

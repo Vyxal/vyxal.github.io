@@ -12,6 +12,12 @@ $primary: rgb(59, 130, 246);
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/variables-dark";
+
+$custom-colors: (
+  "ourple": #712cf9
+);
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
 @import "~bootstrap/scss/maps";
 @import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
@@ -32,6 +38,15 @@ code.code-pill {
     .program-input {
         width: 33.33% !important;
     }
+}
+
+.element-offcanvas-tab-pane {
+    flex-direction: column;
+}
+
+.element-offcanvas-tab-pane.show {
+    display: flex !important;
+    height: 100%;
 }
 
 // Layout & components

@@ -1,10 +1,11 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { ELEMENT_DATA, ElementDataContext, elementFuse, modifierFuse } from "../util/element-data";
+import { ELEMENT_DATA, ElementDataContext, elementFuse, modifierFuse, syntaxFuse } from "../util/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
 import Fuse from "fuse.js";
+import { SyntaxCard } from "../cards/SyntaxCard";
 
 type CardSearchResultsParams<T> = {
     card: ({ item }: { item: T }) => JSX.Element,
@@ -60,6 +61,9 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                         <Nav.Link eventKey="modifiers">Modifiers</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
+                        <Nav.Link eventKey="syntax">Syntax</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
                         <Nav.Link eventKey="codepage">Codepage</Nav.Link>
                     </Nav.Item>
                 </Nav>
@@ -70,6 +74,9 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                 </Tab.Pane>
                 <Tab.Pane eventKey="modifiers" className="element-offcanvas-tab-pane">
                     <CardSearch card={ModifierCard} fuse={modifierFuse} defaults={elementData.modifiers} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="syntax" className="element-offcanvas-tab-pane">
+                    <CardSearch card={SyntaxCard} fuse={syntaxFuse} defaults={elementData.syntax} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="codepage">
                     <table className="table">

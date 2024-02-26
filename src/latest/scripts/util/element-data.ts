@@ -120,7 +120,22 @@ export const modifierFuse = new Fuse<Modifier>([], {
         },
     ],
 });
+export const syntaxFuse = new Fuse<SyntaxFeature>([], {
+    includeScore: true,
+    threshold: 0.3,
+    keys: [
+        {
+            "name": "symbol",
+            "weight": 3,
+        },
+        {
+            "name": "name",
+            "weight": 2,
+        },
+    ],
+});
 ELEMENT_DATA.then((data) => {
     elementFuse.setCollection(data.elements);
     modifierFuse.setCollection(data.modifiers);
+    syntaxFuse.setCollection(data.syntax);
 });

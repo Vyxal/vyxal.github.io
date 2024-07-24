@@ -186,5 +186,10 @@ module.exports = function (env, argv) {
                 },
             ],
         },
+        ignoreWarnings: [
+            // TODO: Remove these once Bootstrap 5.3.4 releases
+            /https:\/\/sass-lang.com\/d\/mixed-decls/,
+            /22 repetitive deprecation warnings omitted\./,
+        ]
     }];
 }

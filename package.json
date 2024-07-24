@@ -50,7 +50,7 @@
         "@uiw/codemirror-theme-github": "^4.21.22",
         "@uiw/codemirror-theme-vscode": "^4.21.22",
         "@uiw/react-codemirror": "^4.21.22",
-        "bootstrap": "^5.3.2",
+        "bootstrap": "^5.3.3",
         "bootstrap-icons": "^1.11.3",
         "codemirror": "^6.0.1",
         "fuse.js": "^7.0.0",

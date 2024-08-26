@@ -44,7 +44,7 @@
         "@codemirror/autocomplete": "^6.12.0",
         "@codemirror/commands": "^6.3.3",
         "@codemirror/language": "^6.10.1",
-        "@codemirror/view": "^6.24.1",
+        "@codemirror/view": "^6.33.0",
         "@lezer/common": "^1.2.1",
         "@popperjs/core": "^2.11.8",
         "@uiw/codemirror-theme-github": "^4.21.22",

@@ -46,7 +46,7 @@ export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeo
         </Modal.Body>
         <Modal.Footer>
             {/* @ts-expect-error VERSION gets replaced by Webpack */}
-            <span class="me-auto form-text font-monospace">{VERSION}</span>
+            <span className="me-auto form-text font-monospace">{VERSION}</span>
             <Button variant="primary" onClick={() => setShow(false)}>
                 Close
             </Button>

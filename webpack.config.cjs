@@ -124,7 +124,7 @@ module.exports = function (env, argv) {
                         test: /[\\/]node_modules[\\/].+\.(js|ts)$/,
                         name(module, chunks, cacheGroupKey) {
                             let segs = module.identifier().split("/")
-                            return `./vendor/${segs.slice(segs.lastIndexOf("node_modules") + 1).join("-")}`
+                            return `./vendor/${segs.slice(segs.lastIndexOf("node_modules") + 1).join("-").slice(0, -3)}`
                         },
                         chunks: "all",
                         reuseExistingChunk: true

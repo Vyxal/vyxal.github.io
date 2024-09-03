@@ -89,35 +89,35 @@ export function vyxalHover(util: UtilWorker, elementData: ElementData): Extensio
             }
             console.log(c.name, view.state.doc.sliceString(c.from, c.to));
         }
-        if (node.name != "Element") {
-            return null;
-        }
         const hoveredChar = view.state.doc.sliceString(node.from, node.to);
-        if (elementData.elementMap.has(hoveredChar)) {
-            const element = elementData.elementMap.get(hoveredChar)!;
-            return {
-                pos: pos,
-                create() {
-                    const container = document.createElement("div");
-                    container.innerHTML = renderToStaticMarkup(ElementCard({ item: element, shadow: true }));
-                    return {
-                        dom: container,
-                    };
-                },
-            } as Tooltip;
-        }
-        if (elementData.modifierMap.has(hoveredChar)) {
-            const modifier = elementData.modifierMap.get(hoveredChar)!;
-            return {
-                pos: pos,
-                create() {
-                    const container = document.createElement("div");
-                    container.innerHTML = renderToStaticMarkup(ModifierCard({ item: modifier, shadow: true }));
-                    return {
-                        dom: container,
-                    };
-                },
-            } as Tooltip;
+        if (node.name == "Element") {
+            if (elementData.elementMap.has(hoveredChar)) {
+                const element = elementData.elementMap.get(hoveredChar)!;
+                return {
+                    pos: pos,
+                    create() {
+                        const container = document.createElement("div");
+                        container.innerHTML = renderToStaticMarkup(ElementCard({ item: element, shadow: true }));
+                        return {
+                            dom: container,
+                        };
+                    },
+                } as Tooltip;
+            }
+        } else if (node.name == "ModifierChar") {
+            if (elementData.modifierMap.has(hoveredChar)) {
+                const modifier = elementData.modifierMap.get(hoveredChar)!;
+                return {
+                    pos: pos,
+                    create() {
+                        const container = document.createElement("div");
+                        container.innerHTML = renderToStaticMarkup(ModifierCard({ item: modifier, shadow: true }));
+                        return {
+                            dom: container,
+                        };
+                    },
+                } as Tooltip;
+            }
         }
         return null;
     });

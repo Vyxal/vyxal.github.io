@@ -31,5 +31,10 @@ export const InputDialog = memo(function({ inputs, setInputs, show, setShow }: I
                 <i className="bi bi-plus-circle"></i> Add input
             </Button>
         </Modal.Body>
+        <Modal.Footer>
+            <Button variant="primary" onClick={() => setShow(false)}>
+                Close
+            </Button>
+        </Modal.Footer>
     </Modal>;
 });

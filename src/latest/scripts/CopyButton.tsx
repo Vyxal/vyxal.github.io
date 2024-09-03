@@ -40,7 +40,7 @@ export function CopyButton({ className, title, generate }: CopyButtonParams) {
                         }
                         return navigator.clipboard.writeText(generate()).then(
                             () => setState("copied"),
-                            () => setState("failed")
+                            () => setState("failed"),
                         );
                     }).finally(() => window.setTimeout(() => setState("copy"), 1500));
                 }

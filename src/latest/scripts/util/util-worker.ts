@@ -22,7 +22,7 @@ export class UtilWorker {
                 const worker = new SharedWorker(
                     /* webpackChunkName: "util-worker" */
                     new URL("../workers/util", import.meta.url),
-                    { name: "util-worker" }
+                    { name: "util-worker" },
                 );
                 const readyListener = (event: MessageEvent<unknown>) => {
                     if (event.data != "ready") {
@@ -39,7 +39,7 @@ export class UtilWorker {
                 const worker = new Worker(
                     /* webpackChunkName: "util-fallback" */
                     new URL("../workers/util-fallback", import.meta.url),
-                    { name: "util-worker" }
+                    { name: "util-worker" },
                 );
                 const readyListener = (event: MessageEvent<unknown>) => {
                     if (event.data != "ready") {

@@ -70,7 +70,7 @@ export class VyRunner extends EventTarget {
         return new Promise<Worker>((resolve) => {
             const worker = new Worker(
                 /* webpackChunkName: "worker" */
-                new URL("./workers/runner.ts", import.meta.url)
+                new URL("./workers/runner.ts", import.meta.url),
             );
             const listener = (event: MessageEvent<WorkerMessage>) => {
                 if (event.data.type == "ready") {

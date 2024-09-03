@@ -45,7 +45,7 @@ self.addEventListener("message", function(message: MessageEvent<RunRequest>) {
                     text: line,
                     workerNumber: request.workerNumber,
                 });
-            }
+            },
         );
         console.log(`Execution complete! (workerNumber ${request.workerNumber})`);
         this.postMessage({

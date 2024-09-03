@@ -23,7 +23,7 @@ export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeo
             <div className="mb-3">
                 <FormLabel htmlFor="theme">Theme</FormLabel>
                 <ToggleButtonGroup className="d-block" name="theme" type="radio" value={Theme[theme]} onChange={(theme) => setTheme(Theme[theme as keyof typeof Theme])}>
-                    {(Object.values(Theme).filter(value => typeof value === 'string') as string[]).map((theme, i) => <ToggleButton key={i} id={`theme-${i}`} value={theme}>{theme}</ToggleButton>
+                    {(Object.values(Theme).filter(value => typeof value === 'string') as string[]).map((theme, i) => <ToggleButton key={i} id={`theme-${i}`} value={theme}>{theme}</ToggleButton>,
                     )}
                 </ToggleButtonGroup>
             </div>

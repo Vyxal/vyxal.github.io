@@ -27,7 +27,7 @@ import { enableMapSet } from "immer";
 // } else {
 //     console.warn("No service worker support detected, skipping registration.");
 // }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 
 const utilWorker = new UtilWorker();
 
@@ -91,7 +91,7 @@ function Theseus() {
             });
         } else {
             window.location.hash = encodeHash(
-                header, code, footer, [...serializeFlags(elementData.flagDefs, flags)], inputs.map((input) => input.value), elementData.version
+                header, code, footer, [...serializeFlags(elementData.flagDefs, flags)], inputs.map((input) => input.value), elementData.version,
             );
         }
     }, [header, code, footer, flags, inputs]);
@@ -105,7 +105,7 @@ function Theseus() {
                 header + code + footer,
                 [...serializeFlags(elementData.flagDefs, flags)],
                 inputs.map((i) => i.value),
-                timeout * 1000
+                timeout * 1000,
             );
         };
         window.addEventListener("run-vyxal", listener);
@@ -157,7 +157,7 @@ function Theseus() {
                                 header + code + footer,
                                 [...serializeFlags(elementData.flagDefs, flags)],
                                 inputs.map((i) => i.value),
-                                timeout * 1000
+                                timeout * 1000,
                             );
                             break;
                         case "running":
@@ -246,6 +246,6 @@ ELEMENT_DATA.then((data) => {
     root.render(
         <ElementDataContext.Provider value={data}>
             <Theseus />
-        </ElementDataContext.Provider>
+        </ElementDataContext.Provider>,
     );
 });

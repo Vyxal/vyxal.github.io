@@ -84,7 +84,9 @@ export function vyxalHover(util: UtilWorker, elementData: ElementData): Extensio
         console.log(node.name);
         const c = node.cursor();
         while (true) {
-            if (!c.parent()) break;
+            if (!c.parent()) {
+                break;
+            }
             console.log(c.name, view.state.doc.sliceString(c.from, c.to));
         }
         if (node.name != "Element") {

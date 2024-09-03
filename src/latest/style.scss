@@ -1,11 +1,5 @@
 // $accordion-padding-y: 0;
 // $accordion-padding-x: 0;
-
-.terminal-placeholder {
-    height: 400px;
-    background-color: black;
-}
-
 // $primary: rgb(59, 130, 246);
 
 // Configuration
@@ -49,6 +43,49 @@ code.code-pill {
     height: 100%;
 }
 
+.cm-theme:not(:last-child) {
+    border-bottom: 1px solid var(--#{$prefix}border-color);
+}
+
+#react-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.terminal-placeholder {
+    background-color: black;
+}
+
+.terminal-wrapper {
+    background-color: black;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+@supports(scrollbar-color: auto) {
+    .xterm-viewport.xterm-viewport {
+        scrollbar-width: thin;
+        scrollbar-color: #ffffff20 transparent;
+    }
+}
+
+@supports selector(::-webkit-scrollbar) {
+    .xterm-viewport::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .xterm-viewport::-webkit-scrollbar-track {
+        opacity: 0;
+    }
+
+    .xterm-viewport::-webkit-scrollbar-thumb {
+        min-height: 20px;
+        background-color: #ffffff20;
+    }
+}
+
 // Layout & components
 @import "~bootstrap/scss/root";
 @import "~bootstrap/scss/reboot";
@@ -81,6 +118,10 @@ code.code-pill {
 @import "~bootstrap/scss/spinners";
 @import "~bootstrap/scss/offcanvas";
 @import "~bootstrap/scss/placeholders";
+
+.input-group {
+    width: initial;
+}
 
 // Helpers
 @import "~bootstrap/scss/helpers";

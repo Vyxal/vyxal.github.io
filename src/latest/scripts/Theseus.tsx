@@ -1,6 +1,6 @@
 import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
 import Header from "./Header";
-import { Accordion, Col, Row, Container, Spinner, InputGroup, Form, Button, Tab, Nav } from "react-bootstrap";
+import { Col, Row, Container, Spinner, Tab, Nav } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { Theme, VyRunnerState } from "./util/misc";
@@ -20,6 +20,7 @@ import { IncompatibleDialog, IncompatibleInfo } from "./dialogs/IncompatibleDial
 import { deserializeFlags, Flags, serializeFlags } from "./flags";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import { enableMapSet } from "immer";
+import { Input, InputDialog } from "./dialogs/InputDialog";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {
@@ -33,13 +34,6 @@ const utilWorker = new UtilWorker();
 
 const VyTerminal = lazy(() => import("./VyTerminal"));
 const Editor = lazy(() => import("./Editor").then((i) => ELEMENT_DATA.then(i.default).then((component) => ({ default: component }))));
-
-type Input = {
-    id: number,
-    value: string,
-};
-
-let inputId = 0;
 
 // TODO: Don't hardcode this
 const LITERATE_MODE_FLAG_NAME = "Literate mode";
@@ -61,10 +55,11 @@ function Theseus() {
     const [header, setHeader] = useState(link?.header ?? "");
     const [code, setCode] = useState(link?.code ?? "");
     const [footer, setFooter] = useState(link?.footer ?? "");
-    const [inputs, setInputs] = useState<Input[]>(link?.inputs?.map((input) => ({ id: inputId++, value: input } as Input)) ?? []);
+    const [inputs, setInputs] = useState<Input[]>(link?.inputs?.map((input) => ({ id: Math.random(), value: input } as Input)) ?? []);
     const [showFlagsDialog, setShowFlagsDialog] = useState(false);
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);
     const [showShareDialog, setShowShareDialog] = useState(false);
+    const [showInputDialog, setShowInputDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
     const [bytecount, setBytecount] = useState("...");
     const [incompatible, setIncompatible] = useState<IncompatibleInfo>(undefined);
@@ -146,6 +141,7 @@ function Theseus() {
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
         <ShareDialog bytecount={bytecount} code={code} flags={[...serializeFlags(elementData.flagDefs, flags)].join("")} show={showShareDialog} setShow={setShowShareDialog} />
         <IncompatibleDialog data={incompatible} />
+        <InputDialog inputs={inputs} setInputs={setInputs} show={showInputDialog} setShow={setShowInputDialog} />
         <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />
         <Header
             state={state} flags={serializeFlags(elementData.flagDefs, flags)} onRunClicked={() => {
@@ -165,11 +161,11 @@ function Theseus() {
                             break;
                     }
                 }
-            }} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog} setShowElementOffcanvas={setShowElementOffcanvas}
+            }} inputs={inputs} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog} setShowInputDialog={setShowInputDialog} setShowElementOffcanvas={setShowElementOffcanvas}
         />
-        <Container className="bg-body-tertiary mt-3 rounded">
-            <Row>
-                <Col lg="6" className="g-0">
+        <Container fluid className="flex-grow-1">
+            <Row className="h-100">
+                <Col lg="6" className="g-0 d-flex flex-column">
                     <Suspense
                         fallback={
                             <div className="d-flex justify-content-center py-4 m-2">
@@ -179,47 +175,31 @@ function Theseus() {
                             </div>
                         }
                     >
-                        <Accordion defaultActiveKey="1" alwaysOpen className="p-3">
-                            <Editor header="Header" height="50px" eventKey="0" code={header} setCode={setHeader} theme={theme} literate={literate} />
-                            <Editor header={`Code: ${bytecount}`} height="100px" eventKey="1" code={code} setCode={setCode} theme={theme} literate={literate} />
-                            <Editor header="Footer" code={footer} height="50px" eventKey="2" setCode={setFooter} theme={theme} literate={literate} />
-                            <Accordion.Item eventKey="3">
-                                <Accordion.Header>Inputs</Accordion.Header>
-                                <Accordion.Body className="d-flex flex-wrap">
-                                    {inputs.map((input) => {
-                                        return <InputGroup className="mb-2 program-input p-1" key={input.id}>
-                                            <Form.Control placeholder="Input" value={input.value} onChange={(event) => setInputs(inputs.map((item) => item.id == input.id ? { id: item.id, value: event.currentTarget.value } : item))} />
-                                            <Button variant="outline-danger" title="Delete input" onClick={() => setInputs(inputs.filter((item) => item.id != input.id))}>
-                                                <i className="bi bi-trash2"></i>
-                                            </Button>
-                                        </InputGroup>;
-                                    })}
-                                    <Button variant="outline-primary" title="Add input" onClick={() => setInputs([...inputs, { id: inputId++, value: "" }])} className="m-1 align-self-start">
-                                        <i className="bi bi-plus-circle"></i>
-                                    </Button>
-                                </Accordion.Body>
-                            </Accordion.Item>
-                        </Accordion>
+                        <Editor ratio="1" title="Header" code={header} setCode={setHeader} theme={theme} literate={literate} />
+                        <Editor ratio="3" title={bytecount} code={code} setCode={setCode} theme={theme} literate={literate} />
+                        <Editor ratio="1" title="Footer" code={footer} setCode={setFooter} theme={theme} literate={literate} />
                     </Suspense>
                 </Col>
-                <Col lg="6">
+                <Col lg="6" className="g-0 vstack">
                     <Tab.Container
                         defaultActiveKey="terminal"
                     >
-                        <Nav variant="tabs" className="m-2 mb-0 align-items-end">
+                        <Nav variant="pills" className="align-items-end m-2">
                             <Nav.Item>
                                 <Nav.Link eventKey="terminal">Terminal</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link eventKey="html">HTML</Nav.Link>
                             </Nav.Item>
-                            <CopyButton className="ms-auto my-1" title="Copy output" generate={() => runnerRef.current?.getOutput() ?? ""} />
+                            <div className="ms-auto">
+                                <CopyButton title="Copy output" generate={() => runnerRef.current?.getOutput() ?? ""} />
+                            </div>
                         </Nav>
-                        <Tab.Content>
-                            <Tab.Pane eventKey="terminal">
+                        <Tab.Content className="flex-grow-1 bg-body-tertiary">
+                            <Tab.Pane eventKey="terminal" className="h-100 position-relative">
                                 <Suspense
                                     fallback={
-                                        <div className="d-flex justify-content-center mb-2 mx-2 pt-2 border border-top-0 terminal-placeholder">
+                                        <div className="d-flex justify-content-center pt-2 h-100 terminal-placeholder">
                                             <Spinner animation="border" className="" role="status" variant="light">
                                                 <span className="visually-hidden">Loading...</span>
                                             </Spinner>

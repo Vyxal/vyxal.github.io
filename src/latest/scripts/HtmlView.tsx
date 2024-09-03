@@ -23,7 +23,7 @@ export default function HtmlView({ getOutput }: HtmlViewParams) {
         </div>;
     } else {
         return (
-            <div className="vstack bg-body p-2 align-items-center m-3 border rounded">
+            <div className="vstack p-2 align-items-center">
                 <i className="bi bi-exclamation-diamond-fill h1 text-warning"></i>
                 <span className="form-text py-2 text-center">
                     {/* probably unnecessary to warn the user, but whatever */}

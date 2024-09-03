@@ -4,16 +4,18 @@ import { Button, ButtonGroup, Container, Dropdown, InputGroup, Nav, Navbar, Spin
 import { VyRunnerState } from "./util/misc";
 
 import logo from "../assets/logo-64.png";
+import { Input } from "./dialogs/InputDialog";
 
 type ShowDialogButtonArgs = {
     shower: (boolean) => unknown,
     title: string,
     icon: string,
+    margin?: boolean,
 };
 
-function ShowDialogButton({ shower, title, icon }: ShowDialogButtonArgs) {
+function ShowDialogButton({ shower, title, icon, margin = true }: ShowDialogButtonArgs) {
     return (
-        <Button variant="outline-secondary me-md-3 me-2" onClick={() => shower(true)} title={title}>
+        <Button variant="outline-secondary" className={margin ? "me-md-3 me-2" : ""} onClick={() => shower(true)} title={title}>
             <i className={`bi ${icon}`}></i>
         </Button>
     );
@@ -23,16 +25,18 @@ type HeaderArgs = {
     state: VyRunnerState,
     onRunClicked: () => unknown,
     flags: Set<string>,
+    inputs: Input[],
     setShowFlagsDialog: Dispatch<SetStateAction<boolean>>,
     setShowSettingsDialog: Dispatch<SetStateAction<boolean>>,
     setShowShareDialog: Dispatch<SetStateAction<boolean>>,
+    setShowInputDialog: Dispatch<SetStateAction<boolean>>,
     setShowElementOffcanvas: Dispatch<SetStateAction<boolean>>,
 };
 
-export default function Header({ state, onRunClicked, flags, setShowFlagsDialog, setShowSettingsDialog, setShowShareDialog, setShowElementOffcanvas }: HeaderArgs) {
+export default function Header({ state, onRunClicked, flags, inputs, setShowFlagsDialog, setShowSettingsDialog, setShowShareDialog, setShowInputDialog, setShowElementOffcanvas }: HeaderArgs) {
     return (
         <Navbar className="bg-body-tertiary flex-wrap">
-            <Container className="justify-content-start">
+            <Container fluid className="justify-content-start">
                 <Navbar.Brand>
                     <img src={logo} width="32" height="32" className="rounded me-2" alt="Vyxal woogle" />
                     <span className="d-none d-sm-inline">Vyxal 3</span>
@@ -44,9 +48,15 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                                 <span className="form-control font-monospace">-{[...flags].join("")}</span>
                             ) : null
                         }
-                        <Button variant="outline-secondary" onClick={() => setShowFlagsDialog(true)} title="Flags">
-                            <i className="bi bi-flag-fill"></i>
-                        </Button>
+                        <ShowDialogButton shower={setShowFlagsDialog} icon="bi-flag-fill" title="Flags" margin={false} />
+                    </InputGroup>
+                    <InputGroup className="me-md-3 me-2">
+                        <ShowDialogButton shower={setShowInputDialog} icon="bi-list-ul" title="Inputs" margin={false} />
+                        {
+                            inputs.length > 0 ? (
+                                <span className="form-control font-monospace">{inputs.length}</span>
+                            ) : null
+                        }
                     </InputGroup>
                     <ShowDialogButton shower={setShowShareDialog} icon="bi-share" title="Share code" />
                     <ShowDialogButton shower={setShowSettingsDialog} icon="bi-gear" title="Settings" />
@@ -65,6 +75,9 @@ export default function Header({ state, onRunClicked, flags, setShowFlagsDialog,
                             </Button>
                             <Dropdown.Toggle split id="toggle-mober-menu" variant="outline-secondary" />
                             <Dropdown.Menu>
+                                <Dropdown.Item as="button" onClick={() => setShowInputDialog(true)}>
+                                    Inputs
+                                </Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={() => setShowShareDialog(true)}>
                                     Share code
                                 </Dropdown.Item>

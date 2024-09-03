@@ -43,6 +43,6 @@ const VyTerminal = forwardRef(function VyTerminal(props: VyTerminalParams, ref: 
         };
     }, []);
 
-    return <div ref={wrapperRef} className="border border-top-0 mb-2 mx-2"></div>;
+    return <div ref={wrapperRef} className="terminal-wrapper"></div>;
 });
 export default VyTerminal;

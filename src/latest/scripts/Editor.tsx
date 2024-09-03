@@ -4,9 +4,8 @@ import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { vyxal } from "./languages/lang-vyxal";
 import langVyxalLit from "./languages/lang-vyxal-lit";
-import { Accordion } from "react-bootstrap";
 import { autocompletion } from "@codemirror/autocomplete";
-import { lineNumbers } from "@codemirror/view";
+import { EditorView, lineNumbers } from "@codemirror/view";
 import { Theme } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
@@ -16,7 +15,7 @@ const EXTENSIONS = [
     keymap.of([
         {
             key: "Shift-Enter",
-            run: (view) => {
+            run(view) {
                 if (view.state.doc.length <= 0) {
                     return false;
                 }
@@ -29,6 +28,10 @@ const EXTENSIONS = [
     minimalSetup,
     autocompletion(),
     lineNumbers(),
+    EditorView.theme({
+        "&": { height: "100%" },
+        "&.cm-focused": { outline: "none" },
+    }),
 ];
 const util = new UtilWorker();
 
@@ -38,10 +41,9 @@ const THEMES = {
 };
 
 type EditorParams = {
-    header: string,
     code: string,
-    height: string,
-    eventKey: string,
+    ratio: string,
+    title: string,
     setCode: Dispatch<SetStateAction<string>>,
     theme: Theme,
     literate: boolean,
@@ -50,7 +52,7 @@ type EditorParams = {
 export default function Editor(data: ElementData) {
     const VYXAL = vyxal(util, data);
     const VYXAL_LIT = langVyxalLit(util, data);
-    return function({ header, code, height, eventKey, setCode, theme, literate }: EditorParams) {
+    return function({ code, ratio, title, setCode, theme, literate }: EditorParams) {
         const onChange = useCallback((code: string) => {
             if (code == "lyxal") {
                 window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
@@ -58,17 +60,18 @@ export default function Editor(data: ElementData) {
             setCode(code);
         }, []);
         const extensions = useMemo(() => EXTENSIONS.concat([literate ? VYXAL_LIT : VYXAL]), [literate]);
-        return <Accordion.Item eventKey={eventKey}>
-            <Accordion.Header>{header}</Accordion.Header>
-            <Accordion.Body>
-                <ReactCodeMirror
-                    theme={THEMES[theme]}
-                    value={code}
-                    height={height}
-                    onChange={onChange}
-                    extensions={extensions}
-                />
-            </Accordion.Body>
-        </Accordion.Item>;
+        return <>
+            <div className="bg-body-tertiary">
+                {title}
+            </div>
+            <ReactCodeMirror
+                theme={THEMES[theme]}
+                value={code}
+                style={{ flex: ratio }}
+                // height={height}
+                onChange={onChange}
+                extensions={extensions}
+            />
+        </>;
     };
 }

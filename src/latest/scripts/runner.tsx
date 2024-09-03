@@ -37,7 +37,7 @@ export class VyRunner extends EventTarget {
         this.terminal.loadAddon(this.fit);
         this.terminal.open(element);
         this.fit.fit();
-        window.addEventListener("resize", this.onResize.bind(this));
+        new ResizeObserver(() => requestAnimationFrame(() => this.onResize())).observe(element);
         Promise.all([ELEMENT_DATA, fetch(splash).then((r) => r.text())]).then(([elementData, splashes]) => {
             const splashList = splashes.split("\n");
             this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${elementData.version}`);

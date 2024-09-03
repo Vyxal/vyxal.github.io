@@ -23,6 +23,7 @@
         "@lezer/generator": "^1.7.1",
         "@microsoft/eslint-formatter-sarif": "^3.0.0",
         "@stylistic/eslint-plugin": "^2.7.2",
+        "@stylistic/eslint-plugin-jsx": "^2.7.2",
         "@stylistic/eslint-plugin-ts": "^2.7.2",
         "@types/react": "^18.3.5",
         "@types/react-bootstrap": "^0.32.35",

@@ -18,6 +18,8 @@ const compat = new FlatCompat({
 export default [
     ...compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"),
     {
+        files: ["**/*.ts", "**/*.tsx"],
+        
         plugins: {
             "@typescript-eslint": typescriptEslint,
             "@stylistic": stylistic,

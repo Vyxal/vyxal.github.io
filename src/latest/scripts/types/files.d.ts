@@ -18,3 +18,7 @@ declare module "*.handlebars.md" {
     const content: string;
     export = content;
 }
+declare module "*.grammar" {
+    const parser: import("@lezer/lr").LRParser;
+    export = parser;
+}

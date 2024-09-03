@@ -1,71 +1,98 @@
 import type { CompletionContext, CompletionResult } from "@codemirror/autocomplete";
-import { LanguageSupport, StreamLanguage, StreamParser, StringStream, syntaxTree } from "@codemirror/language";
+import { LanguageSupport, LRLanguage, syntaxTree } from "@codemirror/language";
 
 import type { ElementData } from "../util/element-data";
 import { UtilWorker } from "../util/util-worker";
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
-import { VARIABLE_NAME, VARIABLE_LIST, NUMBER, NUMBER_PART, elementAutocomplete, LanguageData } from './common';
+import { elementAutocomplete } from './common';
 import type { SyntaxNode } from "@lezer/common";
-import { hoverTooltip, Tooltip } from "@codemirror/view";
-import { MapMode } from "@codemirror/state";
+import { EditorView, hoverTooltip, Tooltip } from "@codemirror/view";
+import { Extension, MapMode } from "@codemirror/state";
+import parser from "./vyxal.grammar";
+import { styleTags, tags } from "@lezer/highlight";
 
-enum Mode {
-    Normal,
-    VariableOp,
-    String,
-    LambdaArgs,
-    CustomDefinitionName,
-    CustomDefinitionElementArgs,
-    CustomDefinitionModifierArgs,
-    RecordDefinitionName,
-    ExtensionMethodName,
-    ExtensionMethodArgName,
-    ExtensionMethodArgType,
+export const vyxalLanguage = LRLanguage.define({
+    parser: parser.configure({
+        props: [
+            styleTags({
+                Digraph: tags.function(tags.propertyName),
+                SugarTrigraph: tags.macroName,
+                SyntaxTrigraph: tags.operator,
+                StructureOpen: tags.bracket,
+                StructureClose: tags.bracket,
+                ModifierChar: tags.modifier,
+                VariableThing: tags.variableName,
+                String: tags.string,
+                SingleCharString: tags.special(tags.string),
+                TwoCharString: tags.special(tags.string),
+                "Number!": tags.number,
+                TwoCharNumber: tags.special(tags.number),
+                Branch: tags.punctuation,
+                ContextIndex: tags.controlKeyword,
+                Comment: tags.comment,
+                Element: tags.keyword,
+            }),
+        ],
+    }),
+});
+
+export function vyxalCompletion(elementData: ElementData) {
+    return vyxalLanguage.data.of({
+        autocomplete(context: CompletionContext): Promise<CompletionResult | null> {
+            const sugar = context.matchBefore(/#[,.^](.)/);
+            if (sugar != null) {
+                const desugared = elementData.sugars.get(sugar.text);
+                if (typeof desugared == "string") {
+                    return Promise.resolve({
+                        from: sugar.from,
+                        filter: false,
+                        options: [
+                            { label: desugared, detail: "sugar trigraph", type: "constant" },
+                        ],
+                    });
+                }
+            }
+            return elementAutocomplete(context, false);
+        },
+    });
 }
 
-type VyxalState = {
-    mode: Mode,
-};
-
-class VyxalLanguage implements StreamParser<VyxalState> {
-    util: UtilWorker;
-    elementData: ElementData;
-    constructor(util: UtilWorker, elementData: ElementData) {
-        this.util = util;
-        this.elementData = elementData;
-    }
-    name = "vyxal3";
-    languageData: LanguageData = {
-        commentTokens: {
-            line: "##",
-        },
-        autocomplete: this.autocomplete.bind(this),
-    };
-    autocomplete(context: CompletionContext): Promise<CompletionResult | null> {
-        const sugar = context.matchBefore(/#[,.^](.)/);
-        if (sugar != null) {
-            const desugared = this.elementData.sugars.get(sugar.text);
-            if (typeof desugared == "string") {
-                return Promise.resolve({
-                    from: sugar.from,
-                    filter: false,
-                    options: [
-                        { label: desugared, detail: "sugar trigraph", type: "constant" },
-                    ],
-                });
-            }
+export function vyxalHover(util: UtilWorker, elementData: ElementData): Extension {
+    async function makeStringTooltip(view: EditorView, node: SyntaxNode): Promise<HTMLElement | null> {
+        if (node.name != "string") {
+            return Promise.resolve(null);
         }
-        return elementAutocomplete(context, false);
+        const content = view.state.doc.slice(node.from, node.to).toString();
+        switch (content.at(-1)) {
+            case "\"": {
+                return Promise.resolve(null);
+            }
+            case "„": {
+                const decompressed = await util.decompress(content);
+                const container = document.createElement("div");
+                container.innerHTML = `<b>Compressed string: </b> ${decompressed}`;
+                return container;
+            }
+            default:
+                return Promise.resolve(null);
+        }
     }
-    elementTooltip = hoverTooltip((view, pos) => {
-        if (syntaxTree(view.state).cursorAt(pos).name != "Document") {
+    const elementTooltip = hoverTooltip((view, pos) => {
+        const node = syntaxTree(view.state).resolve(pos, 1);
+        console.log(node.name);
+        const c = node.cursor();
+        while (true) {
+            if (!c.parent()) break;
+            console.log(c.name, view.state.doc.sliceString(c.from, c.to));
+        }
+        if (node.name != "Element") {
             return null;
         }
-        const hoveredChar = view.state.doc.sliceString(pos, pos + 1);
-        if (this.elementData.elementMap.has(hoveredChar)) {
-            const element = this.elementData.elementMap.get(hoveredChar)!;
+        const hoveredChar = view.state.doc.sliceString(node.from, node.to);
+        if (elementData.elementMap.has(hoveredChar)) {
+            const element = elementData.elementMap.get(hoveredChar)!;
             return {
                 pos: pos,
                 create() {
@@ -77,8 +104,8 @@ class VyxalLanguage implements StreamParser<VyxalState> {
                 },
             } as Tooltip;
         }
-        if (this.elementData.modifierMap.has(hoveredChar)) {
-            const modifier = this.elementData.modifierMap.get(hoveredChar)!;
+        if (elementData.modifierMap.has(hoveredChar)) {
+            const modifier = elementData.modifierMap.get(hoveredChar)!;
             return {
                 pos: pos,
                 create() {
@@ -92,268 +119,40 @@ class VyxalLanguage implements StreamParser<VyxalState> {
         }
         return null;
     });
-
-    private makeStringTooltip(view, node: SyntaxNode): Promise<HTMLElement | null> {
-        if (node.name != "string") {
-            return Promise.resolve(null);
-        }
-        const content = view.state.doc.slice(node.from, node.to).toString();
-        switch (content.at(-1)) {
-            case "\"": {
-                return Promise.resolve(null);
-            }
-            case "„": {
-                return this.util.decompress(content).then((decompressed) => {
-                    const container = document.createElement("div");
-                    container.innerHTML = `<b>Compressed string: </b> ${decompressed}`;
-                    return container;
-                });
-            }
-            default:
-                return Promise.resolve(null);
-        }
-    }
-    stringTooltip = hoverTooltip((view, pos) => {
+    const stringTooltip = hoverTooltip(async(view, pos) => {
         const node = syntaxTree(view.state).resolve(pos);
-        return this.makeStringTooltip(view, node).then((element) => {
-            if (element != null) {
-                const container = document.createElement("div");
-                container.appendChild(element);
-                return {
-                    pos: pos,
-                    create: () => {
-                        return {
-                            dom: container,
-                            update: (update) => {
-                                if (update.changes.touchesRange(node.from, node.to)) {
-                                    const newPos = update.changes.mapPos(pos, -1, MapMode.TrackDel);
-                                    if (newPos != null) {
-                                        this.makeStringTooltip(
-                                            view,
-                                            syntaxTree(view.state).resolve(newPos)
-                                        ).then((element) => {
-                                            if (element != null) {
-                                                container.replaceChildren(element);
-                                            }
-                                        });
+        const element = await makeStringTooltip(view, node);
+        if (element != null) {
+            const container = document.createElement("div");
+            container.appendChild(element);
+            return {
+                pos: pos,
+                create: () => {
+                    return {
+                        dom: container,
+                        update: async(update) => {
+                            if (update.changes.touchesRange(node.from, node.to)) {
+                                const newPos = update.changes.mapPos(pos, -1, MapMode.TrackDel);
+                                if (newPos != null) {
+                                    const element = await makeStringTooltip(
+                                        view,
+                                        syntaxTree(view.state).resolve(newPos),
+                                    );
+                                    if (element != null) {
+                                        container.replaceChildren(element);
                                     }
                                 }
-                            },
-                        };
-                    },
-                };
-            }
-            return null;
-        });
-    });
-
-    // Highlighting stuff
-    startState(): VyxalState {
-        return { mode: Mode.Normal };
-    }
-    token = function(stream: StringStream, state: VyxalState): string | null {
-        switch (state.mode) {
-            case Mode.VariableOp:
-                stream.eatWhile(VARIABLE_NAME);
-                state.mode = Mode.Normal;
-                return "variableName";
-            case Mode.LambdaArgs:
-                if (stream.eat("!")) {
-                    state.mode = Mode.Normal;
-                    return "keyword.special";
-                }
-                if (stream.eat("|")) {
-                    state.mode = Mode.Normal;
-                    return "separator";
-                }
-                if (stream.eat("*")) {
-                    return "keyword.special";
-                }
-                if (stream.match(NUMBER_PART) || stream.match(VARIABLE_NAME)) {
-                    return "variableName.definition";
-                }
-                break;
-            case Mode.CustomDefinitionName:
-                stream.eatSpace();
-                if (stream.eat("@")) {
-                    state.mode = Mode.CustomDefinitionElementArgs;
-                    if (stream.match(VARIABLE_NAME)) {
-                        return "variableName.definition";
-                    } else {
-                        return "keyword.special";
-                    }
-                } else if (stream.eat("*")) {
-                    state.mode = Mode.CustomDefinitionModifierArgs;
-                    if (stream.match(VARIABLE_NAME)) {
-                        return "variableName.definition";
-                    } else {
-                        return "keyword.special";
-                    }
-                }
-                break;
-            case Mode.CustomDefinitionElementArgs:
-                stream.eatSpace();
-                if (stream.eat("|")) {
-                    return "separator";
-                } else if (stream.eatWhile(VARIABLE_LIST)) {
-                    state.mode = Mode.Normal;
-                    return "variableName.definition";
-                }
-                break;
-            case Mode.CustomDefinitionModifierArgs:
-                stream.eatSpace();
-                if (stream.eat("|")) {
-                    return "separator";
-                } else if (stream.eatWhile(VARIABLE_LIST)) {
-                    state.mode = Mode.CustomDefinitionElementArgs;
-                    return "variableName.definition";
-                }
-                break;
-
-            case Mode.RecordDefinitionName:
-                stream.eatSpace();
-                if (stream.eat("|")) {
-                    state.mode = Mode.Normal;
-                    return "separator";
-                } else if (stream.match(VARIABLE_NAME)) {
-                    return "variableName.definition";
-                }
-                break;
-
-            case Mode.ExtensionMethodName:
-                if (stream.match(VARIABLE_NAME)) {
-                    return "variableName.definition";
-                }
-                if (stream.eat("|")) {
-                    state.mode = Mode.ExtensionMethodArgName;
-                    return "separator";
-                }
-                break;
-            case Mode.ExtensionMethodArgName:
-                if (stream.eat("|")) {
-                    state.mode = Mode.ExtensionMethodArgType;
-                    return "separator";
-                } else if (stream.match(VARIABLE_NAME)) {
-                    return "variableName.definition";
-                }
-                break;
-            case Mode.ExtensionMethodArgType:
-                if (stream.eat("|")) {
-                    state.mode = Mode.ExtensionMethodArgName;
-                    return "separator";
-                } else if (stream.match(VARIABLE_NAME)) {
-                    return "variableName.definition";
-                }
-                break;
-            case Mode.Normal:
-                if (stream.eat("'")) {
-                    stream.next();
-                    return "string.special";
-                }
-                if (stream.eat("ᶴ")) {
-                    stream.next();
-                    stream.next();
-                    return "string.special";
-                }
-                if (stream.eat("~")) {
-                    stream.next();
-                    stream.next();
-                    return "number.special";
-                }
-                if (stream.eat("\"")) {
-                    stream.eatWhile(/[^"„”“]/);
-                    stream.next();
-                    return "string";
-                }
-                if (stream.eat("#")) {
-                    if (stream.eat("#")) {
-                        stream.skipToEnd();
-                        return "comment";
-                    }
-                    if (stream.eat(/[[\]{]/)) {
-                        return "bracket";
-                    }
-                    if (stream.eat(/[.,^]/)) {
-                        stream.next();
-                        return "macroName";
-                    }
-                    if (stream.eat(":")) {
-                        if (stream.eat(":")) {
-                            state.mode = Mode.CustomDefinitionName;
-                            return "keyword";
-                        }
-                        if (stream.eat("R")) {
-                            state.mode = Mode.RecordDefinitionName;
-                            return "keyword";
-                        }
-                        if (stream.match(">>")) {
-                            state.mode = Mode.ExtensionMethodName;
-                            return "keyword";
-                        }
-                        if (stream.eat("@")) {
-                            state.mode = Mode.VariableOp;
-                            return "definitionOperator.special";
-                        }
-                        if (stream.eat("`")) {
-                            state.mode = Mode.VariableOp;
-                            return "definitionOperator.special";
-                        }
-                        return "invalid";
-                    }
-                    if (stream.eat("$")) {
-                        state.mode = Mode.VariableOp;
-                        return "variableName";
-                    }
-                    if (stream.eat("=")) {
-                        state.mode = Mode.VariableOp;
-                        return "definitionOperator";
-                    }
-                    if (stream.eat(">")) {
-                        state.mode = Mode.VariableOp;
-                        return "definitionOperator.special";
-                    }
-                    if (stream.eat(/[[\]$!=#>@{]/)) {
-                        return "invalid";
-                    }
-                    return "propertyName.function.special";
-                }
-                if (stream.eat(/[∆øÞk]/)) {
-                    stream.next();
-                    return "propertyName.function.special";
-                }
-                if (stream.eat((char) => this.elementData.modifierMap.has(char))) {
-                    return "modifier";
-                }
-                if (stream.eat("λ")) {
-                    if (stream.match(/^(!|[a-zA-Z0-9_*]+?)\|/, false)) {
-                        state.mode = Mode.LambdaArgs;
-                    }
-                    return "keyword";
-                }
-                if (stream.eat(/[[{(ḌṆƛΩ₳µ⟨]/)) {
-                    return "bracket";
-                }
-                if (stream.eat(/}\)]⟩/)) {
-                    return "bracket";
-                }
-                if (stream.eat("|")) {
-                    return "separator";
-                }
-                if (stream.match(/¤(0|[1-9][0-9]*)/)) {
-                    return "controlKeyword";
-                }
-                if (stream.match(NUMBER)) {
-                    return "number";
-                }
+                            }
+                        },
+                    };
+                },
+            };
         }
-        stream.next();
-        return "content";
-    }.bind(this); // why is this a thing that I have to do
+        return null;
+    });
+    return [stringTooltip, elementTooltip];
 }
 
-export default function(util: UtilWorker, data: ElementData) {
-    const instance = new VyxalLanguage(util, data);
-    return new LanguageSupport(
-        StreamLanguage.define(instance), [instance.elementTooltip, instance.stringTooltip]
-    );
+export function vyxal(util: UtilWorker, data: ElementData) {
+    return new LanguageSupport(vyxalLanguage, [vyxalCompletion(data), vyxalHover(util, data)]);
 }

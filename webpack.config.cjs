@@ -124,7 +124,7 @@ module.exports = function (env, argv) {
                         test: /[\\/]node_modules[\\/].+\.(js|ts)$/,
                         name(module, chunks, cacheGroupKey) {
                             let segs = module.identifier().split("/")
-                            return `vendor/${segs.slice(segs.lastIndexOf("node_modules") + 1).join("-")}`
+                            return `./vendor/${segs.slice(segs.lastIndexOf("node_modules") + 1).join("-")}`
                         },
                         chunks: "all",
                         reuseExistingChunk: true
@@ -150,6 +150,10 @@ module.exports = function (env, argv) {
                     test: /\.tsx?$/,
                     exclude: /node_modules/,
                     use: "ts-loader"
+                },
+                {
+                    test: /\.grammar$/i,
+                    use: "lezer-loader",
                 },
                 {
                     test: /\.(txt|json)$/,

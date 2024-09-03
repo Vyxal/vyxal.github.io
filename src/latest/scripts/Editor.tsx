@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import langVyxal from "./languages/lang-vyxal";
+import { vyxal } from "./languages/lang-vyxal";
 import langVyxalLit from "./languages/lang-vyxal-lit";
 import { Accordion } from "react-bootstrap";
 import { autocompletion } from "@codemirror/autocomplete";
@@ -48,7 +48,7 @@ type EditorParams = {
 };
 
 export default function Editor(data: ElementData) {
-    const VYXAL = langVyxal(util, data);
+    const VYXAL = vyxal(util, data);
     const VYXAL_LIT = langVyxalLit(util, data);
     return function({ header, code, height, eventKey, setCode, theme, literate }: EditorParams) {
         const onChange = useCallback((code: string) => {

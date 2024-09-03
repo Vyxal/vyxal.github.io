@@ -80,26 +80,28 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                 </Tab.Pane>
                 <Tab.Pane eventKey="codepage">
                     <table className="table">
-                        {
+                        <tbody>
+                            {
                             // https://stackoverflow.com/a/37826698/14743122
-                            codepage.reduce<string[][]>((resultArray, item, index) => {
-                                const chunkIndex = Math.floor(index / 16);
+                                codepage.reduce<string[][]>((resultArray, item, index) => {
+                                    const chunkIndex = Math.floor(index / 16);
 
-                                if (!resultArray[chunkIndex]) {
-                                    resultArray[chunkIndex] = []; // start a new chunk
-                                }
-
-                                resultArray[chunkIndex].push(item);
-
-                                return resultArray;
-                            }, []).map((row, index) => (
-                                <tr key={index}>
-                                    {
-                                        row.map((glyph) => <td key={glyph}>{glyph}</td>)
+                                    if (!resultArray[chunkIndex]) {
+                                        resultArray[chunkIndex] = []; // start a new chunk
                                     }
-                                </tr>
-                            ))
-                        }
+
+                                    resultArray[chunkIndex].push(item);
+
+                                    return resultArray;
+                                }, []).map((row, index) => (
+                                    <tr key={index}>
+                                        {
+                                            row.map((glyph) => <td key={glyph}>{glyph}</td>)
+                                        }
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
                     </table>
                 </Tab.Pane>
             </Tab.Content>

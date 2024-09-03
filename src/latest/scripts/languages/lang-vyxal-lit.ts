@@ -1,5 +1,5 @@
 import { LanguageSupport, StreamLanguage, StreamParser, StringStream } from "@codemirror/language";
-import { NUMBER, VARIABLE_LIST, NUMBER_PART, VARIABLE_NAME, KEYWORD, elementAutocomplete, LanguageData } from "./common";
+import { NUMBER, NUMBER_PART, VARIABLE_NAME, KEYWORD, elementAutocomplete, LanguageData } from "./common";
 import type { Element, ElementData } from "../util/element-data";
 import { UtilWorker } from "../util/util-worker";
 import type { CompletionContext } from "@codemirror/autocomplete";

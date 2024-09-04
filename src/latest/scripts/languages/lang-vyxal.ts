@@ -81,14 +81,6 @@ export function vyxalHover(util: UtilWorker, elementData: ElementData): Extensio
     }
     const elementTooltip = hoverTooltip((view, pos) => {
         const node = syntaxTree(view.state).resolve(pos, 1);
-        console.log(node.name);
-        const c = node.cursor();
-        while (true) {
-            if (!c.parent()) {
-                break;
-            }
-            console.log(c.name, view.state.doc.sliceString(c.from, c.to));
-        }
         const hoveredChar = view.state.doc.sliceString(node.from, node.to);
         if (node.name == "Element") {
             if (elementData.elementMap.has(hoveredChar)) {

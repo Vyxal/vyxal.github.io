@@ -15,7 +15,8 @@ const incompatMatrix = {
     "3.4.1": true,
     "3.4.2": true,
     "3.4.3": true,
-    "3.4.4": false
+    "3.4.4": true,
+    "3.4.5": false
 }
 
 export function incomptabile(target, current) {

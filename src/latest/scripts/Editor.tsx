@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from "react";
 import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { vyxal } from "./languages/lang-vyxal";
 import { autocompletion } from "@codemirror/autocomplete";
-import { EditorView, lineNumbers } from "@codemirror/view";
+import { EditorView, lineNumbers, showPanel } from "@codemirror/view";
 import { Theme } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
@@ -31,6 +31,7 @@ const EXTENSIONS = [
     EditorView.theme({
         "&": { height: "100%" },
         "&.cm-focused": { outline: "none" },
+        ".cm-scroller": {overflow: "auto"},
     }),
 ];
 const util = new UtilWorker();
@@ -59,15 +60,21 @@ export default function Editor(data: ElementData) {
             }
             setCode(code);
         }, []);
-        const extensions = useMemo(() => EXTENSIONS.concat([literate ? VYXAL_LIT : VYXAL]), [literate]);
+        const header = useMemo(() => showPanel.of((view) => {
+            const dom = document.createElement("div");
+            
+            dom.textContent = title;
+            return { dom, top: true };
+        }), [title]);
+        const extensions = [...useMemo(() => EXTENSIONS.concat([literate ? VYXAL_LIT : VYXAL]), [literate]), header];
         return <>
-            <div className="bg-body-tertiary">
+            {/* <div className="bg-body-tertiary">
                 {title}
-            </div>
+            </div> */}
             <ReactCodeMirror
                 theme={THEMES[theme]}
                 value={code}
-                style={{ flex: ratio }}
+                style={{ height: ratio }}
                 // height={height}
                 onChange={onChange}
                 extensions={extensions}

@@ -168,9 +168,9 @@ function Theseus() {
                             </div>
                         }
                     >
-                        <Editor ratio="1" title="Header" code={header} setCode={setHeader} theme={theme} literate={literate} />
-                        <Editor ratio="3" title={bytecount} code={code} setCode={setCode} theme={theme} literate={literate} />
-                        <Editor ratio="1" title="Footer" code={footer} setCode={setFooter} theme={theme} literate={literate} />
+                        <Editor ratio="20%" title="Header" code={header} setCode={setHeader} theme={theme} literate={literate} />
+                        <Editor ratio="60%" title={bytecount} code={code} setCode={setCode} theme={theme} literate={literate} />
+                        <Editor ratio="20%" title="Footer" code={footer} setCode={setFooter} theme={theme} literate={literate} />
                     </Suspense>
                 </Col>
                 <Col lg="6" className="g-0 vstack">

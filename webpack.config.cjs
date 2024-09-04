@@ -24,7 +24,7 @@ class MonkeyPatchPlugin {
                     .tap("MonkeyPatchPlugin", (data) => {
                         const match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*\.(txt|json))/.exec(data.request)
                         if (match != null && this.enabled) {
-                            data.request = path.join("/", this.basePath, match[1])
+                            data.request = path.join(path.sep, this.basePath, match[1])
                         }
                     })
             }
@@ -89,7 +89,7 @@ module.exports = function (env, argv) {
             ),
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(gitRevisionPlugin.version()),
-                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join("/", env["vy-archive"], "theseus.json") : LATEST_DATA_URI)
+                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join(path.sep, env["vy-archive"], "theseus.json") : LATEST_DATA_URI)
             })
             // new WorkboxPlugin.InjectManifest({
             //     swSrc: "./src/latest/js/service.ts",
@@ -104,7 +104,7 @@ module.exports = function (env, argv) {
                 let match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*\.(js))/.exec(request)
                 if (match) {
                     if (env["vy-archive"] != undefined) {
-                        return callback(null, path.join("/", env["vy-archive"], match[1]), "import")
+                        return callback(null, path.join(path.sep, env["vy-archive"], match[1]), "import")
                     }
                     return callback(null, request, "import")
                 }
@@ -123,7 +123,7 @@ module.exports = function (env, argv) {
                     vendor: {
                         test: /[\\/]node_modules[\\/].+\.(js|ts)$/,
                         name(module, chunks, cacheGroupKey) {
-                            let segs = module.identifier().split("/")
+                            let segs = module.identifier().split(path.sep)
                             return `./vendor/${segs.slice(segs.lastIndexOf("node_modules") + 1).join("-").slice(0, -3)}`
                         },
                         chunks: "all",

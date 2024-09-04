@@ -15,8 +15,8 @@ type ShowDialogButtonArgs = {
 
 function ShowDialogButton({ shower, title, icon, margin = true }: ShowDialogButtonArgs) {
     return (
-        <Button variant="outline-secondary" className={margin ? "me-md-3 me-2" : ""} onClick={() => shower(true)} title={title}>
-            <i className={`bi ${icon}`}></i>
+        <Button variant="secondary" className={margin ? "me-md-3 me-2" : ""} onClick={() => shower(true)} title={title}>
+            <i className={`bi ${icon}`}></i> {title}
         </Button>
     );
 }
@@ -51,7 +51,7 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                         <ShowDialogButton shower={setShowFlagsDialog} icon="bi-flag-fill" title="Flags" margin={false} />
                     </InputGroup>
                     <InputGroup className="me-md-3 me-2">
-                        <ShowDialogButton shower={setShowInputDialog} icon="bi-list-ul" title="Inputs" margin={false} />
+                        <ShowDialogButton shower={setShowInputDialog} icon="bi-card-text" title="Inputs" margin={false} />
                         {
                             inputs.length > 0 ? (
                                 <span className="form-control font-monospace">{inputs.length}</span>
@@ -59,7 +59,7 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                         }
                     </InputGroup>
                     <ShowDialogButton shower={setShowShareDialog} icon="bi-share" title="Share code" />
-                    <ShowDialogButton shower={setShowElementOffcanvas} icon="bi-journal-code" title="Elements and documentation" />
+                    <ShowDialogButton shower={setShowElementOffcanvas} icon="bi-journal-code" title="Elements" />
                 </Nav>
                 <div className="d-sm-none me-3">
                     <InputGroup>
@@ -84,7 +84,7 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                                     Settings
                                 </Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={() => setShowElementOffcanvas(true)}>
-                                    Elements and documentation
+                                    Elements
                                 </Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>

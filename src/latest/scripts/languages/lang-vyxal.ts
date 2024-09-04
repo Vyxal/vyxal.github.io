@@ -2,13 +2,10 @@ import type { CompletionContext, CompletionResult } from "@codemirror/autocomple
 import { LanguageSupport, LRLanguage, syntaxTree } from "@codemirror/language";
 
 import type { ElementData } from "../util/element-data";
-import { UtilWorker } from "../util/util-worker";
-import { renderToStaticMarkup } from 'react-dom/server';
-import { ModifierCard } from "../cards/ModifierCard";
-import { ElementCard } from "../cards/ElementCard";
-import { elementAutocomplete } from './common';
+import type { UtilWorker } from "../util/util-worker";
+import { elementAutocomplete, elementTooltip } from './common';
 import type { SyntaxNode } from "@lezer/common";
-import { EditorView, hoverTooltip, Tooltip } from "@codemirror/view";
+import { EditorView, hoverTooltip } from "@codemirror/view";
 import { Extension, MapMode } from "@codemirror/state";
 import parser from "./vyxal.grammar";
 import { styleTags, tags } from "@lezer/highlight";
@@ -22,7 +19,7 @@ export const vyxalLanguage = LRLanguage.define({
                 SyntaxTrigraph: tags.operator,
                 StructureOpen: tags.bracket,
                 StructureClose: tags.bracket,
-                ModifierChar: tags.modifier,
+                Modifier: tags.modifier,
                 VariableThing: tags.variableName,
                 String: tags.string,
                 SingleCharString: tags.special(tags.string),
@@ -59,9 +56,9 @@ export function vyxalCompletion(elementData: ElementData) {
     });
 }
 
-export function vyxalHover(util: UtilWorker, elementData: ElementData): Extension {
+export function vyxalHover(util: UtilWorker): Extension {
     async function makeStringTooltip(view: EditorView, node: SyntaxNode): Promise<HTMLElement | null> {
-        if (node.name != "string") {
+        if (node.name != "String") {
             return Promise.resolve(null);
         }
         const content = view.state.doc.slice(node.from, node.to).toString();
@@ -79,40 +76,6 @@ export function vyxalHover(util: UtilWorker, elementData: ElementData): Extensio
                 return Promise.resolve(null);
         }
     }
-    const elementTooltip = hoverTooltip((view, pos) => {
-        const node = syntaxTree(view.state).resolve(pos, 1);
-        const hoveredChar = view.state.doc.sliceString(node.from, node.to);
-        if (node.name == "Element") {
-            if (elementData.elementMap.has(hoveredChar)) {
-                const element = elementData.elementMap.get(hoveredChar)!;
-                return {
-                    pos: pos,
-                    create() {
-                        const container = document.createElement("div");
-                        container.innerHTML = renderToStaticMarkup(ElementCard({ item: element, shadow: true }));
-                        return {
-                            dom: container,
-                        };
-                    },
-                } as Tooltip;
-            }
-        } else if (node.name == "ModifierChar") {
-            if (elementData.modifierMap.has(hoveredChar)) {
-                const modifier = elementData.modifierMap.get(hoveredChar)!;
-                return {
-                    pos: pos,
-                    create() {
-                        const container = document.createElement("div");
-                        container.innerHTML = renderToStaticMarkup(ModifierCard({ item: modifier, shadow: true }));
-                        return {
-                            dom: container,
-                        };
-                    },
-                } as Tooltip;
-            }
-        }
-        return null;
-    });
     const stringTooltip = hoverTooltip(async(view, pos) => {
         const node = syntaxTree(view.state).resolve(pos);
         const element = await makeStringTooltip(view, node);
@@ -144,9 +107,9 @@ export function vyxalHover(util: UtilWorker, elementData: ElementData): Extensio
         }
         return null;
     });
-    return [stringTooltip, elementTooltip];
+    return [stringTooltip];
 }
 
 export function vyxal(util: UtilWorker, data: ElementData) {
-    return new LanguageSupport(vyxalLanguage, [vyxalCompletion(data), vyxalHover(util, data)]);
+    return new LanguageSupport(vyxalLanguage, [vyxalCompletion(data), vyxalHover(util), elementTooltip(data, false)]);
 }

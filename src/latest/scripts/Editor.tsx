@@ -51,7 +51,7 @@ type EditorParams = {
 
 export default function Editor(data: ElementData) {
     const VYXAL = vyxal(util, data);
-    const VYXAL_LIT = vyxalLit();
+    const VYXAL_LIT = vyxalLit(data);
     return function({ code, ratio, title, setCode, theme, literate }: EditorParams) {
         const onChange = useCallback((code: string) => {
             if (code == "lyxal") {

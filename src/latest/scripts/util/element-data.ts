@@ -49,8 +49,10 @@ type RawChoiceFlagDef = {
 export type ElementData = {
     elements: Element[],
     elementMap: Map<string, Element>,
+    literateElementMap: Map<string, Element>,
     modifiers: Modifier[],
     modifierMap: Map<string, Modifier>,
+    literateModifierMap: Map<string, Modifier>,
     syntax: SyntaxFeature[],
     sugars: Map<string, string>,
     codepage: Set<string>,
@@ -75,8 +77,10 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch(DATA_URI)
         return {
             elements: data.elements,
             elementMap: new Map(data.elements.map((element) => [element.symbol, element])),
+            literateElementMap: new Map(data.elements.flatMap((element) => element.keywords.map((keyword) => [keyword, element]))),
             modifiers: data.modifiers,
             modifierMap: new Map(data.modifiers.map((modifier) => [modifier.symbol, modifier])),
+            literateModifierMap: new Map(data.modifiers.flatMap((modifier) => modifier.keywords.map((keyword) => [keyword, modifier]))),
             syntax: data.syntax,
             sugars: new Map(Object.entries(data.sugars)),
             codepage: new Set([...data.codepage, " ", "\n"]),

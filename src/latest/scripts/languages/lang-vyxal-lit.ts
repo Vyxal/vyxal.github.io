@@ -2,7 +2,8 @@ import { LanguageSupport, LRLanguage } from "@codemirror/language";
 import parser from "./vyxal-lit.grammar";
 import { styleTags, tags } from "@lezer/highlight";
 import { CompletionContext, CompletionResult } from "@codemirror/autocomplete";
-import { elementAutocomplete } from "./common";
+import { elementAutocomplete, elementTooltip } from "./common";
+import { ElementData } from "../util/element-data";
 
 export const vyxalLitLanguage = LRLanguage.define({
     parser: parser.configure({
@@ -13,8 +14,8 @@ export const vyxalLitLanguage = LRLanguage.define({
                 Lambda: tags.controlKeyword,
                 String: tags.string,
                 Number: tags.number,
-                NormalKW: tags.keyword,
-                ModifierKW: tags.modifier,
+                Element: tags.keyword,
+                Modifier: tags.modifier,
                 VariableThing: tags.variableName,
                 ListStuff: tags.literal,
                 GroupStuff: tags.keyword,
@@ -32,6 +33,6 @@ export function vyxalLitCompletion() {
     });
 }
 
-export function vyxalLit() {
-    return new LanguageSupport(vyxalLitLanguage, [vyxalLitCompletion()]);
+export function vyxalLit(data: ElementData) {
+    return new LanguageSupport(vyxalLitLanguage, [vyxalLitCompletion(), elementTooltip(data, true)]);
 }

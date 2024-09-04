@@ -1,21 +1,13 @@
-import type { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
+import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import type { FuseResult } from "fuse.js";
-import type { CommentTokens } from "@codemirror/commands";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
-import { elementFuse, modifierFuse, Element, Modifier, ELEMENT_DATA } from "../util/element-data";
+import { elementFuse, modifierFuse, Element, Modifier, ELEMENT_DATA, ElementData } from "../util/element-data";
+import { syntaxTree } from "@codemirror/language";
+import { hoverTooltip, Tooltip } from "@codemirror/view";
 
-export interface LanguageData {
-    commentTokens?: CommentTokens,
-    autocomplete?: CompletionSource,
-}
-
-export const NUMBER_PART = /^0|[1-9][0-9]*/;
-export const VARIABLE_NAME = /^[a-zA-Z][a-zA-Z0-9_]*/;
-export const VARIABLE_LIST = /^([a-zA-Z][a-zA-Z0-9_]*,)*/;
-export const NUMBER = /^(((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)?ı((((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?)|_)?)|(((0|[1-9][0-9]*)?\.[0-9]*|0|[1-9][0-9]*)_?))/;
-export const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
+const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
 const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
 
 
@@ -51,21 +43,46 @@ function syncElementAutocomplete(context: CompletionContext, literate: boolean):
 }
 
 
-export function elementAutocomplete(context: CompletionContext, literate: boolean): Promise<CompletionResult | null> {
+export async function elementAutocomplete(context: CompletionContext, literate: boolean): Promise<CompletionResult | null> {
     const sync = syncElementAutocomplete(context, literate);
     if (sync != null) {
         return Promise.resolve(sync);
     }
     if (context.explicit) {
-        return ELEMENT_DATA.then((data) => {
-            return {
-                from: context.pos,
-                to: context.pos,
-                filter: false,
-                options: data.elements.map((e) => elementCompletion(e, literate)),
-                update: (current, from, to, context) => syncElementAutocomplete(context, literate),
-            };
-        });
+        const data = await ELEMENT_DATA;
+        return {
+            from: context.pos,
+            to: context.pos,
+            filter: false,
+            options: data.elements.map((e) => elementCompletion(e, literate)),
+            update: (current, from, to, context) => syncElementAutocomplete(context, literate),
+        };
     }
     return Promise.resolve(null);
+}
+
+export function elementTooltip(elementData: ElementData, literate: boolean) {
+    return hoverTooltip((view, pos) => {
+        const node = syntaxTree(view.state).resolve(pos, 1);
+        const hovered = view.state.doc.sliceString(node.from, node.to);
+        if (!["Element", "Modifier"].includes(node.name)) {
+            return null;
+        }
+        const isModifier = node.name == "Modifier";
+        const element = (isModifier ? (literate ? elementData.literateModifierMap : elementData.modifierMap) : (literate ? elementData.literateElementMap : elementData.elementMap)).get(hovered);
+        if (element !== undefined) {
+            return {
+                pos: pos,
+                create() {
+                    const container = document.createElement("div");
+                    // @ts-expect-error we already know that element is the corect type
+                    container.innerHTML = renderToStaticMarkup((isModifier ? ModifierCard : ElementCard)({ item: element, shadow: true }));
+                    return {
+                        dom: container,
+                    };
+                },
+            } as Tooltip;
+        }
+        return null;
+    });
 }

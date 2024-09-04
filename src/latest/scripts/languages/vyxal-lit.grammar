@@ -10,15 +10,15 @@ Word {
     Lambda |
     String |
     Number |
-    NormalKW |
-    ModifierKW |
+    Element |
+    Modifier |
     VariableThing |
     ListStuff |
     GroupStuff |
     Comment
 }
 
-@precedence {ModifierKW, NormalKW, WeirdKW}
+@precedence {Modifier, Element, WeirdKW}
 
 Structure {
     structure<"yes?"> |
@@ -96,13 +96,13 @@ Lambda {
 
 @tokens {
     WeirdKW {$[a-zA-Z\-?]$[a-zA-Z0-9\-?!*+=<>&%]*":"?}
-    ModifierKW { $[a-zA-Z]$[a-zA-Z0-9\-?!*+=<>&%]*":"}
-    NormalKW { $[a-zA-Z]$[a-zA-Z0-9\-?!*+=<>&%]*"n't"*}
+    Modifier { $[a-zA-Z]$[a-zA-Z0-9\-?!*+=<>&%]*":"}
+    Element { $[a-zA-Z]$[a-zA-Z0-9\-?!*+=<>&%]*"n't"*}
     VariableThing { ("$" | ":=" | ":>" | ":=[") $[a-zA-Z]$[a-zA-Z0-9_]* }
     Number { "." | "i" | "0" | ($[1-9] $[0-9]*) }
     ListStuff { "[" | "]" }
     String {'"' (!["„”“\\] | "\\" _)* $["„”“]}
     Comment {"##" (![\n])*}
     GroupStuff { "(" | ")" | "(." | "(:" | "(:." | "(::" | "(," | "(;" | "(;," | "(;;" }
-    @precedence {ModifierKW, NormalKW, GroupStuff, Number, WeirdKW}
+    @precedence {Modifier, Element, GroupStuff, Number, WeirdKW}
 }

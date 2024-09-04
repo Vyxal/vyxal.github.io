@@ -62,7 +62,7 @@ export default function Editor(data: ElementData) {
         }, []);
         const header = useMemo(() => showPanel.of((view) => {
             const dom = document.createElement("div");
-            
+            dom.classList.add("p-1");
             dom.textContent = title;
             return { dom, top: true };
         }), [title]);

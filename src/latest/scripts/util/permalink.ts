@@ -2,8 +2,8 @@ import compatRaw from "../../data/compat.json?raw";
 
 const compat = JSON.parse(compatRaw);
 
-export function compatible(permalinkVersion: string) {
-    return compat[permalinkVersion] ?? true;
+export function incompatible(permalinkVersion: string) {
+    return compat[permalinkVersion] ?? false;
 }
 
 export function encodeHash(header: string, code: string, footer: string, flags: string[], inputs: string[], version: string): string {

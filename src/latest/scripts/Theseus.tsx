@@ -11,12 +11,11 @@ import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
 import { loadTheme, loadSnowing } from "./util/misc";
-import { compatible, V2Permalink } from "./util/permalink";
+import { incompatible, V2Permalink } from "./util/permalink";
 import { decodeHash, encodeHash } from "./util/permalink";
 import HtmlView from "./HtmlView";
 import { CopyButton } from "./CopyButton";
 import { ELEMENT_DATA, ElementDataContext } from "./util/element-data";
-import { IncompatibleDialog, IncompatibleInfo } from "./dialogs/IncompatibleDialog";
 import { deserializeFlags, Flags, serializeFlags } from "./flags";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import { enableMapSet } from "immer";
@@ -42,6 +41,9 @@ function Theseus() {
     let link: V2Permalink | null;
     if (window.location.hash.length) {
         link = decodeHash(window.location.hash.slice(1));
+        if (link.version != null && incompatible(link.version)) {
+            window.location.replace(`https://vyxal.github.io/versions/v${link.version}#${location.hash.substring(1)}`);
+        } 
     } else {
         link = null;
     }
@@ -62,7 +64,6 @@ function Theseus() {
     const [showInputDialog, setShowInputDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
     const [bytecount, setBytecount] = useState("...");
-    const [incompatible, setIncompatible] = useState<IncompatibleInfo>(undefined);
     const runnerRef = useRef<VyTerminalRef | null>(null);
     const snowflakesRef = useRef<Snowflakes | null>(null);
 
@@ -79,16 +80,9 @@ function Theseus() {
     }, [theme]);
 
     useEffect(() => {
-        if (link?.version != null && !compatible(link.version)) {
-            setIncompatible({
-                latestVersion: elementData.version,
-                targetVersion: link.version,
-            });
-        } else {
-            window.location.hash = encodeHash(
-                header, code, footer, [...serializeFlags(elementData.flagDefs, flags)], inputs.map((input) => input.value), elementData.version,
-            );
-        }
+        window.location.hash = encodeHash(
+            header, code, footer, [...serializeFlags(elementData.flagDefs, flags)], inputs.map((input) => input.value), elementData.version,
+        );
     }, [header, code, footer, flags, inputs]);
 
     useEffect(() => {
@@ -140,7 +134,6 @@ function Theseus() {
         />
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
         <ShareDialog bytecount={bytecount} code={code} flags={[...serializeFlags(elementData.flagDefs, flags)].join("")} show={showShareDialog} setShow={setShowShareDialog} />
-        <IncompatibleDialog data={incompatible} />
         <InputDialog inputs={inputs} setInputs={setInputs} show={showInputDialog} setShow={setShowInputDialog} />
         <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />
         <Header

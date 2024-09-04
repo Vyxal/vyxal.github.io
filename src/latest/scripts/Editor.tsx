@@ -3,13 +3,13 @@ import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { vyxal } from "./languages/lang-vyxal";
-import langVyxalLit from "./languages/lang-vyxal-lit";
 import { autocompletion } from "@codemirror/autocomplete";
 import { EditorView, lineNumbers } from "@codemirror/view";
 import { Theme } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import type { ElementData } from "./util/element-data";
+import { vyxalLit } from "./languages/lang-vyxal-lit";
 
 const EXTENSIONS = [
     keymap.of([
@@ -51,7 +51,7 @@ type EditorParams = {
 
 export default function Editor(data: ElementData) {
     const VYXAL = vyxal(util, data);
-    const VYXAL_LIT = langVyxalLit(util, data);
+    const VYXAL_LIT = vyxalLit();
     return function({ code, ratio, title, setCode, theme, literate }: EditorParams) {
         const onChange = useCallback((code: string) => {
             if (code == "lyxal") {

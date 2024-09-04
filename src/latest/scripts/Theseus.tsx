@@ -184,7 +184,7 @@ function Theseus() {
                             <Nav.Item>
                                 <Nav.Link eventKey="html">HTML</Nav.Link>
                             </Nav.Item>
-                            <div className="ms-auto">
+                            <div className="ms-auto me-1">
                                 <CopyButton title="Copy output" generate={() => runnerRef.current?.getOutput() ?? ""} />
                             </div>
                         </Nav>

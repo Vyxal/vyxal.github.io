@@ -41,7 +41,7 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                     <img src={logo} width="32" height="32" className="rounded me-2" alt="Vyxal woogle" />
                     <span className="d-none d-sm-inline">Vyxal 3</span>
                 </Navbar.Brand>
-                <Nav className="me-auto me-md-0 d-none d-sm-flex">
+                <Nav className="d-none d-sm-flex">
                     <InputGroup className="me-md-3 me-2">
                         {
                             flags.size > 0 ? (
@@ -59,10 +59,9 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                         }
                     </InputGroup>
                     <ShowDialogButton shower={setShowShareDialog} icon="bi-share" title="Share code" />
-                    <ShowDialogButton shower={setShowSettingsDialog} icon="bi-gear" title="Settings" />
                     <ShowDialogButton shower={setShowElementOffcanvas} icon="bi-journal-code" title="Elements and documentation" />
                 </Nav>
-                <div className="d-sm-none me-auto">
+                <div className="d-sm-none me-3">
                     <InputGroup>
                         {
                             flags.size > 0 ? (
@@ -109,6 +108,9 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                         }
                         {{ "idle": "Run", "starting": "Starting", "running": "Stop" }[state]}
                     </Button>
+                </Nav>
+                <Nav className="ms-auto justify-self-end">
+                    <ShowDialogButton shower={setShowSettingsDialog} icon="bi-gear" title="Settings" margin={false} />
                 </Nav>
             </Container>
         </Navbar>

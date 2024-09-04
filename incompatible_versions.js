@@ -10,7 +10,12 @@ const incompatMatrix = {
     "3.0.0": true,
     "3.1.0": true, 
     "3.2.0": true,
-    "3.3.0": false,
+    "3.3.0": true,
+    "3.4.0": true,
+    "3.4.1": true,
+    "3.4.2": true,
+    "3.4.3": true,
+    "3.4.4": false
 }
 
 export function incomptabile(target, current) {

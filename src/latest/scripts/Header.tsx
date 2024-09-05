@@ -16,7 +16,7 @@ type ShowDialogButtonArgs = {
 function ShowDialogButton({ shower, title, icon, margin = true }: ShowDialogButtonArgs) {
     return (
         <Button variant="secondary" className={margin ? "me-md-3 me-2" : ""} onClick={() => shower(true)} title={title}>
-            <i className={`bi ${icon}`}></i> {title}
+            <i className={`bi ${icon}`}></i>
         </Button>
     );
 }

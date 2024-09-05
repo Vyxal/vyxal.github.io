@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -61,7 +61,7 @@ export default function Editor(data: ElementData) {
             }
             setCode(code);
         }, []);
-        const header = useMemo(() => showPanel.of((view) => {
+        const header = useMemo(() => showPanel.of(() => {
             const dom = document.createElement("div");
             dom.classList.add("p-1");
             dom.textContent = title;

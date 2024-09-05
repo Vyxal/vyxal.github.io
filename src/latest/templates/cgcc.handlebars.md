@@ -5,7 +5,7 @@
 {{/if}}
 
 ```
-{{code}}
+{{{code}}}
 ```
 
 [Vyxal It Online!]({{link}})

@@ -41,7 +41,7 @@ export class VyRunner extends EventTarget {
         this.terminal.open(element);
         this.fit.fit();
         new ResizeObserver(() => requestAnimationFrame(() => this.onResize())).observe(element);
-        this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${this.version}`);
+        this.terminal!.writeln(`\x1b[?25lWelcome to \x1b[1;95mVyxal\x1b[0m ${this.version}`);
         this.terminal!.writeln(`\x1b[2;3m${this.splashes[Math.floor(Math.random() * this.splashes.length)]}\x1b[0m`);
         console.log("Terminal attached");
     }

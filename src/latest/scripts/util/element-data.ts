@@ -95,6 +95,7 @@ export const ElementDataContext = createContext<ElementData | undefined>(undefin
 export const elementFuse = new Fuse<Element>([], {
     includeScore: true,
     threshold: 0.3,
+    isCaseSensitive: true,
     keys: [
         {
             "name": "symbol",
@@ -113,6 +114,7 @@ export const elementFuse = new Fuse<Element>([], {
 export const modifierFuse = new Fuse<Modifier>([], {
     includeScore: true,
     threshold: 0.3,
+    isCaseSensitive: true,
     keys: [
         {
             "name": "name",
@@ -127,6 +129,7 @@ export const modifierFuse = new Fuse<Modifier>([], {
 export const syntaxFuse = new Fuse<SyntaxFeature>([], {
     includeScore: true,
     threshold: 0.3,
+    isCaseSensitive: true,
     keys: [
         {
             "name": "symbol",

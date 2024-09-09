@@ -3,24 +3,33 @@ import type { FuseResult } from "fuse.js";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
-import { elementFuse, modifierFuse, Element, Modifier, ELEMENT_DATA, ElementData } from "../util/element-data";
+import { elementFuse, modifierFuse, Element, Modifier, ELEMENT_DATA, ElementData, SyntaxFeature, syntaxFuse } from "../util/element-data";
 import { syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
+import { SyntaxCard } from "../cards/SyntaxCard";
 
 const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
 const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
 
 
-function elementCompletion(element: Element | Modifier, literate: boolean): Completion {
+function elementCompletion(thing: Element | Modifier | SyntaxFeature, literate: boolean): Completion {
     return {
-        label: literate ? element.keywords[0] ?? "<error>" : element.symbol,
-        detail: element.name,
+        label: literate && "keywords" in thing ? thing.keywords[0] ?? "<error>" : thing.symbol,
+        detail: thing.name,
         info() {
             const container = document.createElement("div");
-            container.innerHTML = renderToStaticMarkup("vectorises" in element ? ElementCard({ item: element }) : ModifierCard({ item: element }));
+            let card;
+            if ("vectorises" in thing) {
+                card = ElementCard({ item: thing });
+            } else if ("usage" in thing) {
+                card = SyntaxCard({ item: thing });
+            } else {
+                card = ModifierCard({ item: thing });
+            }
+            container.innerHTML = renderToStaticMarkup(card);
             return container;
         },
-        type: "vectorises" in element ? "method" : "keyword",
+        type: "vectorises" in thing ? "method" : "keyword",
     };
 }
 
@@ -28,7 +37,7 @@ function syncElementAutocomplete(context: CompletionContext, literate: boolean):
     const word = context.matchBefore(literate ? KEYWORD : PREFIXED_KEYWORD);
     if (word != null) {
         word.text = word.text.trimStart();
-        const results: FuseResult<Element | Modifier>[] = elementFuse.search(word.text).concat(modifierFuse.search(word.text));
+        const results: FuseResult<Element | Modifier | SyntaxFeature>[] = [...elementFuse.search(word.text), ...modifierFuse.search(word.text), ...syntaxFuse.search(word.text)];
         if (!results.length) {
             return null;
         }

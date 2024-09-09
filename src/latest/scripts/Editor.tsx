@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback, useContext, useMemo, useRef } from "react";
-import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
+import ReactCodeMirror, { keymap, Prec } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { vyxal } from "./languages/vyxal-extensions";
@@ -12,9 +12,9 @@ import { ElementDataContext } from "./util/element-data";
 import { vyxalLit } from "./languages/vyxal-lit-extensions";
 
 const EXTENSIONS = [
-    keymap.of([
+    Prec.high(keymap.of([
         {
-            key: "Shift-Enter",
+            key: "Ctrl-Enter",
             run(view) {
                 if (view.state.doc.length <= 0) {
                     return false;
@@ -24,7 +24,7 @@ const EXTENSIONS = [
             },
             preventDefault: true,
         },
-    ]),
+    ])),
     minimalSetup,
     autocompletion(),
     lineNumbers(),

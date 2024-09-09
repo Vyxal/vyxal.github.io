@@ -2,6 +2,10 @@ declare module "*.txt" {
     let content: string;
     export = content;
 }
+declare module "*.txt?raw" {
+    let content: string;
+    export = content;
+}
 declare module "*.png" {
     const url: string;
     export = url;

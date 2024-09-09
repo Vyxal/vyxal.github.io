@@ -1,8 +1,6 @@
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { RunRequest, WorkerMessage } from "./util/worker-types";
-import { ELEMENT_DATA } from "./util/element-data";
-import splash from "../data/splash.txt";
 
 const MAX_BUFFER_SIZE = 20000;
 
@@ -19,9 +17,13 @@ export class VyRunner extends EventTarget {
     private workerCounter = 0;
     private outputBuffer: string[] = [];
     private _state: "idle" | "booting" | "running" = "booting";
+    private splashes: string[];
+    private version: string;
 
-    constructor() {
+    constructor(splashes: string[], version: string) {
         super();
+        this.splashes = splashes;
+        this.version = version;
         this.worker = this.spawnWorker();
     }
 
@@ -38,11 +40,8 @@ export class VyRunner extends EventTarget {
         this.terminal.open(element);
         this.fit.fit();
         new ResizeObserver(() => requestAnimationFrame(() => this.onResize())).observe(element);
-        Promise.all([ELEMENT_DATA, fetch(splash).then((r) => r.text())]).then(([elementData, splashes]) => {
-            const splashList = splashes.split("\n");
-            this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${elementData.version}`);
-            this.terminal!.writeln(`\x1b[2;3m${splashList[Math.floor(Math.random() * splashList.length)]}\x1b[0m`);
-        });
+        this.terminal!.writeln(`Welcome to \x1b[1;95mVyxal\x1b[0m ${this.version}`);
+        this.terminal!.writeln(`\x1b[2;3m${this.splashes[Math.floor(Math.random() * this.splashes.length)]}\x1b[0m`);
         console.log("Terminal attached");
     }
 

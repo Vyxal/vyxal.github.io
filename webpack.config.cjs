@@ -80,7 +80,7 @@ module.exports = function (env, argv) {
             ),
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(gitRevisionPlugin.version()),
-                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join("/", env["vy-archive"]) : LATEST_DATA_URI)
+                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join(".", env["vy-archive"]) : LATEST_DATA_URI)
             })
             // new WorkboxPlugin.InjectManifest({
             //     swSrc: "./src/latest/js/service.ts",
@@ -95,7 +95,7 @@ module.exports = function (env, argv) {
                 let match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*\.(js))/.exec(request)
                 if (match) {
                     if (env["vy-archive"] != undefined) {
-                        return callback(null, path.join(path.sep, env["vy-archive"], match[1]), "import")
+                        return callback(null, path.join(".", env["vy-archive"], match[1]), "import")
                     }
                     return callback(null, request, "import")
                 }

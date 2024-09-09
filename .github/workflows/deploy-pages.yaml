@@ -31,10 +31,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v2
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build with webpack
+        run: npx webpack --mode production --progress
+
       - name: Upload built HTML
         uses: actions/upload-pages-artifact@v1
         with:
-          path: '.'
+          path: dist/
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1

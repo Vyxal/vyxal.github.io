@@ -18,20 +18,29 @@ export function encodeHash(header: string, code: string, footer: string, flags: 
     })));
 }
 
-export function decodeHash(hash: string): V2Permalink {
-    const data = JSON.parse(decodeURIComponent(atob(hash)));
-    if (data.format == 2) {
-        return (data as V2Permalink);
+export function decodeHash(hash: string): V2Permalink | null {
+    try {
+        const data = JSON.parse(decodeURIComponent(atob(hash)));
+        if (data instanceof Array) {
+            return ({
+                format: 2,
+                flags: Array.from(data[0] as string),
+                header: data[1],
+                code: data[2],
+                footer: data[3],
+                inputs: (data[4] as string).split("\n"),
+                version: data[5],
+            } as V2Permalink);
+        } else if (data.format == 2) {
+            return (data as V2Permalink);
+        } else {
+            console.warn("Permalink is of an unsupported format!", data);
+            return null;
+        }
+    } catch {
+        console.warn("Failed to decode permalink!");
+        return null;
     }
-    return ({
-        format: 2,
-        flags: Array.from(data.flags as string),
-        header: data.header,
-        code: data.code,
-        footer: data.footer,
-        inputs: (data.inputs as string).split("\n"),
-        version: data.version,
-    } as V2Permalink);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

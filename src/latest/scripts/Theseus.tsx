@@ -41,9 +41,9 @@ function Theseus() {
     let link: V2Permalink | null;
     if (window.location.hash.length) {
         link = decodeHash(window.location.hash.slice(1));
-        if (link.version != null && incompatible(link.version)) {
+        if (link != null && link.version != null && incompatible(link.version)) {
             window.location.replace(`https://vyxal.github.io/versions/v${link.version}#${location.hash.substring(1)}`);
-        } 
+        }
     } else {
         link = null;
     }

@@ -38,6 +38,10 @@ module.exports = function (env, argv) {
                         {
                             import: "./src/index/index.html",
                             filename: "index.html"
+                        },
+                        {
+                            import: "./src/versions/versions.html",
+                            filename: "versions.html"
                         }
                     ]
                 ),

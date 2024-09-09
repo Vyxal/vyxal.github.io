@@ -51,12 +51,12 @@ function Theseus() {
     const [flags, setFlags] = useImmer<Flags>(deserializeFlags(elementData.flagDefs, new Set(link?.flags ?? [])));
     const literate = flags.get(LITERATE_MODE_FLAG_NAME) == true;
     const [theme, setTheme] = useState<Theme>(loadTheme());
-    const [state, setState] = useState<VyRunnerState>("idle");
     const [timeout, setTimeout] = useState<number>(10);
     const [snowing, setSnowing] = useState<boolean>(loadSnowing());
     const [header, setHeader] = useState(link?.header ?? "");
     const [code, setCode] = useState(link?.code ?? "");
     const [footer, setFooter] = useState(link?.footer ?? "");
+    const [state, setState] = useState<VyRunnerState>((header + code + footer).length > 0 ? "starting" : "idle");
     const [inputs, setInputs] = useState<Input[]>(link?.inputs?.map((input) => ({ id: Math.random(), value: input } as Input)) ?? []);
     const [showFlagsDialog, setShowFlagsDialog] = useState(false);
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);

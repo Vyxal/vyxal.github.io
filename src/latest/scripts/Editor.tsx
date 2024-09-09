@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import { Dispatch, SetStateAction, useCallback, useContext, useMemo, useRef } from "react";
 import ReactCodeMirror, { keymap } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -8,7 +8,7 @@ import { EditorView, lineNumbers, showPanel } from "@codemirror/view";
 import { Theme } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
-import type { ElementData } from "./util/element-data";
+import { ElementDataContext } from "./util/element-data";
 import { vyxalLit } from "./languages/vyxal-lit-extensions";
 
 const EXTENSIONS = [
@@ -51,35 +51,34 @@ type EditorParams = {
     literate: boolean,
 };
 
-export default function Editor(data: ElementData) {
-    const VYXAL = vyxal(util, data);
-    const VYXAL_LIT = vyxalLit(data);
-    return function({ code, ratio, title, setCode, theme, literate }: EditorParams) {
-        const onChange = useCallback((code: string) => {
-            if (code == "lyxal") {
-                window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-            }
-            setCode(code);
-        }, []);
-        const header = useMemo(() => showPanel.of(() => {
-            const dom = document.createElement("div");
-            dom.classList.add("p-1");
-            dom.textContent = title;
-            return { dom, top: true };
-        }), [title]);
-        const extensions = [...useMemo(() => EXTENSIONS.concat([literate ? VYXAL_LIT : VYXAL]), [literate]), header];
-        return <>
-            {/* <div className="bg-body-tertiary">
-                {title}
-            </div> */}
-            <ReactCodeMirror
-                theme={THEMES[theme]}
-                value={code}
-                style={{ height: ratio }}
-                // height={height}
-                onChange={onChange}
-                extensions={extensions}
-            />
-        </>;
-    };
-}
+export default function Editor({ code, ratio, title, setCode, theme, literate }: EditorParams) {
+    const elementData = useContext(ElementDataContext);
+    const onChange = useCallback((code: string) => {
+        if (code == "lyxal") {
+            window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+        }
+        setCode(code);
+    }, []);
+    const header = useMemo(() => showPanel.of(() => {
+        const dom = document.createElement("div");
+        dom.classList.add("p-1");
+        dom.textContent = title;
+        return { dom, top: true };
+    }), [title]);
+    const languageExtension = useRef(literate ? vyxalLit(elementData!) : vyxal(util, elementData!));
+
+    const extensions = [...useMemo(() => EXTENSIONS.concat([languageExtension.current]), [literate]), header];
+    return <>
+        {/* <div className="bg-body-tertiary">
+            {title}
+        </div> */}
+        <ReactCodeMirror
+            theme={THEMES[theme]}
+            value={code}
+            style={{ height: ratio }}
+            // height={height}
+            onChange={onChange}
+            extensions={extensions}
+        />
+    </>;
+};

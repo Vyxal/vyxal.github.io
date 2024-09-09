@@ -3,7 +3,7 @@ import type { FuseResult } from "fuse.js";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
-import { elementFuse, modifierFuse, Element, Modifier, ELEMENT_DATA, ElementData, SyntaxFeature, syntaxFuse } from "../util/element-data";
+import { elementFuse, modifierFuse, Element, Modifier, ElementData, SyntaxFeature, syntaxFuse } from "../util/element-data";
 import { syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { SyntaxCard } from "../cards/SyntaxCard";
@@ -52,18 +52,17 @@ function syncElementAutocomplete(context: CompletionContext, literate: boolean):
 }
 
 
-export async function elementAutocomplete(context: CompletionContext, literate: boolean): Promise<CompletionResult | null> {
+export async function elementAutocomplete(elementData: ElementData, context: CompletionContext, literate: boolean): Promise<CompletionResult | null> {
     const sync = syncElementAutocomplete(context, literate);
     if (sync != null) {
         return Promise.resolve(sync);
     }
     if (context.explicit) {
-        const data = await ELEMENT_DATA;
         return {
             from: context.pos,
             to: context.pos,
             filter: false,
-            options: data.elements.map((e) => elementCompletion(e, literate)),
+            options: elementData.elements.map((e) => elementCompletion(e, literate)),
             update: (current, from, to, context) => syncElementAutocomplete(context, literate),
         };
     }

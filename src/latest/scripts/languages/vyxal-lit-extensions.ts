@@ -4,14 +4,14 @@ import { elementAutocomplete, elementTooltip } from "./common";
 import { ElementData } from "../util/element-data";
 import { vyxalLitLanguage } from "../../../common/scripts/languages/vyxal-lit";
 
-export function vyxalLitCompletion() {
+export function vyxalLitCompletion(elementData: ElementData) {
     return vyxalLitLanguage.data.of({
         autocomplete(context: CompletionContext): Promise<CompletionResult | null> {
-            return elementAutocomplete(context, true);
+            return elementAutocomplete(elementData, context, true);
         },
     });
 }
 
-export function vyxalLit(data: ElementData) {
-    return new LanguageSupport(vyxalLitLanguage, [vyxalLitCompletion(), elementTooltip(data, true)]);
+export function vyxalLit(elementData: ElementData) {
+    return new LanguageSupport(vyxalLitLanguage, [vyxalLitCompletion(elementData), elementTooltip(elementData, true)]);
 }

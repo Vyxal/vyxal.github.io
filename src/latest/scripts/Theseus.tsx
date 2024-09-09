@@ -32,7 +32,7 @@ import { Input, InputDialog } from "./dialogs/InputDialog";
 const utilWorker = new UtilWorker();
 
 const VyTerminal = lazy(() => import("./VyTerminal"));
-const Editor = lazy(() => import("./Editor").then((i) => ELEMENT_DATA.then(i.default).then((component) => ({ default: component }))));
+const Editor = lazy(() => import("./Editor"));
 
 // TODO: Don't hardcode this
 const LITERATE_MODE_FLAG_NAME = "Literate mode";

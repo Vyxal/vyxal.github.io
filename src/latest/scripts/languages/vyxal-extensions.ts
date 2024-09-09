@@ -24,7 +24,7 @@ export function vyxalCompletion(elementData: ElementData) {
                     });
                 }
             }
-            return elementAutocomplete(context, false);
+            return elementAutocomplete(elementData, context, false);
         },
     });
 }

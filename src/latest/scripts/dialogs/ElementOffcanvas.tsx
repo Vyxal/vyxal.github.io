@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
-import { ELEMENT_DATA, ElementDataContext, elementFuse, modifierFuse, syntaxFuse } from "../util/element-data";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { ElementDataContext, elementFuse, modifierFuse, syntaxFuse } from "../util/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { ModifierCard } from "../cards/ModifierCard";
@@ -44,11 +44,7 @@ type ElementOffcanvasParams = {
 export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
     const elementData = useContext(ElementDataContext)!;
     const [tab, setTab] = useState("elements");
-    const [codepage, setCodepage] = useState<string[]>([]);
-
-    useEffect(() => {
-        ELEMENT_DATA.then((data) => setCodepage(data.codepageRaw));
-    }, []);
+    const codepage = elementData.codepageRaw;
 
     return <Offcanvas show={show} onHide={() => setShow(false)} style={{ width: "600px" }}>
         <Tab.Container activeKey={tab} onSelect={(tab) => setTab(tab!)}>

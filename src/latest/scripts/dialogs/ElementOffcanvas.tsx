@@ -74,7 +74,7 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                 <Tab.Pane eventKey="syntax" className="element-offcanvas-tab-pane">
                     <CardSearch card={SyntaxCard} fuse={syntaxFuse} defaults={elementData.syntax} />
                 </Tab.Pane>
-                <Tab.Pane eventKey="codepage">
+                <Tab.Pane eventKey="codepage" className="element-offcanvas-tab-pane overflow-scroll">
                     <table className="table">
                         <tbody>
                             {

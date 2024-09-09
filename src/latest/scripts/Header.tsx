@@ -37,7 +37,7 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
     return (
         <Navbar className="bg-body-tertiary flex-wrap">
             <Container fluid className="justify-content-start">
-                <Navbar.Brand>
+                <Navbar.Brand href="/">
                     <img src={logo} width="32" height="32" className="rounded me-2" alt="Vyxal woogle" />
                     <span className="d-none d-sm-inline">Vyxal 3</span>
                 </Navbar.Brand>

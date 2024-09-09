@@ -80,9 +80,6 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                                 <Dropdown.Item as="button" onClick={() => setShowShareDialog(true)}>
                                     Share code
                                 </Dropdown.Item>
-                                <Dropdown.Item as="button" onClick={() => setShowSettingsDialog(true)}>
-                                    Settings
-                                </Dropdown.Item>
                                 <Dropdown.Item as="button" onClick={() => setShowElementOffcanvas(true)}>
                                     Elements
                                 </Dropdown.Item>

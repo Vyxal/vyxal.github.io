@@ -90,12 +90,7 @@ function Theseus() {
             if (state != "idle") {
                 return;
             }
-            runnerRef.current?.start(
-                header + code + footer,
-                [...serializeFlags(elementData.flagDefs, flags)],
-                inputs.map((i) => i.value),
-                timeout * 1000,
-            );
+            runnerRef.current?.start();
         };
         window.addEventListener("run-vyxal", listener);
         return () => window.removeEventListener("run-vyxal", listener);
@@ -142,12 +137,7 @@ function Theseus() {
                     switch (state) {
                         case "idle":
                             setState("starting");
-                            runnerRef.current.start(
-                                header + code + footer,
-                                [...serializeFlags(elementData.flagDefs, flags)],
-                                inputs.map((i) => i.value),
-                                timeout * 1000,
-                            );
+                            runnerRef.current.start();
                             break;
                         case "running":
                             runnerRef.current.stop();
@@ -199,7 +189,15 @@ function Theseus() {
                                         </div>
                                     }
                                 >
-                                    <VyTerminal ref={runnerRef} onStart={() => setState("running")} onFinish={() => setState("idle")} />
+                                    <VyTerminal
+                                        ref={runnerRef}
+                                        code={header + code + footer}
+                                        flags={[...serializeFlags(elementData.flagDefs, flags)]}
+                                        inputs={inputs.map((i) => i.value)}
+                                        timeout={timeout * 1000}
+                                        onStart={() => setState("running")}
+                                        onFinish={() => setState("idle")}
+                                    />
                                 </Suspense>
                             </Tab.Pane>
                             <Tab.Pane eventKey="html">

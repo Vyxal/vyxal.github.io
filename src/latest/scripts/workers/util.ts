@@ -1,6 +1,3 @@
-import LongDictionary from "https://vyxal.github.io/Vyxal/LongDictionary.txt";
-import ShortDictionary from "https://vyxal.github.io/Vyxal/ShortDictionary.txt";
-
 /// <reference lib="ES2020" />
 /// <reference lib="WebWorker" />
 
@@ -26,10 +23,12 @@ type Request = SBCSifyRequest | CompressRequest | DecompressRequest;
 
 declare const self: SharedWorkerGlobalScope;
 
+// @ts-expect-error DATA_URI gets replaced by Webpacl
+const dataUri = DATA_URI;
 const vyxal = Promise.all([
     import("https://vyxal.github.io/Vyxal/vyxal.js"),
-    fetch(ShortDictionary, { cache: "force-cache" }).then((response) => response.text()),
-    fetch(LongDictionary, { cache: "force-cache" }).then((response) => response.text()),
+    fetch(`${dataUri}/ShortDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),
+    fetch(`${dataUri}/LongDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),
 ]);
 
 console.log("Utility worker loaded");
@@ -57,3 +56,5 @@ self.addEventListener("connect", (e) => {
         port.postMessage("ready"); 
     });
 });
+
+export {};

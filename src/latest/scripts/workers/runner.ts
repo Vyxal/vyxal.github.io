@@ -12,7 +12,6 @@ interface RunRequest {
 
 // @ts-expect-error DATA_URI gets replaced by Webpacl
 const dataUri = DATA_URI;
-
 const dictPromise = Promise.all([
     fetch(`${dataUri}/ShortDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),
     fetch(`${dataUri}/LongDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),

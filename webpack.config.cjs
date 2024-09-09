@@ -19,11 +19,6 @@ module.exports = function (env, argv) {
         devtool: false,
         experiments: {
             outputModule: true,
-            buildHttp: {
-                allowedUris: ["https://vyxal.github.io"],
-                cacheLocation: false,
-                frozen: false, // the docs can't tell ME what to do!
-            }
         },
         plugins: [
             new HtmlBundlerPlugin({

@@ -9,7 +9,7 @@ const { GitRevisionPlugin } = require('git-revision-webpack-plugin')
 
 const gitRevisionPlugin = new GitRevisionPlugin()
 
-const LATEST_DATA_URI = "https://vyxal.github.io/Vyxal/theseus.json"
+const LATEST_DATA_URI = "https://vyxal.github.io/Vyxal"
 
 module.exports = function (env, argv) {
     const prod = argv.mode == "production"
@@ -80,7 +80,7 @@ module.exports = function (env, argv) {
             ),
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(gitRevisionPlugin.version()),
-                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join("/", env["vy-archive"], "theseus.json") : LATEST_DATA_URI)
+                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join("/", env["vy-archive"]) : LATEST_DATA_URI)
             })
             // new WorkboxPlugin.InjectManifest({
             //     swSrc: "./src/latest/js/service.ts",

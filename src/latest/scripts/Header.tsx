@@ -3,7 +3,7 @@ import { Button, ButtonGroup, Container, Dropdown, InputGroup, Nav, Navbar, Spin
 
 import { VyRunnerState } from "./util/misc";
 
-import logo from "../assets/logo-64.png";
+import logo from "../../common/assets/logo-64.png";
 import { Input } from "./dialogs/InputDialog";
 
 type ShowDialogButtonArgs = {

@@ -11,27 +11,6 @@ const gitRevisionPlugin = new GitRevisionPlugin()
 
 const LATEST_DATA_URI = "https://vyxal.github.io/Vyxal/theseus.json"
 
-class MonkeyPatchPlugin {
-    constructor(basePath, enabled) {
-        this.basePath = basePath
-        this.enabled = enabled
-    }
-    apply(compiler) {
-        compiler.hooks.compilation.tap(
-            "MonkeyPatchPlugin",
-            (compilation, { normalModuleFactory }) => {
-                normalModuleFactory.hooks.resolve
-                    .tap("MonkeyPatchPlugin", (data) => {
-                        const match = /https?:\/\/vyxal.github.io\/Vyxal\/(.*\.(txt|json))/.exec(data.request)
-                        if (match != null && this.enabled) {
-                            data.request = path.join(path.sep, this.basePath, match[1])
-                        }
-                    })
-            }
-        )
-    }
-}
-
 module.exports = function (env, argv) {
     const prod = argv.mode == "production"
     return [{
@@ -47,14 +26,26 @@ module.exports = function (env, argv) {
             }
         },
         plugins: [
-            new MonkeyPatchPlugin(env["vy-archive"], env["vy-archive"] != undefined),
             new HtmlBundlerPlugin({
-                entry: [
-                    {
-                        import: "./src/latest/latest.html",
-                        filename: "latest.html"
-                    }
-                ],
+                entry: env["vy-archive"] != undefined ? (
+                    [
+                        {
+                            import: "./src/latest/latest.html",
+                            filename: "index.html"
+                        },
+                    ]
+                ) : (
+                    [
+                        {
+                            import: "./src/latest/latest.html",
+                            filename: "latest.html"
+                        },
+                        {
+                            import: "./src/index/index.html",
+                            filename: "index.html"
+                        }
+                    ]
+                ),
                 js: {
                     filename: "[name].[contenthash:8].js"
                 },
@@ -89,7 +80,7 @@ module.exports = function (env, argv) {
             ),
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(gitRevisionPlugin.version()),
-                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join(path.sep, env["vy-archive"], "theseus.json") : LATEST_DATA_URI)
+                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join("/", env["vy-archive"], "theseus.json") : LATEST_DATA_URI)
             })
             // new WorkboxPlugin.InjectManifest({
             //     swSrc: "./src/latest/js/service.ts",
@@ -156,7 +147,7 @@ module.exports = function (env, argv) {
                     use: "lezer-loader",
                 },
                 {
-                    test: /\.(txt|json)$/,
+                    test: /\.(txt|json|vyl?)$/,
                     type: "asset/resource"
                 },
                 {
@@ -193,7 +184,7 @@ module.exports = function (env, argv) {
         ignoreWarnings: [
             // TODO: Remove these once Bootstrap 5.3.4 releases
             /https:\/\/sass-lang.com\/d\/mixed-decls/,
-            /22 repetitive deprecation warnings omitted\./,
+            /\d+ repetitive deprecation warnings omitted\./,
         ]
     }];
 }

@@ -1,0 +1,6 @@
+## The classic fizzbuzz
+100 map<
+  n [3, 5] divides?
+  "FizzBuzz" halve
+  dot-product maximum
+} join-on-newlines

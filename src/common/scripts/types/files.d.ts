@@ -22,3 +22,7 @@ declare module "*.grammar" {
     const parser: import("@lezer/lr").LRParser;
     export = parser;
 }
+declare module "*.vyl?raw" {
+    const content: string;
+    export = content;
+}

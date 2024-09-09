@@ -3,3 +3,4 @@ dist/
 *.lock
 .vscode/
 eslint-results.sarif
+Vyxal/

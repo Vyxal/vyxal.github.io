@@ -1,5 +1,3 @@
-import LongDictionary from "https://vyxal.github.io/Vyxal/LongDictionary.txt";
-import ShortDictionary from "https://vyxal.github.io/Vyxal/ShortDictionary.txt";
 import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
 
 // This file cannot import anything local! That's why all this stuff is duplicated here.
@@ -12,9 +10,12 @@ interface RunRequest {
     flags: string[],
 }
 
+// @ts-expect-error DATA_URI gets replaced by Webpacl
+const dataUri = DATA_URI;
+
 const dictPromise = Promise.all([
-    fetch(ShortDictionary, { cache: "force-cache" }).then((response) => response.text()),
-    fetch(LongDictionary, { cache: "force-cache" }).then((response) => response.text()),
+    fetch(`${dataUri}/ShortDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),
+    fetch(`${dataUri}/LongDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),
 ]).then((responses) => {
     Vyxal.setShortDict(responses[0]);
     Vyxal.setLongDict(responses[0]);

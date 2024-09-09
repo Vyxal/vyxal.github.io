@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Vyxal 3 web interpreter: the best place to run Vyxal 3 online!">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="rgb(59, 130, 246)">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#26b4d1">
+    <title>Vyxal 3</title>
+    <link rel="shortcut icon" href="../common/assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.scss?inline">
+    <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
+    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+</head>
+<body data-bs-theme="dark">
+    <header>
+        <nav class="navbar navbar-expand bg-body-tertiary">
+            <div class="container">
+                <span class="navbar-brand">
+                    <img src="../common/assets/logo-64.png" width="32" height="32" class="rounded me-2" alt="Vyxal woogle" />
+                    <span class="d-none d-sm-inline">Vyxal 3</span>
+                </span>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="container col-xxl-8 px-4 py-5">
+            <div class="row align-items-center g-5 py-5 flex-lg-row-reverse">
+                <div class="col-10 col-sm-8 col-lg-6">
+                    <div id="cm-parent"></div>
+                    <script src="scripts/fizzbuzz.ts"></script>
+                </div>
+                <div class="col-lg-6">
+                    <h1 class="fw-bold text-body-emphasis">Welcome to Vyxal <span class="text-primary">3</span></h1>
+                    <p class="text-secondary">The concise and powerful programming language</p>
+                    <div class="d-grid gap-2 d-sm-flex">
+                        <a href="/latest.html" class="btn btn-primary btn-lg px-4 gap-3">Online IDE</a>
+                        <a href="#versions" class="btn btn-secondary btn-lg px-4">All versions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-body-tertiary py-3">
+            <div class="container">
+                <div class="row gap-4 mb-4">
+                    <h2>Why Vyxal</h2>
+                    <div class="col-lg bg-body rounded p-3">
+                        <i class="bi bi-code fs-1 text-primary"></i>
+                        <h4>Concise Syntax</h4>
+                        <p class="text-secondary-emphasis">Write more with less. Vyxal's syntax is designed for brevity and readability.</p>
+                    </div>
+                    <div class="col-lg bg-body rounded p-3">
+                        <i class="bi bi-lightning-fill fs-1 text-primary"></i>
+                        <h4>Lightning Fast</h4>
+                        <p class="text-secondary-emphasis">Optimized for performance. Execute complex operations in milliseconds.</p>
+                    </div>
+                    <div class="col-lg bg-body rounded p-3">
+                        <i class="bi bi-terminal fs-1 text-primary"></i>
+                        <h4>Interactive REPL</h4>
+                        <p class="text-secondary-emphasis">Experiment and learn with our interactive Read-Eval-Print Loop environment.</p>
+                    </div>
+                </div>
+                <div class="row gap-4">
+                    <h2>Use Vyxal</h2>
+                    <div class="col-lg bg-body rounded p-3 d-flex flex-column">
+                        <i class="bi bi-globe fs-1 text-primary"></i>
+                        <h4>Online</h4>
+                        <p>Use Vyxal from the comfort of your web browser with our intuitive IDE.</p>
+                        <div class="mt-auto align-self-start">
+                            <a href="/latest.html" class="btn btn-primary me-2">Open</a>
+                            <a class="btn btn-secondary">Archived versions</a>
+                        </div>
+                    </div>
+                    <div class="col-lg bg-body rounded p-3 d-flex flex-column">
+                        <i class="bi bi-book fs-1 text-primary"></i>
+                        <h4>Learn</h4>
+                        <p>Take the official tour to learn how to use Vyxal.</p>
+                        <a href="https://github.com/Vyxal/Vyxal/blob/version-3/documentation/Tour.md" class="btn btn-primary mt-auto align-self-start">Tour</a>
+                    </div>
+                    <div class="col-lg bg-body rounded p-3 d-flex flex-column">
+                        <i class="bi bi-download fs-1 text-primary"></i>
+                        <h4>Download</h4>
+                        <p>Run Vyxal on your computer as a JAR or native executable.</p>
+                        <a href="https://github.com/Vyxal/Vyxal/releases" class="btn btn-secondary align-self-start">GitHub releases</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- <script type="module" src="scripts/versions.ts"></script> -->
+</body>
+</html>

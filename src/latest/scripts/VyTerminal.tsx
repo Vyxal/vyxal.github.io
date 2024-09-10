@@ -26,11 +26,7 @@ const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout
     useImperativeHandle(ref, () => {
         return {
             start() {
-                if (code == "lyxal") {
-                    window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-                } else {
-                    runner.start(code, flags, inputs, timeout);
-                }
+                runner.start(code, flags, inputs, timeout);
             },
             stop() {
                 return runner.terminate(TerminateReason.Terminated);
@@ -45,7 +41,7 @@ const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout
         runner.attach(wrapperRef.current!);
         runner.addEventListener("started", onStart);
         runner.addEventListener("finished", onFinish);
-        if (code.length > 0 && code != "lyxal") {
+        if (code.length > 0) {
             runner.start(code, flags, inputs, timeout);
         }
         return () => {

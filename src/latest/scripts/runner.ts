@@ -120,6 +120,10 @@ export class VyRunner extends EventTarget {
     }
 
     start(code: string, flags: string[], inputs: string[], timeout: number) {
+        if (code == "lyxal") {
+            window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+            return;
+        }
         return this.worker.then((worker) => {
             if (this._state == "running") {
                 throw new Error("Attempted to start while running");

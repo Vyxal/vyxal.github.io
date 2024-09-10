@@ -49,7 +49,7 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
     return <Offcanvas show={show} onHide={() => setShow(false)} style={{ width: "600px" }}>
         <Tab.Container activeKey={tab} onSelect={(tab) => setTab(tab!)}>
             <Offcanvas.Header closeButton>
-                <Nav variant="pills" className="flex-nowrap me-3 overflow-x-scroll">
+                <Nav variant="pills" className="flex-nowrap me-3 overflow-x-auto">
                     <Nav.Item>
                         <Nav.Link eventKey="elements">Elements</Nav.Link>
                     </Nav.Item>

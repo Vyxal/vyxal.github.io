@@ -54,9 +54,6 @@ type EditorParams = {
 export default function Editor({ code, ratio, title, setCode, theme, literate }: EditorParams) {
     const elementData = useContext(ElementDataContext);
     const onChange = useCallback((code: string) => {
-        if (code == "lyxal") {
-            window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-        }
         setCode(code);
     }, []);
     const header = useMemo(() => showPanel.of(() => {

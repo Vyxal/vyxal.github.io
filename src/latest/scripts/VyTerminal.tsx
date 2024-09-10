@@ -45,7 +45,7 @@ const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout
         runner.attach(wrapperRef.current!);
         runner.addEventListener("started", onStart);
         runner.addEventListener("finished", onFinish);
-        if (code.length > 0) {
+        if (code.length > 0 && code != "lyxal") {
             runner.start(code, flags, inputs, timeout);
         }
         return () => {

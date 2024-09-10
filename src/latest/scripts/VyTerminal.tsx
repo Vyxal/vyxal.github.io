@@ -31,7 +31,9 @@ const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout
             stop() {
                 return runner.terminate(TerminateReason.Terminated);
             },
-            getOutput: runner.getOutput,
+            getOutput() {
+                return runner.getOutput();
+            },
         };
     });
 

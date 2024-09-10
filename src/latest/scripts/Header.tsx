@@ -51,7 +51,7 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                         <ShowDialogButton shower={setShowFlagsDialog} icon="bi-flag-fill" title="Flags" margin={false} />
                     </InputGroup>
                     <InputGroup className="me-md-3 me-2">
-                        <ShowDialogButton shower={setShowInputDialog} icon="bi-card-text" title="Inputs" margin={false} />
+                        <ShowDialogButton shower={setShowInputDialog} icon="bi bi-patch-question" title="Inputs" margin={false} />
                         {
                             inputs.length > 0 ? (
                                 <span className="form-control font-monospace">{inputs.length}</span>

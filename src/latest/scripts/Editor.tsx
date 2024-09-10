@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useContext, useMemo, useRef } from "react";
+import { Dispatch, SetStateAction, useCallback, useContext, useMemo } from "react";
 import ReactCodeMirror, { keymap, Prec } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -62,9 +62,8 @@ export default function Editor({ code, ratio, title, setCode, theme, literate }:
         dom.textContent = title;
         return { dom, top: true };
     }), [title]);
-    const languageExtension = useRef(literate ? vyxalLit(elementData!) : vyxal(util, elementData!));
 
-    const extensions = [...useMemo(() => EXTENSIONS.concat([languageExtension.current]), [literate]), header];
+    const extensions = [...useMemo(() => EXTENSIONS.concat([literate ? vyxalLit(elementData!) : vyxal(util, elementData!)]), [literate]), header];
     return <>
         {/* <div className="bg-body-tertiary">
             {title}

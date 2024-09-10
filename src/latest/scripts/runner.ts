@@ -125,7 +125,7 @@ export class VyRunner extends EventTarget {
                 throw new Error("Attempted to start while running");
             }
             if (code == "lyxal") {
-            window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
             }
             this.terminal?.clear();
             this.outputBuffer.length = 0;

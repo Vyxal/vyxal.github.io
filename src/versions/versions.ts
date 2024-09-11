@@ -4,8 +4,7 @@ function makeVersionLink(version: string, type?: "legacy" | "latest" | "normal")
     const a = document.createElement("div");
     a.classList.add("list-group-item");
     a.classList.add("d-flex");
-    a.classList.add("justify-content-between");
-    let body = `<span><span class="me-2">${version}</span>`;
+    let body = `<span class="me-auto"><span class="me-2">${version}</span>`;
     if (type == "latest") {
         body += `<span class="badge text-bg-primary">latest</span></span> <a href="/latest.html">online interpreter</a>`;
     } else {
@@ -15,7 +14,7 @@ function makeVersionLink(version: string, type?: "legacy" | "latest" | "normal")
             body += "</span>";
         }
         body += `<a href="https://github.com/Vyxal/Vyxal/releases/tag/v${version}">GitHub release</a>`;
-        body += `<a href="/versions/v${version}/">online interpreter</a>`;
+        body += `<span class="text-secondary mx-2">&bullet;</span> <a href="/versions/v${version}/">online interpreter</a>`;
     }
     a.innerHTML = body;
     return a;

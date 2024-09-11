@@ -36,11 +36,11 @@ module.exports = function (env, argv) {
                             filename: "latest.html"
                         },
                         {
-                            import: "./src/index/index.html",
+                            import: "./src/index/index.hbs",
                             filename: "index.html"
                         },
                         {
-                            import: "./src/versions/versions.html",
+                            import: "./src/versions/versions.hbs",
                             filename: "versions.html"
                         }
                     ]
@@ -61,6 +61,12 @@ module.exports = function (env, argv) {
                 //         as: "image"
                 //     }
                 // ]
+                preprocessor: "handlebars",
+                preprocessorOptions: {
+                    partials: [
+                        "src/common/templates/"
+                    ]
+                }
             }),
             // new CopyPlugin({
             //     patterns: [

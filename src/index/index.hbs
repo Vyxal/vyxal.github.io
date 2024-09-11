@@ -8,33 +8,13 @@
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#26b4d1">
     <title>Vyxal 3</title>
     <link rel="shortcut icon" href="../common/assets/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="style.scss?inline">
+    <link rel="stylesheet" href="../common/styles/style.scss?inline">
     <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="prefetch" href="https://discord.com/api/guilds/936437703048822844/widget.json">
     <script type="module" src="bootstrap/dist/js/bootstrap.min.js"></script>
 </head>
 <body data-bs-theme="dark">
-    <header>
-        <nav class="navbar navbar-expand bg-body-tertiary">
-            <div class="container">
-                <a href="/" class="navbar-brand">
-                    <img src="../common/assets/logo-64.png" width="32" height="32" class="rounded me-2"
-                        alt="Vyxal woogle" />
-                    <span>Vyxal 3</span>
-                </a>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/Vyxal/Vyxal/tree/version-3/documentation">Docs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://github.com/Vyxal">Community</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://codegolf.stackexchange.com/search?q=%22Vyxal+3%22">Examples</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+    {{> header}}
     <main>
         <div class="container col-xxl-8 px-4 py-5">
             <div class="row align-items-center g-5 py-5 flex-lg-row-reverse">
@@ -95,6 +75,9 @@
                         <p>Run Vyxal on your computer as a JAR or native executable.</p>
                         <a href="https://github.com/Vyxal/Vyxal/releases" class="btn btn-secondary align-self-start">GitHub releases</a>
                     </div>
+                </div>
+                <div class="row gap-4">
+                    <h2>Community</h2>
                 </div>
             </div>
         </div>

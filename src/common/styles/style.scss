@@ -49,3 +49,11 @@
     @extend .border;
     @extend .rounded;
 }
+
+@include media-breakpoint-up(sm) {
+    .discord-online {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}

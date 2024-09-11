@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vyxal 3 versions</title>
+    <link rel="shortcut icon" href="../common/assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../common/styles/style.scss?inline">
+    <link rel="stylesheet" href="bootstrap-icons/font/bootstrap-icons.css">
+</head>
+
+<body data-bs-theme="dark">
+    {{> header}}
+    <main class="container">
+        <h1 class="my-3">All Vyxal versions</h1>
+        <div id="version-list" class="list-group">
+            <div id="versions-loading" class="list-group-item d-flex flex-column">
+                <div class="spinner-border align-self-center" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="versions.ts"></script>
+</body>
+
+</html>

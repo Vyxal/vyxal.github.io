@@ -18,10 +18,33 @@ export function encodeHash(header: string, code: string, footer: string, flags: 
     })));
 }
 
+// escape() polyfill for legacy permalinks
+// https://262.ecma-international.org/5.1/#sec-B.2.1
+const ESCAPE_ALLOWED = new Set([..."ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@*_+-./"].map((i) => i.charCodeAt(0)));
+function escape(input: string) {
+    let r = "";
+    if (input.length == 0) {
+        return "";
+    }
+    for (let k = 0; k < input.length; k++) {
+        const code = input.charCodeAt(k);
+        if (ESCAPE_ALLOWED.has(code)) {
+            r += input[k];
+        } else if (code < 256) {
+            r += `%${code.toString(16)}`;
+        } else {
+            r += `%u${code.toString(16).padStart(4, "0")}`;
+        }
+    }
+    return r;
+}
+
 export function decodeHash(hash: string): V2Permalink | null {
     try {
-        const data = JSON.parse(decodeURIComponent(atob(hash)));
+        let data = JSON.parse(decodeURIComponent(atob(hash)));
         if (data instanceof Array) {
+            // it's a legacy permalink, do decoding again
+            data = JSON.parse(decodeURIComponent(escape(atob(hash))));
             return ({
                 format: 2,
                 flags: Array.from(data[0] as string),

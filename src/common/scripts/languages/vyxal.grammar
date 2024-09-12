@@ -41,7 +41,7 @@ AnyString {
         "#::M"
     }
     StructureClose { "]" | "}" | ")" }
-    String {'"' (!["„”“\\] | "\\" _)* $["„”“]}
+    String {'"' (!["„”“\\] | "\\" _)* ($["„”“] | @eof) }
     SingleCharString { "'" _ }
     TwoCharString { "ᶴ" _ _ }
     TwoCharNumber { "~" _ _ }

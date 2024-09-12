@@ -29,20 +29,27 @@ export function CopyButton({ className, title, generate }: CopyButtonParams) {
             variant={VARIANTS[state]}
             className={className}
             title={TITLES[state]}
-            onClick={() => {
+            onClick={async() => {
                 if (state == "copy") {
-                    // @ts-expect-error Apparently "clipboard-write" isn't a permission TS knows
-                    navigator.permissions.query({ name: "clipboard-write" }).then((perm) => {
-                        if (perm.state != "granted") {
+                    try {
+                        // @ts-expect-error Apparently "clipboard-write" isn't a permission TS knows
+                        const permission = await navigator.permissions.query({ name: "clipboard-write" });
+                        if (permission.state != "granted") {
                             console.error("Clipboard write permission not granted, is this a secure context?");
                             setState("failed");
                             return;
                         }
-                        return navigator.clipboard.writeText(generate()).then(
-                            () => setState("copied"),
-                            () => setState("failed"),
-                        );
-                    }).finally(() => window.setTimeout(() => setState("copy"), 1500));
+                    } catch {
+                        // we're probably on firefox
+                    }
+                    try {
+                        await navigator.clipboard.writeText(generate());
+                    } catch (e) {
+                        setState("failed");
+                        console.error("Failed to copy", e);
+                    } finally {
+                        setTimeout(() => setState("copy"), 1500);
+                    }
                 }
             }}
         >

@@ -4,7 +4,7 @@ import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { vyxal } from "./languages/vyxal-extensions";
 import { autocompletion } from "@codemirror/autocomplete";
-import { EditorView, lineNumbers, showPanel } from "@codemirror/view";
+import { EditorView, highlightActiveLine, highlightActiveLineGutter, lineNumbers, showPanel } from "@codemirror/view";
 import { Theme } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
@@ -29,6 +29,8 @@ const EXTENSIONS = [
     minimalSetup,
     autocompletion(),
     lineNumbers(),
+    highlightActiveLine(),
+    highlightActiveLineGutter(),
     EditorView.theme({
         "&": { height: "100%" },
         "&.cm-focused": { outline: "none" },
@@ -71,6 +73,7 @@ export default function Editor({ code, ratio, children, setCode, theme, literate
             {title}
         </div> */}
         <ReactCodeMirror
+            basicSetup={false}
             theme={THEMES[theme]}
             value={code}
             style={{ height: ratio }}

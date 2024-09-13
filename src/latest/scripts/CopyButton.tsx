@@ -44,6 +44,7 @@ export function CopyButton({ className, title, generate }: CopyButtonParams) {
                     }
                     try {
                         await navigator.clipboard.writeText(generate());
+                        setState("copied");
                     } catch (e) {
                         setState("failed");
                         console.error("Failed to copy", e);

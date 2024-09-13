@@ -1,12 +1,12 @@
 import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import type { FuseResult } from "fuse.js";
-import { renderToStaticMarkup } from "react-dom/server";
 import { ModifierCard } from "../cards/ModifierCard";
 import { ElementCard } from "../cards/ElementCard";
 import { elementFuse, modifierFuse, Element, Modifier, ElementData, SyntaxFeature, syntaxFuse } from "../util/element-data";
 import { syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { SyntaxCard } from "../cards/SyntaxCard";
+import { createRoot } from "react-dom/client";
 
 const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
 const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
@@ -26,8 +26,14 @@ function elementCompletion(thing: Element | Modifier | SyntaxFeature, literate: 
             } else {
                 card = ModifierCard({ item: thing });
             }
-            container.innerHTML = renderToStaticMarkup(card);
-            return container;
+            const root = createRoot(container);
+            root.render(card);
+            return {
+                dom: container,
+                destroy() {
+                    root.unmount();
+                },
+            };
         },
         type: "vectorises" in thing ? "method" : "keyword",
     };

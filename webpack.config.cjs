@@ -46,10 +46,10 @@ module.exports = function (env, argv) {
                     ]
                 ),
                 js: {
-                    filename: "[name].[contenthash:8].js"
+                    filename: "scripts/[name].[contenthash:8].js"
                 },
                 css: {
-                    filename: "[name].[contenthash:8].css",
+                    filename: "styles/[name].[contenthash:8].css",
                 },
                 // preload: [
                 //     {
@@ -75,7 +75,7 @@ module.exports = function (env, argv) {
             // }),
             prod ? (
                 new webpack.SourceMapDevToolPlugin({
-                    filename: "[file].map[query]",
+                    filename: "maps/[base].map[query]",
                     exclude: [/style.*\.css$/],
                 })
             ) : (
@@ -109,7 +109,9 @@ module.exports = function (env, argv) {
         ],
         output: {
             clean: true,
-            sourceMapFilename: "[file].map",
+            filename: "scripts/[name].[contenthash:8].js",
+            chunkFilename: "scripts/[name].[chunkhash:8].js"
+            // sourceMapFilename: "[file].map",
         },
         optimization: {
             runtimeChunk: "single",
@@ -120,7 +122,7 @@ module.exports = function (env, argv) {
                         test: /[\\/]node_modules[\\/].+\.(js|ts)$/,
                         name(module, chunks, cacheGroupKey) {
                             let segs = module.identifier().split(path.sep)
-                            return `./vendor/${segs.slice(segs.lastIndexOf("node_modules") + 1).join("-").slice(0, -3)}`
+                            return `vendor/${segs.slice(segs.lastIndexOf("node_modules") + 1).join("-").slice(0, -3)}`
                         },
                         chunks: "all",
                         reuseExistingChunk: true

@@ -31,8 +31,14 @@ import { Input, InputDialog } from "./dialogs/InputDialog";
 
 const utilWorker = new UtilWorker();
 
-const VyTerminal = lazy(() => import("./VyTerminal"));
-const Editor = lazy(() => import("./Editor"));
+const VyTerminal = lazy(() => import(
+    /* webpackChunkName: "terminal" */
+    "./VyTerminal"
+));
+const Editor = lazy(() => import(
+    /* webpackChunkName: "editor" */
+    "./Editor"
+));
 
 // TODO: Don't hardcode this
 const LITERATE_MODE_FLAG_NAME = "Literate mode";
@@ -98,7 +104,10 @@ function Theseus() {
 
     useEffect(() => {
         if (snowing) {
-            import("magic-snowflakes").then(({ default: Snowflakes }) => {
+            import(
+                /* webpackChunkName: "magic-snowflakes" */
+                "magic-snowflakes"
+            ).then(({ default: Snowflakes }) => {
                 if (snowflakesRef.current == null) {
                     snowflakesRef.current = new Snowflakes();
                 }

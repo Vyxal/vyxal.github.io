@@ -21,7 +21,11 @@ type Template = {
 };
 
 function ShareDialogBody() {
-    return import(/* webpackPrefetch: true */ "handlebars").then((Handlebars) => {
+    return import(
+        /* webpackPrefetch: true */
+        /* webpackChunkName: "handlebars" */
+        "handlebars"
+    ).then((Handlebars) => {
         const cgcc = Handlebars.compile<Template>(CGCCTemplate);
         const cmc = Handlebars.compile<Template>(CMCTemplate);
         return function({ bytecount, code, flags }: ShareDialogParams) {

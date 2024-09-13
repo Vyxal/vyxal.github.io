@@ -1,6 +1,6 @@
-import { lazy, Suspense, useContext, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useContext, useEffect, useRef, useState } from "react";
 import Header from "./Header";
-import { Col, Row, Container, Spinner, Tab, Nav } from "react-bootstrap";
+import { Col, Row, Container, Spinner, Tab, Nav, Button } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { createRoot } from "react-dom/client";
 import { Theme, VyRunnerState } from "./util/misc";
@@ -80,9 +80,9 @@ function Theseus() {
     }, [theme]);
 
     useEffect(() => {
-        window.location.hash = encodeHash(
+        history.replaceState(undefined, "", "#" + encodeHash(
             header, code, footer, [...serializeFlags(elementData.flagDefs, flags)], inputs.map((input) => input.value), elementData.version,
-        );
+        ));
     }, [header, code, footer, flags, inputs]);
 
     useEffect(() => {
@@ -115,6 +115,10 @@ function Theseus() {
     useEffect(() => {
         utilWorker.formatBytecount(code, literate).then(setBytecount);
     }, [code, flags]);
+
+    const literateToSbcs = useCallback(async() => {
+        runnerRef.current?.showMessage(`\x1b[1mSBCS translation:\x1b[0m\n${await utilWorker.sbcsify(code)}`);
+    }, [code, runnerRef]);
 
     return <>
         <SettingsDialog
@@ -158,9 +162,22 @@ function Theseus() {
                             </div>
                         }
                     >
-                        <Editor ratio="20%" title="Header" code={header} setCode={setHeader} theme={theme} literate={literate} />
-                        <Editor ratio="60%" title={bytecount} code={code} setCode={setCode} theme={theme} literate={literate} />
-                        <Editor ratio="20%" title="Footer" code={footer} setCode={setFooter} theme={theme} literate={literate} />
+                        <Editor ratio="20%" code={header} setCode={setHeader} theme={theme} literate={literate}>
+                            Header
+                        </Editor>
+                        <Editor ratio="60%" code={code} setCode={setCode} theme={theme} literate={literate}>
+                            <div className="d-flex align-items-center">
+                                {bytecount}
+                                {literate ? (
+                                    <Button variant="link" size="sm" className="ms-auto p-0" onClick={literateToSbcs}>
+                                        literate to sbcs
+                                    </Button>
+                                ) : null}
+                            </div>
+                        </Editor>
+                        <Editor ratio="20%" code={footer} setCode={setFooter} theme={theme} literate={literate}>
+                            Footer
+                        </Editor>
                     </Suspense>
                 </Col>
                 <Col lg="6" className="g-0 vstack">

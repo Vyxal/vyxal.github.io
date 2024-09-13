@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useContext, useMemo } from "react";
+import { Dispatch, ReactNode, SetStateAction, useCallback, useContext, useMemo, useState } from "react";
 import ReactCodeMirror, { keymap, Prec } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
@@ -10,6 +10,7 @@ import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { ElementDataContext } from "./util/element-data";
 import { vyxalLit } from "./languages/vyxal-lit-extensions";
+import { createPortal } from "react-dom";
 
 const EXTENSIONS = [
     Prec.high(keymap.of([
@@ -45,23 +46,24 @@ const THEMES = {
 type EditorParams = {
     code: string,
     ratio: string,
-    title: string,
     setCode: Dispatch<SetStateAction<string>>,
     theme: Theme,
     literate: boolean,
+    children: ReactNode,
 };
 
-export default function Editor({ code, ratio, title, setCode, theme, literate }: EditorParams) {
+export default function Editor({ code, ratio, children, setCode, theme, literate }: EditorParams) {
     const elementData = useContext(ElementDataContext);
     const onChange = useCallback((code: string) => {
         setCode(code);
     }, []);
+    const [headerDom, setHeaderDom] = useState<HTMLElement | null>(null);
     const header = useMemo(() => showPanel.of(() => {
         const dom = document.createElement("div");
         dom.classList.add("p-1");
-        dom.textContent = title;
+        setHeaderDom(dom);
         return { dom, top: true };
-    }), [title]);
+    }), []);
 
     const extensions = [...useMemo(() => EXTENSIONS.concat([literate ? vyxalLit(elementData!) : vyxal(util, elementData!)]), [literate]), header];
     return <>
@@ -76,5 +78,6 @@ export default function Editor({ code, ratio, title, setCode, theme, literate }:
             onChange={onChange}
             extensions={extensions}
         />
+        {headerDom !== null && createPortal(children, headerDom)}
     </>;
 };

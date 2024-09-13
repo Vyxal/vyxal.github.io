@@ -78,6 +78,7 @@ export class VyRunner extends EventTarget {
                     worker.addEventListener("message", this.onWorkerMessage.bind(this));
                     worker.removeEventListener("message", listener);
                     console.log("Worker is ready");
+                    this._state = "idle";
                 }
             };
             // possible race condition? won't appear in practice
@@ -167,5 +168,13 @@ export class VyRunner extends EventTarget {
 
     getOutput() {
         return this.outputBuffer.join("");
+    }
+
+    showMessage(message: string) {
+        if (this._state == "idle") {
+            this.terminal?.clear();
+            this.terminal?.reset();
+            this.terminal?.write(message);
+        }
     }
 }

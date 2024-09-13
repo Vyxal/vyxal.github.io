@@ -16,6 +16,7 @@ export interface VyTerminalRef {
     start(): void,
     stop(): void,
     getOutput(): string,
+    showMessage(message: string): void,
 }
 
 const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout, onStart, onFinish }: VyTerminalParams, ref: ForwardedRef<VyTerminalRef>) {
@@ -33,6 +34,9 @@ const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout
             },
             getOutput() {
                 return runner.getOutput();
+            },
+            showMessage(message: string) {
+                return runner.showMessage(message);
             },
         };
     });

@@ -130,6 +130,7 @@ export class VyRunner extends EventTarget {
                 throw new Error("Attempted to start while running");
             }
             this.terminal?.clear();
+            this.terminal?.reset();
             this.outputBuffer.length = 0;
             worker.postMessage({
                 code: code,

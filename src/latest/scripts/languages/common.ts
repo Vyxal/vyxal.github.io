@@ -89,10 +89,15 @@ export function elementTooltip(elementData: ElementData, literate: boolean) {
                 pos: pos,
                 create() {
                     const container = document.createElement("div");
-                    // @ts-expect-error we already know that element is the corect type
-                    container.innerHTML = renderToStaticMarkup((isModifier ? ModifierCard : ElementCard)({ item: element, shadow: true }));
+                    // @ts-expect-error we already know that element is the correct type
+                    const card = (isModifier ? ModifierCard : ElementCard)({ item: element, shadow: true });
+                    const root = createRoot(container);
+                    root.render(card);
                     return {
                         dom: container,
+                        destroy() {
+                            root.unmount();
+                        },
                     };
                 },
             } as Tooltip;

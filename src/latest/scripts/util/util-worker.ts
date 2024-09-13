@@ -18,12 +18,20 @@ export class UtilWorker {
     private rqid: number = 0;
     constructor() {
         this.worker = new Promise((resolve) => {
-            if (window.SharedWorker) {
-                const worker = new SharedWorker(
+            const worker = window.SharedWorker ? (
+                new SharedWorker(
                     /* webpackChunkName: "util-worker" */
                     new URL("../workers/util", import.meta.url),
                     { name: "util-worker" },
-                );
+                )
+            ) : (
+                new Worker(
+                    /* webpackChunkName: "util-worker" */
+                    new URL("../workers/util", import.meta.url),
+                    { name: "util-worker" },
+                )
+            );
+            if (!(worker instanceof Worker)) {
                 const readyListener = (event: MessageEvent<unknown>) => {
                     if (event.data != "ready") {
                         throw Error("Unexpected initial message");
@@ -36,11 +44,6 @@ export class UtilWorker {
             } else {
                 console.warn("Shared Workers are unavailable, starting fallback worker instead");
                 console.warn("Use Firefox for Android instead of Chrome, dammit");
-                const worker = new Worker(
-                    /* webpackChunkName: "util-fallback" */
-                    new URL("../workers/util-fallback", import.meta.url),
-                    { name: "util-worker" },
-                );
                 const readyListener = (event: MessageEvent<unknown>) => {
                     if (event.data != "ready") {
                         throw Error("Unexpected initial message");

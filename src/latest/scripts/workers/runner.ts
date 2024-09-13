@@ -1,14 +1,5 @@
 import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
-
-// This file cannot import anything local! That's why all this stuff is duplicated here.
-
-interface RunRequest {
-    type: "run",
-    workerNumber: number,
-    code: string,
-    inputs: string[],
-    flags: string[],
-}
+import type { RunRequest } from "../util/worker-types";
 
 // @ts-expect-error DATA_URI gets replaced by Webpacl
 const dataUri = DATA_URI;

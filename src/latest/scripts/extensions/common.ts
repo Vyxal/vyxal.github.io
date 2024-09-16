@@ -1,12 +1,10 @@
 import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import type { FuseResult } from "fuse.js";
-import { ModifierCard } from "../cards/ModifierCard";
-import { ElementCard } from "../cards/ElementCard";
 import { elementFuse, modifierFuse, Element, Modifier, ElementData, SyntaxFeature, syntaxFuse } from "../util/element-data";
 import { syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
-import { SyntaxCard } from "../cards/SyntaxCard";
 import { createRoot } from "react-dom/client";
+import { ThingCard } from "../ThingCard";
 
 const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
 const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
@@ -14,20 +12,12 @@ const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
 
 function elementCompletion(thing: Element | Modifier | SyntaxFeature, literate: boolean): Completion {
     return {
-        label: literate && "keywords" in thing ? thing.keywords[0] ?? "<error>" : thing.symbol,
+        label: literate && thing.type != "syntax" ? thing.keywords[0] ?? "<error>" : thing.symbol,
         detail: thing.name,
         info() {
             const container = document.createElement("div");
-            let card;
-            if ("vectorises" in thing) {
-                card = ElementCard({ item: thing });
-            } else if ("usage" in thing) {
-                card = SyntaxCard({ item: thing });
-            } else {
-                card = ModifierCard({ item: thing });
-            }
             const root = createRoot(container);
-            root.render(card);
+            root.render(ThingCard({ thing }));
             return {
                 dom: container,
                 destroy() {
@@ -35,7 +25,7 @@ function elementCompletion(thing: Element | Modifier | SyntaxFeature, literate: 
                 },
             };
         },
-        type: "vectorises" in thing ? "method" : "keyword",
+        type: thing.type == "element" ? "method" : "keyword",
     };
 }
 
@@ -68,7 +58,7 @@ export async function elementAutocomplete(elementData: ElementData, context: Com
             from: context.pos,
             to: context.pos,
             filter: false,
-            options: elementData.elements.map((e) => elementCompletion(e, literate)),
+            options: [...elementData.elements.values()].map((e) => elementCompletion(e, literate)),
             update: (current, from, to, context) => syncElementAutocomplete(context, literate),
         };
     }
@@ -83,14 +73,13 @@ export function elementTooltip(elementData: ElementData, literate: boolean) {
             return null;
         }
         const isModifier = node.name == "Modifier";
-        const element = (isModifier ? (literate ? elementData.literateModifierMap : elementData.modifierMap) : (literate ? elementData.literateElementMap : elementData.elementMap)).get(hovered);
+        const element = (isModifier ? (literate ? elementData.modifiersByKeyword : elementData.modifiers) : (literate ? elementData.elementsByKeyword : elementData.elements)).get(hovered);
         if (element !== undefined) {
             return {
                 pos: pos,
                 create() {
                     const container = document.createElement("div");
-                    // @ts-expect-error we already know that element is the correct type
-                    const card = (isModifier ? ModifierCard : ElementCard)({ item: element, shadow: true });
+                    const card = ThingCard({ thing: element, shadow: true });
                     const root = createRoot(container);
                     root.render(card);
                     return {

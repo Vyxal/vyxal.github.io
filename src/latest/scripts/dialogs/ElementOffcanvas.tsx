@@ -1,49 +1,24 @@
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { ElementDataContext, elementFuse, modifierFuse, syntaxFuse } from "../util/element-data";
+import { Element, ElementDataContext, elementFuse, Modifier, modifierFuse, SyntaxFeature, syntaxFuse } from "../util/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
-import { ModifierCard } from "../cards/ModifierCard";
-import { ElementCard } from "../cards/ElementCard";
-import Fuse from "fuse.js";
-import { SyntaxCard } from "../cards/SyntaxCard";
-
-type CardSearchResultsParams<T> = {
-    card: ({ item }: { item: T }) => JSX.Element,
-    fuse: Fuse<T>,
-    defaults: T[],
-};
-
-function CardSearch<T>({ card, fuse, defaults }: CardSearchResultsParams<T>) {
-    const [query, setQuery] = useState("");
-
-    const results = query.length ? fuse.search(query).map((result) => result.item) : defaults;
-
-    return <>
-        <Form.Control type="search" placeholder="Search..." value={query} onChange={(event) => setQuery(event.currentTarget.value)} className="" />
-        <Row xs={1} md={2} className="g-4 mt-0 overflow-y-scroll align-items-stretch">
-            {results.length ? (
-                results.map((item, i) => {
-                    return <Col key={i}>
-                        {card({ item })}
-                    </Col>;
-                })
-            ) : (
-                <Col>
-                    <Card body>No results</Card>
-                </Col>
-            )}
-        </Row>
-    </>;
-}
+import type Fuse from "fuse.js";
+import { ThingCard } from "../ThingCard";
 
 type ElementOffcanvasParams = {
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
+const fuses: Fuse<Element | Modifier | SyntaxFeature>[] = [elementFuse, modifierFuse, syntaxFuse];
+
 export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
     const elementData = useContext(ElementDataContext)!;
-    const [tab, setTab] = useState("elements");
+    const [tab, setTab] = useState("search");
+    const [query, setQuery] = useState("");
+    const results = query != "" ? (
+        fuses.flatMap((fuse) => fuse.search(query)).sort((a, b) => a.score! - b.score!).map(({ item }) => item)
+    ) : [...elementData.elements.values(), ...elementData.modifiers.values(), ...elementData.syntax.values()];
     const codepage = elementData.codepageRaw;
 
     return <Offcanvas show={show} onHide={() => setShow(false)} style={{ width: "600px" }}>
@@ -51,13 +26,7 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
             <Offcanvas.Header closeButton>
                 <Nav variant="pills" className="flex-nowrap me-3 overflow-x-auto">
                     <Nav.Item>
-                        <Nav.Link eventKey="elements">Elements</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        <Nav.Link eventKey="modifiers">Modifiers</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        <Nav.Link eventKey="syntax">Syntax</Nav.Link>
+                        <Nav.Link eventKey="search">Elements</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                         <Nav.Link eventKey="codepage">Codepage</Nav.Link>
@@ -65,14 +34,21 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                 </Nav>
             </Offcanvas.Header>
             <Tab.Content className="offcanvas-body overflow-y-hidden">
-                <Tab.Pane eventKey="elements" className="element-offcanvas-tab-pane">
-                    <CardSearch card={ElementCard} fuse={elementFuse} defaults={elementData.elements} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="modifiers" className="element-offcanvas-tab-pane">
-                    <CardSearch card={ModifierCard} fuse={modifierFuse} defaults={elementData.modifiers} />
-                </Tab.Pane>
-                <Tab.Pane eventKey="syntax" className="element-offcanvas-tab-pane">
-                    <CardSearch card={SyntaxCard} fuse={syntaxFuse} defaults={elementData.syntax} />
+                <Tab.Pane eventKey="search" className="element-offcanvas-tab-pane">
+                    <Form.Control type="search" placeholder="Search..." value={query} onChange={(event) => setQuery(event.currentTarget.value)} className="" />
+                    <Row xs={1} md={2} className="g-4 mt-0 overflow-y-scroll align-items-stretch">
+                        {results.length ? (
+                            results.map((item, i) => {
+                                return <Col key={i}>
+                                    <ThingCard thing={item} />
+                                </Col>;
+                            })
+                        ) : (
+                            <Col>
+                                <Card body>No results</Card>
+                            </Col>
+                        )}
+                    </Row>
                 </Tab.Pane>
                 <Tab.Pane eventKey="codepage" className="element-offcanvas-tab-pane overflow-scroll">
                     <table className="table">

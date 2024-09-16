@@ -2,6 +2,7 @@ import Fuse from "fuse.js";
 import { createContext } from "react";
 
 export type Element = {
+    type: "element",
     name: string,
     symbol: string,
     keywords: string[],
@@ -10,6 +11,7 @@ export type Element = {
 };
 
 export type Modifier = {
+    type: "modifier",
     name: string,
     symbol: string,
     description: string,
@@ -18,11 +20,14 @@ export type Modifier = {
 };
 
 export type SyntaxFeature = {
+    type: "syntax",
     name: string,
     symbol: string,
     description: string,
     usage: string,
 };
+
+export type SyntaxThing = Element | Modifier | SyntaxFeature;
 
 export type BooleanFlagDef = {
     type: "boolean",
@@ -47,13 +52,11 @@ type RawChoiceFlagDef = {
 };
 
 export type ElementData = {
-    elements: Element[],
-    elementMap: Map<string, Element>,
-    literateElementMap: Map<string, Element>,
-    modifiers: Modifier[],
-    modifierMap: Map<string, Modifier>,
-    literateModifierMap: Map<string, Modifier>,
-    syntax: SyntaxFeature[],
+    elements: Map<string, Element>,
+    elementsByKeyword: Map<string, Element>,
+    modifiers: Map<string, Modifier>,
+    modifiersByKeyword: Map<string, Modifier>,
+    syntax: Map<string, SyntaxFeature>,
     sugars: Map<string, string>,
     codepage: Set<string>,
     codepageRaw: string[],
@@ -61,9 +64,9 @@ export type ElementData = {
     version: string,
 };
 type RawElementData = {
-    elements: Element[],
-    modifiers: Modifier[],
-    syntax: SyntaxFeature[],
+    elements: Omit<Element, "type">[],
+    modifiers: Omit<Modifier, "type">[],
+    syntax: Omit<SyntaxFeature, "type">[],
     sugars: object,
     codepage: string,
     flags: (BooleanFlagDef | RawChoiceFlagDef)[],
@@ -74,14 +77,15 @@ type RawElementData = {
 export const ELEMENT_DATA: Promise<ElementData> = fetch(`${DATA_URI}/theseus.json`)
     .then((response) => response.json())
     .then((data: RawElementData): ElementData => {
+        const elements: Element[] = data.elements.map((element) => ({ type: "element", ...element }));
+        const modifiers: Modifier[] = data.modifiers.map((modifier) => ({ type: "modifier", ...modifier }));
+        const syntax: SyntaxFeature[] = data.syntax.map((syntax) => ({ type: "syntax", ...syntax }));
         return {
-            elements: data.elements,
-            elementMap: new Map(data.elements.map((element) => [element.symbol, element])),
-            literateElementMap: new Map(data.elements.flatMap((element) => element.keywords.map((keyword) => [keyword, element]))),
-            modifiers: data.modifiers,
-            modifierMap: new Map(data.modifiers.map((modifier) => [modifier.symbol, modifier])),
-            literateModifierMap: new Map(data.modifiers.flatMap((modifier) => modifier.keywords.map((keyword) => [keyword, modifier]))),
-            syntax: data.syntax,
+            elements: new Map(elements.map((element) => [element.symbol, element])),
+            elementsByKeyword: new Map(elements.flatMap((element) => element.keywords.map((keyword) => [keyword, element]))),
+            modifiers: new Map(modifiers.map((modifier) => [modifier.symbol, modifier])),
+            modifiersByKeyword: new Map(modifiers.flatMap((modifier) => modifier.keywords.map((keyword) => [keyword, modifier]))),
+            syntax: new Map(syntax.map((syntax) => [syntax.symbol, syntax])),
             sugars: new Map(Object.entries(data.sugars)),
             codepage: new Set([...data.codepage, " ", "\n"]),
             codepageRaw: [...data.codepage],
@@ -142,7 +146,7 @@ export const syntaxFuse = new Fuse<SyntaxFeature>([], {
     ],
 });
 ELEMENT_DATA.then((data) => {
-    elementFuse.setCollection(data.elements);
-    modifierFuse.setCollection(data.modifiers);
-    syntaxFuse.setCollection(data.syntax);
+    elementFuse.setCollection([...data.elements.values()]);
+    modifierFuse.setCollection([...data.modifiers.values()]);
+    syntaxFuse.setCollection([...data.syntax.values()]);
 });

@@ -2,14 +2,14 @@ import { Dispatch, ReactNode, SetStateAction, useCallback, useContext, useMemo, 
 import ReactCodeMirror, { keymap, Prec } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import { vyxal } from "./languages/vyxal-extensions";
+import { vyxal } from "./extensions/vyxal/vyxal-extensions";
 import { autocompletion } from "@codemirror/autocomplete";
 import { EditorView, highlightActiveLine, highlightActiveLineGutter, lineNumbers, showPanel } from "@codemirror/view";
 import { Theme } from "./util/misc";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { ElementDataContext } from "./util/element-data";
-import { vyxalLit } from "./languages/vyxal-lit-extensions";
+import { vyxalLit } from "./extensions/vyxal-lit-extensions";
 import { createPortal } from "react-dom";
 
 const EXTENSIONS = [

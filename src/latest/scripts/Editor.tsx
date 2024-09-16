@@ -11,6 +11,8 @@ import { githubLight } from "@uiw/codemirror-theme-github";
 import { ElementDataContext } from "./util/element-data";
 import { vyxalLit } from "./extensions/vyxal-lit-extensions";
 import { createPortal } from "react-dom";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
+import { Button, Stack } from "react-bootstrap";
 
 const EXTENSIONS = [
     Prec.high(keymap.of([
@@ -54,6 +56,17 @@ type EditorParams = {
     children: ReactNode,
 };
 
+function EditorError({ error, resetErrorBoundary }: FallbackProps) {
+    return <Stack direction="vertical" className="bg-danger-subtle p-2 position-absolute">
+        <h3 className="text-danger"><i className="bi bi-x-circle"></i> An error occured</h3>
+        <Button variant="danger" onClick={resetErrorBoundary}>Reset editor</Button>
+        {error.toString()}
+        <div>
+            {error.stack}
+        </div>
+    </Stack>;
+}
+
 export default function Editor({ code, ratio, children, setCode, theme, literate }: EditorParams) {
     const elementData = useContext(ElementDataContext);
     const onChange = useCallback((code: string) => {
@@ -68,19 +81,17 @@ export default function Editor({ code, ratio, children, setCode, theme, literate
     }), []);
 
     const extensions = [...useMemo(() => EXTENSIONS.concat([literate ? vyxalLit(elementData!) : vyxal(util, elementData!)]), [literate]), header];
-    return <>
-        {/* <div className="bg-body-tertiary">
-            {title}
-        </div> */}
-        <ReactCodeMirror
-            basicSetup={false}
-            theme={THEMES[theme]}
-            value={code}
-            style={{ height: ratio }}
-            // height={height}
-            onChange={onChange}
-            extensions={extensions}
-        />
-        {headerDom !== null && createPortal(children, headerDom)}
-    </>;
+    return <div style={{ height: ratio, overflow: "auto", position: "relative" }}>
+        <ErrorBoundary FallbackComponent={EditorError}>
+            <ReactCodeMirror
+                basicSetup={false}
+                theme={THEMES[theme]}
+                value={code}
+                // height={height}
+                onChange={onChange}
+                extensions={extensions}
+            />
+            {headerDom !== null && createPortal(children, headerDom)}
+        </ErrorBoundary>
+    </div>;
 };

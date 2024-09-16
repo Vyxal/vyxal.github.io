@@ -4,8 +4,8 @@ import type { ElementData } from "../../util/element-data";
 import type { UtilWorker } from "../../util/util-worker";
 import { elementAutocomplete, elementTooltip } from '../common';
 import type { SyntaxNode } from "@lezer/common";
-import { Decoration, DecorationSet, EditorView, hoverTooltip } from "@codemirror/view";
-import { EditorState, Extension, MapMode, Range, StateField } from "@codemirror/state";
+import { EditorView, hoverTooltip } from "@codemirror/view";
+import { Extension, MapMode } from "@codemirror/state";
 import { vyxalLanguage } from "../../../../common/scripts/languages/vyxal";
 import { vyxalBracketMatching } from "./bracket-matching";
 

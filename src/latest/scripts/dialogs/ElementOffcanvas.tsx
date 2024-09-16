@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { Element, ElementDataContext, elementFuse, Modifier, modifierFuse, SyntaxFeature, syntaxFuse, SyntaxThing } from "../util/element-data";
+import { ElementDataContext, elementFuse, modifierFuse, syntaxFuse, SyntaxThing } from "../util/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import type Fuse from "fuse.js";

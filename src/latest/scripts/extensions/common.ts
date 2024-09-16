@@ -1,6 +1,6 @@
 import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import type { FuseResult } from "fuse.js";
-import { elementFuse, modifierFuse, Element, Modifier, ElementData, SyntaxFeature, syntaxFuse, SyntaxThing } from "../util/element-data";
+import { elementFuse, modifierFuse, ElementData, syntaxFuse, SyntaxThing } from "../util/element-data";
 import { syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { createRoot } from "react-dom/client";

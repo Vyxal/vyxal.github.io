@@ -13,7 +13,7 @@ const dictPromise = Promise.all([
 
 self.addEventListener("message", function(message: MessageEvent<RunRequest>) {
     const request = message.data;
-    console.log(`Recieved run request (workerNumber ${request.workerNumber})`);
+    console.log(`Received run request (workerNumber ${request.workerNumber})`);
     dictPromise.then(() => {
         this.postMessage({
             type: "started",

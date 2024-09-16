@@ -114,6 +114,7 @@ export const elementFuse = new Fuse<Element>([], {
             "weight": 1,
         },
     ],
+    ignoreLocation: true,
 });
 export const modifierFuse = new Fuse<Modifier>([], {
     includeScore: true,
@@ -129,6 +130,7 @@ export const modifierFuse = new Fuse<Modifier>([], {
             "weight": 1,
         },
     ],
+    ignoreLocation: true,
 });
 export const syntaxFuse = new Fuse<SyntaxFeature>([], {
     includeScore: true,
@@ -144,6 +146,7 @@ export const syntaxFuse = new Fuse<SyntaxFeature>([], {
             "weight": 2,
         },
     ],
+    ignoreLocation: true,
 });
 ELEMENT_DATA.then((data) => {
     elementFuse.setCollection([...data.elements.values()]);

@@ -1,5 +1,5 @@
-import { Dispatch, ReactNode, SetStateAction, useCallback, useContext, useMemo, useState } from "react";
-import ReactCodeMirror, { keymap, Prec } from "@uiw/react-codemirror";
+import { Dispatch, ReactNode, SetStateAction, useCallback, useContext, useMemo, useRef, useState } from "react";
+import ReactCodeMirror, { keymap, Prec, ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { vyxal } from "./extensions/vyxal/vyxal-extensions";
@@ -53,6 +53,8 @@ type EditorParams = {
     setCode: Dispatch<SetStateAction<string>>,
     theme: Theme,
     literate: boolean,
+    claimFocus: (state: ReactCodeMirrorRef) => unknown,
+    autoFocus?: boolean,
     children: ReactNode,
 };
 
@@ -67,8 +69,9 @@ function EditorError({ error, resetErrorBoundary }: FallbackProps) {
     </Stack>;
 }
 
-export default function Editor({ code, ratio, children, setCode, theme, literate }: EditorParams) {
+export default function Editor({ code, ratio, children, setCode, theme, literate, claimFocus, autoFocus }: EditorParams) {
     const elementData = useContext(ElementDataContext);
+    const editorRef = useRef<ReactCodeMirrorRef | null>(null);
     const onChange = useCallback((code: string) => {
         setCode(code);
     }, []);
@@ -79,19 +82,27 @@ export default function Editor({ code, ratio, children, setCode, theme, literate
         setHeaderDom(dom);
         return { dom, top: true };
     }), []);
+    const focusChangeHandler = useMemo(() => EditorView.focusChangeEffect.of((state, focusing) => {
+        if (focusing && editorRef.current) {
+            claimFocus(editorRef.current);
+        }
+        return null;
+    }), []);
 
-    const extensions = useMemo(() => EXTENSIONS.concat(literate ? vyxalLit(elementData!) : vyxal(util, elementData!), header), [literate]);
-    return <div style={{ height: ratio, overflow: "auto", position: "relative" }}>
+    const extensions = useMemo(() => EXTENSIONS.concat(literate ? vyxalLit(elementData!) : vyxal(util, elementData!), header, focusChangeHandler), [literate]);
+    return <>
         <ErrorBoundary FallbackComponent={EditorError}>
             <ReactCodeMirror
                 basicSetup={false}
                 theme={THEMES[theme]}
                 value={code}
-                // height={height}
+                style={{ height: ratio }}
                 onChange={onChange}
                 extensions={extensions}
+                ref={editorRef}
+                autoFocus={autoFocus}
             />
             {headerDom !== null && createPortal(children, headerDom)}
         </ErrorBoundary>
-    </div>;
+    </>;
 };

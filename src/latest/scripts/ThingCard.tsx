@@ -4,6 +4,7 @@ import type { SyntaxThing } from "./util/element-data";
 export type ThingCardParams = {
     thing: SyntaxThing,
     shadow?: boolean,
+    onClick?: () => unknown,
 };
 
 const variants: { [key in SyntaxThing["type"]]: string } = {
@@ -12,8 +13,8 @@ const variants: { [key in SyntaxThing["type"]]: string } = {
     syntax: "ourple",
 };
 
-export function ThingCard({ thing, shadow }: ThingCardParams) {
-    return <Card border={variants[thing.type]} className={`h-100 ${(shadow ?? false) ? "shadow" : ""}`}>
+export function ThingCard({ thing, shadow, onClick }: ThingCardParams) {
+    return <Card border={variants[thing.type]} className={`h-100 ${(shadow ?? false) ? "shadow" : ""} ${(onClick !== undefined ? "clickable" : "")}`} onClick={onClick}>
         <Card.Body>
             <Card.Title>{thing.symbol}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">{thing.name}</Card.Subtitle>

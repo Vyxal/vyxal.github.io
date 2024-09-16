@@ -20,6 +20,7 @@ import { deserializeFlags, Flags, serializeFlags } from "./flags";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import { enableMapSet } from "immer";
 import { Input, InputDialog } from "./dialogs/InputDialog";
+import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
 // Disabled until webpack/webpack#17870 is fixed
 // if ("serviceWorker" in navigator) {
@@ -70,6 +71,7 @@ function Theseus() {
     const [showInputDialog, setShowInputDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
     const [bytecount, setBytecount] = useState("...");
+    const [lastFocusedEditor, setLastFocusedEditor] = useState<ReactCodeMirrorRef | null>(null);
     const runnerRef = useRef<VyTerminalRef | null>(null);
     const snowflakesRef = useRef<Snowflakes | null>(null);
 
@@ -143,7 +145,13 @@ function Theseus() {
         <FlagsDialog flags={flags} setFlags={setFlags} show={showFlagsDialog} setShow={setShowFlagsDialog} />
         <ShareDialog bytecount={bytecount} code={code} flags={[...serializeFlags(elementData.flagDefs, flags)].join("")} show={showShareDialog} setShow={setShowShareDialog} />
         <InputDialog inputs={inputs} setInputs={setInputs} show={showInputDialog} setShow={setShowInputDialog} />
-        <ElementOffcanvas show={showElementOffcanvas} setShow={setShowElementOffcanvas} />
+        <ElementOffcanvas
+            show={showElementOffcanvas} setShow={setShowElementOffcanvas} insertCharacter={(char) => {
+                lastFocusedEditor?.view?.dispatch({
+                    changes: { from: lastFocusedEditor.view.state.doc.length, insert: char },
+                });
+            }} 
+        />
         <Header
             state={state} flags={serializeFlags(elementData.flagDefs, flags)} onRunClicked={() => {
                 if (runnerRef.current != null) {
@@ -171,10 +179,10 @@ function Theseus() {
                             </div>
                         }
                     >
-                        <Editor ratio="20%" code={header} setCode={setHeader} theme={theme} literate={literate}>
+                        <Editor ratio="20%" code={header} setCode={setHeader} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
                             Header
                         </Editor>
-                        <Editor ratio="60%" code={code} setCode={setCode} theme={theme} literate={literate}>
+                        <Editor ratio="60%" code={code} setCode={setCode} theme={theme} literate={literate} claimFocus={setLastFocusedEditor} autoFocus>
                             <div className="d-flex align-items-center">
                                 {bytecount}
                                 {literate ? (
@@ -184,7 +192,7 @@ function Theseus() {
                                 ) : null}
                             </div>
                         </Editor>
-                        <Editor ratio="20%" code={footer} setCode={setFooter} theme={theme} literate={literate}>
+                        <Editor ratio="20%" code={footer} setCode={setFooter} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
                             Footer
                         </Editor>
                     </Suspense>

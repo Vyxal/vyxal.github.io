@@ -64,6 +64,17 @@ code.code-pill {
     height: 100%;
 }
 
+.card.clickable {
+    cursor: pointer;
+
+    :hover {
+        @extend .bg-body-secondary;
+    }
+    .list-group-item {
+        background-color: inherit;
+    }
+}
+
 @supports(scrollbar-color: auto) {
     .xterm-viewport.xterm-viewport {
         scrollbar-width: thin;

@@ -8,11 +8,12 @@ import { ThingCard } from "../ThingCard";
 type ElementOffcanvasParams = {
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
+    insertCharacter: (char: string) => void,
 };
 
 const fuses: Fuse<SyntaxThing>[] = [elementFuse, modifierFuse, syntaxFuse];
 
-export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
+export function ElementOffcanvas({ show, setShow, insertCharacter }: ElementOffcanvasParams) {
     const elementData = useContext(ElementDataContext)!;
     const [tab, setTab] = useState("search");
     const [query, setQuery] = useState("");
@@ -40,7 +41,7 @@ export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
                         {results.length ? (
                             results.map((item, i) => {
                                 return <Col key={i}>
-                                    <ThingCard thing={item} />
+                                    <ThingCard thing={item} onClick={() => insertCharacter(item.symbol)} />
                                 </Col>;
                             })
                         ) : (

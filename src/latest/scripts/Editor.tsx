@@ -80,7 +80,7 @@ export default function Editor({ code, ratio, children, setCode, theme, literate
         return { dom, top: true };
     }), []);
 
-    const extensions = [...useMemo(() => EXTENSIONS.concat([literate ? vyxalLit(elementData!) : vyxal(util, elementData!)]), [literate]), header];
+    const extensions = useMemo(() => EXTENSIONS.concat(literate ? vyxalLit(elementData!) : vyxal(util, elementData!), header), [literate]);
     return <div style={{ height: ratio, overflow: "auto", position: "relative" }}>
         <ErrorBoundary FallbackComponent={EditorError}>
             <ReactCodeMirror

@@ -21,7 +21,7 @@ function elementCompletion(thing: SyntaxThing, literate: boolean): Completion {
             return {
                 dom: container,
                 destroy() {
-                    root.unmount();
+                    setTimeout(() => root.unmount());
                 },
             };
         },
@@ -88,7 +88,7 @@ export function elementTooltip(elementData: ElementData, literate: boolean) {
                     return {
                         dom: container,
                         destroy() {
-                            root.unmount();
+                            setTimeout(() => root.unmount());
                         },
                     };
                 },

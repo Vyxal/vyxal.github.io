@@ -57,7 +57,7 @@ function Theseus() {
     const [flags, setFlags] = useImmer<Flags>(deserializeFlags(elementData.flagDefs, new Set(link?.flags ?? [])));
     const literate = flags.get(LITERATE_MODE_FLAG_NAME) == true;
     const [theme, setTheme] = useState<Theme>(loadTheme());
-    const [timeout, setTimeout] = useState<number>(10);
+    const [timeout, setTimeout] = useState<number | null>(10);
     const [snowing, setSnowing] = useState<boolean>(loadSnowing());
     const [header, setHeader] = useState(link?.header ?? "");
     const [code, setCode] = useState(link?.code ?? "");
@@ -220,7 +220,7 @@ function Theseus() {
                                         code={header + code + footer}
                                         flags={[...serializeFlags(elementData.flagDefs, flags)]}
                                         inputs={inputs.map((i) => i.value)}
-                                        timeout={timeout * 1000}
+                                        timeout={timeout != null ? timeout * 1000 : null}
                                         onStart={() => setState("running")}
                                         onFinish={() => setState("idle")}
                                     />

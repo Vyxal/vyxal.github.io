@@ -6,8 +6,8 @@ import FormRange from "react-bootstrap/esm/FormRange";
 type SettingsDialogParams = {
     theme: Theme,
     setTheme: Dispatch<SetStateAction<Theme>>,
-    timeout: number,
-    setTimeout: Dispatch<SetStateAction<number>>,
+    timeout: number | null,
+    setTimeout: Dispatch<SetStateAction<number | null>>,
     snowing: boolean,
     setSnowing: Dispatch<SetStateAction<boolean>>,
     show: boolean,
@@ -28,9 +28,12 @@ export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeo
                 </ToggleButtonGroup>
             </div>
             <div className="mb-3">
-                <FormLabel htmlFor="timeout"><i className="bi bi-link-45deg"></i> Timeout</FormLabel>
-                <FormRange name="timeout" step="5" max="60" min="10" value={timeout} onChange={(event) => setTimeout(Number.parseInt(event.currentTarget.value))} />
-                <FormText>{timeout} seconds</FormText>
+                <FormLabel htmlFor="timeout">
+                    <i className="bi bi-link-45deg"></i> Timeout
+                    <FormCheck type="switch"  className="d-inline-block ms-2" name="timeout-enabled" checked={timeout != null} onChange={(event) => setTimeout(event.currentTarget.checked ? 10 : null)} />
+                </FormLabel>
+                <FormRange name="timeout" step="5" max="60" min="10" disabled={timeout == null} value={timeout != null ? timeout : 10} onChange={(event) => setTimeout(Number.parseInt(event.currentTarget.value))} />
+                <FormText>{timeout != null ? `${timeout} seconds` : "infinite"}</FormText>
             </div>
             {isTheSeason() && (
                 <FormCheck

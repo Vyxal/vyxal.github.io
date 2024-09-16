@@ -19,7 +19,7 @@ export class VyRunner extends EventTarget {
     private _state: "idle" | "booting" | "running" = "booting";
     private splashes: string[];
     private version: string;
-    private timeoutHandle: number;
+    private timeoutHandle: number | null;
 
     constructor(splashes: string[], version: string) {
         super();
@@ -120,7 +120,7 @@ export class VyRunner extends EventTarget {
         }
     }
 
-    start(code: string, flags: string[], inputs: string[], timeout: number) {
+    start(code: string, flags: string[], inputs: string[], timeout: number | null) {
         if (code == "lyxal") {
             window.location.assign("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
             return;
@@ -138,10 +138,12 @@ export class VyRunner extends EventTarget {
                 inputs: inputs,
                 workerNumber: this.workerCounter,
             } as RunRequest);
-            this.timeoutHandle = window.setTimeout(() => {
-                this.terminate(TerminateReason.TimedOut);
-            }, timeout);
-            this.addEventListener("finished", () => window.clearTimeout(this.timeoutHandle!), { once: true });
+            if (timeout != null) {
+                this.timeoutHandle = window.setTimeout(() => {
+                    this.terminate(TerminateReason.TimedOut);
+                }, timeout);
+                this.addEventListener("finished", () => window.clearTimeout(this.timeoutHandle!), { once: true });
+            }
         });
     }
 

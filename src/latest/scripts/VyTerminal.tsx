@@ -7,7 +7,7 @@ type VyTerminalParams = {
     code: string,
     flags: string[],
     inputs: string[],
-    timeout: number,
+    timeout: number | null,
     onStart: () => unknown,
     onFinish: () => unknown,
 };

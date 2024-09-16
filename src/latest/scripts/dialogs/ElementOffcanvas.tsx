@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { Element, ElementDataContext, elementFuse, Modifier, modifierFuse, SyntaxFeature, syntaxFuse } from "../util/element-data";
+import { Element, ElementDataContext, elementFuse, Modifier, modifierFuse, SyntaxFeature, syntaxFuse, SyntaxThing } from "../util/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import type Fuse from "fuse.js";
@@ -10,7 +10,7 @@ type ElementOffcanvasParams = {
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
-const fuses: Fuse<Element | Modifier | SyntaxFeature>[] = [elementFuse, modifierFuse, syntaxFuse];
+const fuses: Fuse<SyntaxThing>[] = [elementFuse, modifierFuse, syntaxFuse];
 
 export function ElementOffcanvas({ show, setShow }: ElementOffcanvasParams) {
     const elementData = useContext(ElementDataContext)!;

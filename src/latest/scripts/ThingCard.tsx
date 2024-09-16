@@ -1,6 +1,5 @@
 import { Card, ListGroup } from "react-bootstrap";
 import type { SyntaxThing } from "./util/element-data";
-import { Variant } from "react-bootstrap/esm/types";
 
 export type ThingCardParams = {
     thing: SyntaxThing,

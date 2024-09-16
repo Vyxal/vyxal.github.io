@@ -1,6 +1,6 @@
 import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import type { FuseResult } from "fuse.js";
-import { elementFuse, modifierFuse, Element, Modifier, ElementData, SyntaxFeature, syntaxFuse } from "../util/element-data";
+import { elementFuse, modifierFuse, Element, Modifier, ElementData, SyntaxFeature, syntaxFuse, SyntaxThing } from "../util/element-data";
 import { syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { createRoot } from "react-dom/client";
@@ -10,7 +10,7 @@ const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
 const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
 
 
-function elementCompletion(thing: Element | Modifier | SyntaxFeature, literate: boolean): Completion {
+function elementCompletion(thing: SyntaxThing, literate: boolean): Completion {
     return {
         label: literate && thing.type != "syntax" ? thing.keywords[0] ?? "<error>" : thing.symbol,
         detail: thing.name,
@@ -33,7 +33,7 @@ function syncElementAutocomplete(context: CompletionContext, literate: boolean):
     const word = context.matchBefore(literate ? KEYWORD : PREFIXED_KEYWORD);
     if (word != null) {
         word.text = word.text.trimStart();
-        const results: FuseResult<Element | Modifier | SyntaxFeature>[] = [...elementFuse.search(word.text), ...modifierFuse.search(word.text), ...syntaxFuse.search(word.text)];
+        const results: FuseResult<SyntaxThing>[] = [...elementFuse.search(word.text), ...modifierFuse.search(word.text), ...syntaxFuse.search(word.text)];
         if (!results.length) {
             return null;
         }
@@ -69,17 +69,20 @@ export function elementTooltip(elementData: ElementData, literate: boolean) {
     return hoverTooltip((view, pos) => {
         const node = syntaxTree(view.state).resolve(pos, 1);
         const hovered = view.state.doc.sliceString(node.from, node.to);
-        if (!["Element", "Modifier"].includes(node.name)) {
+        let thing: SyntaxThing | undefined;
+        if (node.name == "Element" || node.name == "Modifier") {
+            thing = (node.name == "Modifier" ? (literate ? elementData.modifiersByKeyword : elementData.modifiers) : (literate ? elementData.elementsByKeyword : elementData.elements)).get(hovered);
+        } else if (elementData.syntax.has(hovered)) {
+            thing = elementData.syntax.get(hovered)!;
+        } else {
             return null;
         }
-        const isModifier = node.name == "Modifier";
-        const element = (isModifier ? (literate ? elementData.modifiersByKeyword : elementData.modifiers) : (literate ? elementData.elementsByKeyword : elementData.elements)).get(hovered);
-        if (element !== undefined) {
+        if (thing !== undefined) {
             return {
                 pos: pos,
                 create() {
                     const container = document.createElement("div");
-                    const card = ThingCard({ thing: element, shadow: true });
+                    const card = ThingCard({ thing, shadow: true });
                     const root = createRoot(container);
                     root.render(card);
                     return {

@@ -53,7 +53,6 @@ function matchBrackets(state: EditorState, position: number, side: Side): MatchR
         const iter = tree.cursorAt(position, side);
         let depth = 0;
         do {
-            console.log(iter.name);
             if (iter.name == "StructureClose") {
                 const closer = state.doc.sliceString(iter.from, iter.to);
                 if (closer == "}") {
@@ -126,7 +125,6 @@ const bracketMatchingState = StateField.define<DecorationSet>({
                 continue;
             }
             const match = matchBrackets(transaction.state, range.head, Side.FORWARDS) ?? matchBrackets(transaction.state, range.head, Side.BACKWARDS);
-            console.log(match);
             if (match) {
                 if (match.matched) {
                     match.start.map((node) => decorations.push(matchingMark.range(node.from, node.to)));

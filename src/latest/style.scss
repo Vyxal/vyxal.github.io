@@ -16,6 +16,22 @@ $theme-colors: map-merge($theme-colors, $custom-colors);
 @import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
 
+main {
+    display: flex;
+    flex-direction: row;
+    @include media-breakpoint-down(md) {
+        flex-direction: column;
+        > div {
+            height: 50%;
+        }
+    }
+    > div {
+        flex-basis: 50%;
+    }
+    width: 100%;
+    height: 100%;
+}
+
 code.code-pill {
     border-radius: $border-radius-sm;
     background-color: shade-color($code-color, 80%);

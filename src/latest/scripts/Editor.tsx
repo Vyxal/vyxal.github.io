@@ -37,7 +37,7 @@ const EXTENSIONS = [
         "&": { height: "100%" },
         "&.cm-focused": { outline: "none" },
         ".cm-scroller": {overflow: "auto"},
-        ".cm-panels": {"z-index": "0 !important"},
+        ".cm-tooltip": {"z-index": "300 !important"},
     }),
 ];
 const util = new UtilWorker();

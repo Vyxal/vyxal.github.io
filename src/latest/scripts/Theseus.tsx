@@ -167,81 +167,79 @@ function Theseus() {
                 }
             }} inputs={inputs} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog} setShowInputDialog={setShowInputDialog} setShowElementOffcanvas={setShowElementOffcanvas}
         />
-        <Container fluid className="flex-grow-1">
-            <Row className="h-100">
-                <Col lg="6" className="g-0 d-flex flex-column">
-                    <Suspense
-                        fallback={
-                            <div className="d-flex justify-content-center py-4 m-2">
-                                <Spinner animation="border" className="" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </Spinner>
-                            </div>
-                        }
-                    >
-                        <Editor ratio="20%" code={header} setCode={setHeader} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
-                            Header
-                        </Editor>
-                        <Editor ratio="60%" code={code} setCode={setCode} theme={theme} literate={literate} claimFocus={setLastFocusedEditor} autoFocus>
-                            <div className="d-flex align-items-center">
-                                {bytecount}
-                                {literate ? (
-                                    <Button variant="link" size="sm" className="ms-auto p-0" onClick={literateToSbcs}>
-                                        literate to sbcs
-                                    </Button>
-                                ) : null}
-                            </div>
-                        </Editor>
-                        <Editor ratio="20%" code={footer} setCode={setFooter} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
-                            Footer
-                        </Editor>
-                    </Suspense>
-                </Col>
-                <Col lg="6" className="g-0 vstack">
-                    <Tab.Container
-                        defaultActiveKey="terminal"
-                    >
-                        <Nav variant="pills" className="align-items-end m-2">
-                            <Nav.Item>
-                                <Nav.Link eventKey="terminal">Terminal</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="html">HTML</Nav.Link>
-                            </Nav.Item>
-                            <div className="ms-auto me-1">
-                                <CopyButton title="Copy output" generate={() => runnerRef.current?.getOutput() ?? ""} />
-                            </div>
-                        </Nav>
-                        <Tab.Content className="flex-grow-1 bg-body-tertiary">
-                            <Tab.Pane eventKey="terminal" className="h-100 position-relative">
-                                <Suspense
-                                    fallback={
-                                        <div className="d-flex justify-content-center pt-2 h-100 terminal-placeholder">
-                                            <Spinner animation="border" className="" role="status" variant="light">
-                                                <span className="visually-hidden">Loading...</span>
-                                            </Spinner>
-                                        </div>
-                                    }
-                                >
-                                    <VyTerminal
-                                        ref={runnerRef}
-                                        code={header + code + footer}
-                                        flags={[...serializeFlags(elementData.flagDefs, flags)]}
-                                        inputs={inputs.map((i) => i.value)}
-                                        timeout={timeout != null ? timeout * 1000 : null}
-                                        onStart={() => setState("running")}
-                                        onFinish={() => setState("idle")}
-                                    />
-                                </Suspense>
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="html">
-                                <HtmlView getOutput={runnerRef.current?.getOutput} />
-                            </Tab.Pane>
-                        </Tab.Content>
-                    </Tab.Container>
-                </Col>
-            </Row>
-        </Container>
+        <main>
+            <div>
+                <Suspense
+                    fallback={
+                        <div className="d-flex justify-content-center py-4 m-2">
+                            <Spinner animation="border" className="" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                        </div>
+                    }
+                >
+                    <Editor ratio="20%" code={header} setCode={setHeader} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
+                        Header
+                    </Editor>
+                    <Editor ratio="60%" code={code} setCode={setCode} theme={theme} literate={literate} claimFocus={setLastFocusedEditor} autoFocus>
+                        <div className="d-flex align-items-center">
+                            {bytecount}
+                            {literate ? (
+                                <Button variant="link" size="sm" className="ms-auto p-0" onClick={literateToSbcs}>
+                                    literate to sbcs
+                                </Button>
+                            ) : null}
+                        </div>
+                    </Editor>
+                    <Editor ratio="20%" code={footer} setCode={setFooter} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
+                        Footer
+                    </Editor>
+                </Suspense>
+            </div>
+            <div className="vstack">
+                <Tab.Container
+                    defaultActiveKey="terminal"
+                >
+                    <Nav variant="pills" className="align-items-end m-2">
+                        <Nav.Item>
+                            <Nav.Link eventKey="terminal">Terminal</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="html">HTML</Nav.Link>
+                        </Nav.Item>
+                        <div className="ms-auto me-1">
+                            <CopyButton title="Copy output" generate={() => runnerRef.current?.getOutput() ?? ""} />
+                        </div>
+                    </Nav>
+                    <Tab.Content className="flex-grow-1 bg-body-tertiary">
+                        <Tab.Pane eventKey="terminal" className="h-100 position-relative">
+                            <Suspense
+                                fallback={
+                                    <div className="d-flex justify-content-center pt-2 h-100 terminal-placeholder">
+                                        <Spinner animation="border" className="" role="status" variant="light">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </Spinner>
+                                    </div>
+                                }
+                            >
+                                <VyTerminal
+                                    ref={runnerRef}
+                                    code={header + code + footer}
+                                    flags={[...serializeFlags(elementData.flagDefs, flags)]}
+                                    inputs={inputs.map((i) => i.value)}
+                                    timeout={timeout != null ? timeout * 1000 : null}
+                                    onStart={() => setState("running")}
+                                    onFinish={() => setState("idle")}
+                                />
+                            </Suspense>
+                        </Tab.Pane>
+                        <Tab.Pane eventKey="html">
+                            <HtmlView getOutput={runnerRef.current?.getOutput} />
+                        </Tab.Pane>
+                    </Tab.Content>
+                </Tab.Container>
+            </div>
+        </main>
     </>;
 }
 

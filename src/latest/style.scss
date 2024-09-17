@@ -82,13 +82,12 @@ code.code-pill {
 
 .card.clickable {
     cursor: pointer;
-
-    :hover {
-        @extend .bg-body-secondary;
-    }
     .list-group-item {
         background-color: inherit;
     }
+}
+.card.clickable:hover {
+    @extend .bg-body-secondary;
 }
 
 @supports(scrollbar-color: auto) {

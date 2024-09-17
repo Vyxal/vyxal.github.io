@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, memo } from "react";
+import { Dispatch, SetStateAction, memo, useEffect, useRef } from "react";
 import { Button, FormCheck, FormLabel, FormText, Modal, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
 import { Settings, Theme, isTheSeason } from "../util/settings";
 import FormRange from "react-bootstrap/esm/FormRange";
@@ -14,6 +14,25 @@ type SettingsDialogProps = {
 };
 
 export const SettingsDialog = memo(function({ settings, setSettings, timeout, setTimeout, show, setShow }: SettingsDialogProps) {
+    const eggProgress = useRef(0);
+    useEffect(() => {
+        const listener = (event: KeyboardEvent) => {
+            if ("snow"[eggProgress.current] == event.key.toLowerCase() && settings.snowing != "always") {
+                eggProgress.current++;
+                if (eggProgress.current == 4) {
+                    eggProgress.current = 0;
+                    setSettings((settings) => {
+                        settings.snowing = "always";
+                    });
+                }
+            } else {
+                eggProgress.current = 0;
+            }
+        };
+        document.addEventListener("keydown", listener);
+        return () => document.removeEventListener("keydown", listener);
+    }, [eggProgress, settings]);
+
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
             <Modal.Title>Settings</Modal.Title>
@@ -71,7 +90,9 @@ export const SettingsDialog = memo(function({ settings, setSettings, timeout, se
                     type="switch"
                     name="seasonal-mode"
                     checked={settings.snowing != "no"}
-                    onChange={(event) => setSettings((settings) => settings.snowing = event.target.checked ? "yes" : "no")}
+                    onChange={(event) => setSettings((settings) => {
+                        settings.snowing = event.target.checked ? "yes" : "no";
+                    })}
                     label={<><i className="bi bi-snow"></i> Seasonal decorations</>}
                 />
             )}

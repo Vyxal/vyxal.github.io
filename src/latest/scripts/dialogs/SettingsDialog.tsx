@@ -55,7 +55,6 @@ export const SettingsDialog = memo(function({ settings, setSettings, timeout, se
                 </ToggleButtonGroup>
             </div>
             <div className="mb-3">
-                <FormLabel htmlFor="bracket-matching">Highlight matching brackets</FormLabel>
                 <FormCheck
                     type="switch"
                     name="bracket-matching"
@@ -63,10 +62,10 @@ export const SettingsDialog = memo(function({ settings, setSettings, timeout, se
                     onChange={(event) => setSettings((settings) => {
                         settings.highlightBrackets = event.target.checked ? "yes" : "no";
                     })}
+                    label="Highlight matching brackets"
                 />
             </div>
             <div className="mb-3">
-                <FormLabel htmlFor="bracket-matching">Show indicator when brackets are closed by EOF</FormLabel>
                 <FormCheck
                     type="switch"
                     name="bracket-matching-eof"
@@ -75,6 +74,7 @@ export const SettingsDialog = memo(function({ settings, setSettings, timeout, se
                     onChange={(event) => setSettings((settings) => {
                         settings.highlightBrackets = event.target.checked ? "yes-eof" : "yes";
                     })}
+                    label="Show indicator when brackets are closed by EOF"
                 />
             </div>
             <div className="mb-3">

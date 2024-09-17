@@ -57,6 +57,17 @@ export const SettingsDialog = memo(function({ settings, setSettings, timeout, se
             <div className="mb-3">
                 <FormCheck
                     type="switch"
+                    name="literate-by-default"
+                    checked={settings.literateByDefault}
+                    onChange={(event) => setSettings((settings) => {
+                        settings.literateByDefault = event.target.checked;
+                    })}
+                    label="Default to literate mode in a new editor"
+                />
+            </div>
+            <div className="mb-3">
+                <FormCheck
+                    type="switch"
                     name="bracket-matching"
                     checked={settings.highlightBrackets != "no"}
                     onChange={(event) => setSettings((settings) => {

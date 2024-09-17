@@ -4,17 +4,20 @@ export enum Theme {
 
 export type Settings = {
     theme: Theme,
+    literateByDefault: boolean,
     snowing: "yes" | "no" | "always",
     highlightBrackets: "yes" | "yes-eof" | "no",
 };
 
+type SettingsRaw = Omit<Settings, "theme"> & { theme: keyof typeof Theme };
+
 const defaultSettings: SettingsRaw = {
     theme: "Dark",
+    literateByDefault: false,
     snowing: "yes",
     highlightBrackets: "yes",
 };
 
-type SettingsRaw = Omit<Settings, "theme"> & { theme: keyof typeof Theme };
 
 export function isTheSeason() {
     const now = new Date();

@@ -51,11 +51,17 @@ type TheseusProps = {
 function Theseus({ permalink }: TheseusProps) {
     const elementData = useContext(ElementDataContext)!;
 
-    const [flags, setFlags] = useImmer<Flags>(deserializeFlags(elementData.flagDefs, new Set(permalink?.flags ?? [])));
-    const literate = flags.get(LITERATE_MODE_FLAG_NAME) == true;
-
     const [settings, setSettings] = useImmer<Settings>(loadSettings());
     const [timeout, setTimeout] = useState<number | null>(10);
+
+    const [flags, setFlags] = useImmer<Flags>(() => {
+        const initial = deserializeFlags(elementData.flagDefs, new Set(permalink?.flags ?? []));
+        if (permalink == null && settings.literateByDefault) {
+            initial.set(LITERATE_MODE_FLAG_NAME, true);
+        }
+        return initial;
+    });
+    const literate = flags.get(LITERATE_MODE_FLAG_NAME) == true;
 
     const [header, setHeader] = useState(permalink?.header ?? "");
     const [code, setCode] = useState(permalink?.code ?? "");

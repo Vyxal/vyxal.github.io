@@ -70,7 +70,7 @@ export function elementTooltip(elementData: ElementData, literate: boolean) {
         const node = syntaxTree(view.state).resolve(pos, 1);
         const hovered = view.state.doc.sliceString(node.from, node.to);
         let thing: SyntaxThing | undefined;
-        if (node.name == "Element" || node.name == "Modifier") {
+        if (node.name == "Element" || node.name == "Digraph" || node.name == "Modifier") {
             thing = (node.name == "Modifier" ? (literate ? elementData.modifiersByKeyword : elementData.modifiers) : (literate ? elementData.elementsByKeyword : elementData.elements)).get(hovered);
         } else if (elementData.syntax.has(hovered)) {
             thing = elementData.syntax.get(hovered)!;

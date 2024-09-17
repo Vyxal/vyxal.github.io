@@ -5,7 +5,7 @@ import CGCCTemplate from "../../templates/cgcc.handlebars.md";
 import CMCTemplate from "../../templates/cmc.handlebars.md";
 import { CopyButton } from "../CopyButton";
 
-type ShareDialogParams = {
+type ShareDialogProps = {
     bytecount: string,
     code: string,
     flags: string,
@@ -28,7 +28,7 @@ function ShareDialogBody() {
     ).then((Handlebars) => {
         const cgcc = Handlebars.compile<Template>(CGCCTemplate);
         const cmc = Handlebars.compile<Template>(CMCTemplate);
-        return function({ bytecount, code, flags }: ShareDialogParams) {
+        return function({ bytecount, code, flags }: ShareDialogProps) {
             const [key, setKey] = useState("link");
             const [content, setContent] = useState("");
 
@@ -86,7 +86,7 @@ function ShareDialogBody() {
 
 const ShareDialogLazyBody = lazy(() => ShareDialogBody().then((component) => ({ default: component })));
 
-export default function ShareDialog({ bytecount, code, flags, show, setShow }: ShareDialogParams) {
+export default function ShareDialog({ bytecount, code, flags, show, setShow }: ShareDialogProps) {
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
             <Modal.Title>Share</Modal.Title>

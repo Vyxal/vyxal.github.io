@@ -4,7 +4,7 @@ import { Settings, Theme, isTheSeason } from "../util/settings";
 import FormRange from "react-bootstrap/esm/FormRange";
 import { Updater } from "use-immer";
 
-type SettingsDialogParams = {
+type SettingsDialogProps = {
     settings: Settings,
     setSettings: Updater<Settings>,
     timeout: number | null,
@@ -13,7 +13,7 @@ type SettingsDialogParams = {
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
-export const SettingsDialog = memo(function({ settings, setSettings, timeout, setTimeout, show, setShow }: SettingsDialogParams) {
+export const SettingsDialog = memo(function({ settings, setSettings, timeout, setTimeout, show, setShow }: SettingsDialogProps) {
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
             <Modal.Title>Settings</Modal.Title>

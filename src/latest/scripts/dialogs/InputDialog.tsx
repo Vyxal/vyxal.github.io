@@ -6,14 +6,14 @@ export type Input = {
     value: string,
 };
 
-export type InputDialogParams = {
+type InputDialogProps = {
     inputs: Input[],
     setInputs: Dispatch<SetStateAction<Input[]>>,
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
-export const InputDialog = memo(function({ inputs, setInputs, show, setShow }: InputDialogParams) {
+export const InputDialog = memo(function({ inputs, setInputs, show, setShow }: InputDialogProps) {
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
             <Modal.Title>Inputs</Modal.Title>

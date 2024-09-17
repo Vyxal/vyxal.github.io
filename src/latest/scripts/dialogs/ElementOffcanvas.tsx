@@ -5,7 +5,7 @@ import { Form } from "react-bootstrap";
 import type Fuse from "fuse.js";
 import { ThingCard } from "../ThingCard";
 
-type ElementOffcanvasParams = {
+type ElementOffcanvasProps = {
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
     insertCharacter: (char: string) => void,
@@ -13,7 +13,7 @@ type ElementOffcanvasParams = {
 
 const fuses: Fuse<SyntaxThing>[] = [elementFuse, modifierFuse, syntaxFuse];
 
-export function ElementOffcanvas({ show, setShow, insertCharacter }: ElementOffcanvasParams) {
+export function ElementOffcanvas({ show, setShow, insertCharacter }: ElementOffcanvasProps) {
     const elementData = useContext(ElementDataContext)!;
     const [tab, setTab] = useState("search");
     const [query, setQuery] = useState("");

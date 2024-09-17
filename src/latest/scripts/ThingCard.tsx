@@ -1,19 +1,19 @@
 import { Card, ListGroup } from "react-bootstrap";
 import type { SyntaxThing } from "./util/element-data";
 
-export type ThingCardParams = {
-    thing: SyntaxThing,
-    shadow?: boolean,
-    onClick?: () => unknown,
-};
-
 const variants: { [key in SyntaxThing["type"]]: string } = {
     element: "",
     modifier: "primary",
     syntax: "ourple",
 };
 
-export function ThingCard({ thing, shadow, onClick }: ThingCardParams) {
+type ThingCardProps = {
+    thing: SyntaxThing,
+    shadow?: boolean,
+    onClick?: () => unknown,
+};
+
+export function ThingCard({ thing, shadow, onClick }: ThingCardProps) {
     return <Card border={variants[thing.type]} className={`h-100 ${(shadow ?? false) ? "shadow" : ""} ${(onClick !== undefined ? "clickable" : "")}`} onClick={onClick}>
         <Card.Body>
             <Card.Title>{thing.symbol}</Card.Title>

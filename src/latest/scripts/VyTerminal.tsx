@@ -1,16 +1,7 @@
-import React, { ForwardedRef, forwardRef, useContext, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { ForwardedRef, forwardRef, useContext, useEffect, useImperativeHandle, useMemo, useRef } from "react";
 import { VyRunner, TerminateReason } from "./runner";
 import { ElementDataContext } from "./util/element-data";
 import splashes from "../data/splash.txt?raw";
-
-type VyTerminalParams = {
-    code: string,
-    flags: string[],
-    inputs: string[],
-    timeout: number | null,
-    onStart: () => unknown,
-    onFinish: () => unknown,
-};
 
 export interface VyTerminalRef {
     start(): void,
@@ -19,7 +10,16 @@ export interface VyTerminalRef {
     showMessage(message: string): void,
 }
 
-const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout, onStart, onFinish }: VyTerminalParams, ref: ForwardedRef<VyTerminalRef>) {
+type VyTerminalProps = {
+    code: string,
+    flags: string[],
+    inputs: string[],
+    timeout: number | null,
+    onStart: () => unknown,
+    onFinish: () => unknown,
+};
+
+const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout, onStart, onFinish }: VyTerminalProps, ref: ForwardedRef<VyTerminalRef>) {
     const wrapperRef = useRef(null);
     const elementData = useContext(ElementDataContext);
     const runner = useMemo(() => new VyRunner(splashes.split("\n"), elementData!.version), []);

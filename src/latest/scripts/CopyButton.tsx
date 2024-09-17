@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 
-type CopyButtonParams = {
+type CopyButtonProps = {
     className?: string,
     title: string,
     generate: () => string,
 };
-export function CopyButton({ className, title, generate }: CopyButtonParams) {
+
+export function CopyButton({ className, title, generate }: CopyButtonProps) {
     const TITLES = {
         copy: title,
         copied: "Copied!",

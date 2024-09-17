@@ -48,7 +48,7 @@ const THEMES = {
     [Theme.Light]: githubLight,
 };
 
-type EditorParams = {
+type EditorProps = {
     code: string,
     ratio: string,
     setCode: Dispatch<SetStateAction<string>>,
@@ -70,7 +70,7 @@ function EditorError({ error, resetErrorBoundary }: FallbackProps) {
     </Stack>;
 }
 
-export default function Editor({ code, ratio, children, setCode, settings, literate, claimFocus, autoFocus }: EditorParams) {
+export default function Editor({ code, ratio, children, setCode, settings, literate, claimFocus, autoFocus }: EditorProps) {
     const elementData = useContext(ElementDataContext);
     const editorRef = useRef<ReactCodeMirrorRef | null>(null);
     const onChange = useCallback((code: string) => {

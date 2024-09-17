@@ -5,22 +5,22 @@ import type { VyRunnerState } from "./Theseus";
 import logo from "../../common/assets/logo-64.png";
 import { Input } from "./dialogs/InputDialog";
 
-type ShowDialogButtonArgs = {
-    shower: (boolean) => unknown,
+type ShowDialogButtonProps = {
+    setOpen: (arg: boolean) => unknown,
     title: string,
     icon: string,
     margin?: boolean,
 };
 
-function ShowDialogButton({ shower, title, icon, margin = true }: ShowDialogButtonArgs) {
+function ShowDialogButton({ setOpen, title, icon, margin = true }: ShowDialogButtonProps) {
     return (
-        <Button variant="secondary" className={margin ? "me-md-3 me-2" : ""} onClick={() => shower(true)} title={title}>
+        <Button variant="secondary" className={margin ? "me-md-3 me-2" : ""} onClick={() => setOpen(true)} title={title}>
             <i className={`bi ${icon}`}></i>
         </Button>
     );
 }
 
-type HeaderArgs = {
+type HeaderProps = {
     state: VyRunnerState,
     onRunClicked: () => unknown,
     flags: Set<string>,
@@ -32,7 +32,7 @@ type HeaderArgs = {
     setShowElementOffcanvas: Dispatch<SetStateAction<boolean>>,
 };
 
-export default function Header({ state, onRunClicked, flags, inputs, setShowFlagsDialog, setShowSettingsDialog, setShowShareDialog, setShowInputDialog, setShowElementOffcanvas }: HeaderArgs) {
+export default function Header({ state, onRunClicked, flags, inputs, setShowFlagsDialog, setShowSettingsDialog, setShowShareDialog, setShowInputDialog, setShowElementOffcanvas }: HeaderProps) {
     return (
         <Navbar className="bg-body-tertiary flex-wrap">
             <Container fluid className="justify-content-start">
@@ -47,18 +47,18 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                                 <span className="form-control font-monospace">-{[...flags].join("")}</span>
                             ) : null
                         }
-                        <ShowDialogButton shower={setShowFlagsDialog} icon="bi-flag-fill" title="Flags" margin={false} />
+                        <ShowDialogButton setOpen={setShowFlagsDialog} icon="bi-flag-fill" title="Flags" margin={false} />
                     </InputGroup>
                     <InputGroup className="me-md-3 me-2">
-                        <ShowDialogButton shower={setShowInputDialog} icon="bi bi-patch-question" title="Inputs" margin={false} />
+                        <ShowDialogButton setOpen={setShowInputDialog} icon="bi bi-patch-question" title="Inputs" margin={false} />
                         {
                             inputs.length > 0 ? (
                                 <span className="form-control font-monospace">{inputs.length}</span>
                             ) : null
                         }
                     </InputGroup>
-                    <ShowDialogButton shower={setShowShareDialog} icon="bi-share" title="Share code" />
-                    <ShowDialogButton shower={setShowElementOffcanvas} icon="bi-journal-code" title="Elements" />
+                    <ShowDialogButton setOpen={setShowShareDialog} icon="bi-share" title="Share code" />
+                    <ShowDialogButton setOpen={setShowElementOffcanvas} icon="bi-journal-code" title="Elements" />
                 </Nav>
                 <div className="d-sm-none me-3">
                     <InputGroup>
@@ -106,7 +106,7 @@ export default function Header({ state, onRunClicked, flags, inputs, setShowFlag
                     </Button>
                 </Nav>
                 <Nav className="ms-auto justify-self-end">
-                    <ShowDialogButton shower={setShowSettingsDialog} icon="bi-gear" title="Settings" margin={false} />
+                    <ShowDialogButton setOpen={setShowSettingsDialog} icon="bi-gear" title="Settings" margin={false} />
                 </Nav>
             </Container>
         </Navbar>

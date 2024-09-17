@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 
-type HtmlViewParams = {
+type HtmlViewProps = {
     getOutput: (() => string) | undefined, // may be undefined if the terminal hasn't mounted yet
 };
 
-export default function HtmlView({ getOutput }: HtmlViewParams) {
+export default function HtmlView({ getOutput }: HtmlViewProps) {
     const [agreedToWarning, setAgreedToWarning] = useState(false);
     const [document, setDocument] = useState("");
 

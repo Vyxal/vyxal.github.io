@@ -5,7 +5,7 @@ import { vscodeDark } from "@uiw/codemirror-theme-vscode";
 import { vyxal } from "./extensions/vyxal/vyxal-extensions";
 import { autocompletion } from "@codemirror/autocomplete";
 import { EditorView, highlightActiveLine, highlightActiveLineGutter, lineNumbers, showPanel } from "@codemirror/view";
-import { Theme } from "./util/misc";
+import { Settings, Theme } from "./util/settings";
 import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { ElementDataContext } from "./util/element-data";
@@ -13,6 +13,7 @@ import { vyxalLit } from "./extensions/vyxal-lit-extensions";
 import { createPortal } from "react-dom";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { Button, Stack } from "react-bootstrap";
+import { vyxalBracketMatching } from "./extensions/vyxal/bracket-matching";
 
 const EXTENSIONS = [
     Prec.high(keymap.of([
@@ -51,7 +52,7 @@ type EditorParams = {
     code: string,
     ratio: string,
     setCode: Dispatch<SetStateAction<string>>,
-    theme: Theme,
+    settings: Settings,
     literate: boolean,
     claimFocus: (state: ReactCodeMirrorRef) => unknown,
     autoFocus?: boolean,
@@ -69,7 +70,7 @@ function EditorError({ error, resetErrorBoundary }: FallbackProps) {
     </Stack>;
 }
 
-export default function Editor({ code, ratio, children, setCode, theme, literate, claimFocus, autoFocus }: EditorParams) {
+export default function Editor({ code, ratio, children, setCode, settings, literate, claimFocus, autoFocus }: EditorParams) {
     const elementData = useContext(ElementDataContext);
     const editorRef = useRef<ReactCodeMirrorRef | null>(null);
     const onChange = useCallback((code: string) => {
@@ -89,12 +90,17 @@ export default function Editor({ code, ratio, children, setCode, theme, literate
         return null;
     }), []);
 
-    const extensions = useMemo(() => EXTENSIONS.concat(literate ? vyxalLit(elementData!) : vyxal(util, elementData!), header, focusChangeHandler), [literate]);
+    const extensions = [
+        EXTENSIONS, header, focusChangeHandler,
+        useMemo(() => literate ? vyxalLit(elementData!) : vyxal(util, elementData!), [literate]),
+        useMemo(() => settings.highlightBrackets != "no" ? vyxalBracketMatching({ showEof: settings.highlightBrackets == "yes-eof" }) : [], [settings]),
+    ];
+
     return <>
         <ErrorBoundary FallbackComponent={EditorError}>
             <ReactCodeMirror
                 basicSetup={false}
-                theme={THEMES[theme]}
+                theme={THEMES[settings.theme]}
                 value={code}
                 style={{ height: ratio }}
                 onChange={onChange}

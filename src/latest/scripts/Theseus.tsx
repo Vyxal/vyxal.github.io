@@ -1,16 +1,15 @@
 import { lazy, Suspense, useCallback, useContext, useEffect, useRef, useState } from "react";
 import Header from "./Header";
-import { Col, Row, Container, Spinner, Tab, Nav, Button } from "react-bootstrap";
+import { Spinner, Tab, Nav, Button } from "react-bootstrap";
 import { useImmer } from "use-immer";
 import { createRoot } from "react-dom/client";
-import { Theme, VyRunnerState } from "./util/misc";
+import { isTheSeason, loadSettings, saveSettings, Settings, Theme } from "./util/settings";
 import { UtilWorker } from "./util/util-worker";
 import { VyTerminalRef } from "./VyTerminal";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
-import { loadTheme, loadSnowing } from "./util/misc";
 import { incompatible, V2Permalink } from "./util/permalink";
 import { decodeHash, encodeHash } from "./util/permalink";
 import HtmlView from "./HtmlView";
@@ -44,6 +43,8 @@ const Editor = lazy(() => import(
 // TODO: Don't hardcode this
 const LITERATE_MODE_FLAG_NAME = "Literate mode";
 
+export type VyRunnerState = "idle" | "starting" | "running";
+
 function Theseus() {
     let link: V2Permalink | null;
     if (window.location.hash.length) {
@@ -57,9 +58,8 @@ function Theseus() {
     const elementData = useContext(ElementDataContext)!;
     const [flags, setFlags] = useImmer<Flags>(deserializeFlags(elementData.flagDefs, new Set(link?.flags ?? [])));
     const literate = flags.get(LITERATE_MODE_FLAG_NAME) == true;
-    const [theme, setTheme] = useState<Theme>(loadTheme());
+    const [settings, setSettings] = useImmer<Settings>(loadSettings());
     const [timeout, setTimeout] = useState<number | null>(10);
-    const [snowing, setSnowing] = useState<boolean>(loadSnowing());
     const [header, setHeader] = useState(link?.header ?? "");
     const [code, setCode] = useState(link?.code ?? "");
     const [footer, setFooter] = useState(link?.footer ?? "");
@@ -76,8 +76,7 @@ function Theseus() {
     const snowflakesRef = useRef<Snowflakes | null>(null);
 
     useEffect(() => {
-        localStorage.setItem("theme", Theme[theme]);
-        switch (theme) {
+        switch (settings.theme) {
             case Theme.Dark:
                 document.body.dataset["bsTheme"] = "dark";
                 break;
@@ -85,7 +84,23 @@ function Theseus() {
                 document.body.dataset["bsTheme"] = "light";
                 break;
         }
-    }, [theme]);
+        if (settings.snowing == "always" || (settings.snowing == "yes" && isTheSeason())) {
+            import(
+                /* webpackChunkName: "magic-snowflakes" */
+                "magic-snowflakes"
+            ).then(({ default: Snowflakes }) => {
+                if (snowflakesRef.current == null) {
+                    snowflakesRef.current = new Snowflakes();
+                }
+                snowflakesRef.current.start();
+                snowflakesRef.current.show();
+            });
+        } else {
+            snowflakesRef.current?.stop();
+            snowflakesRef.current?.hide();
+        }
+        saveSettings(settings);
+    }, [settings]);
 
     useEffect(() => {
         history.replaceState(undefined, "", "#" + encodeHash(
@@ -105,25 +120,6 @@ function Theseus() {
     }, [header, code, footer, flags, inputs, timeout, state]);
 
     useEffect(() => {
-        if (snowing) {
-            import(
-                /* webpackChunkName: "magic-snowflakes" */
-                "magic-snowflakes"
-            ).then(({ default: Snowflakes }) => {
-                if (snowflakesRef.current == null) {
-                    snowflakesRef.current = new Snowflakes();
-                }
-                snowflakesRef.current.start();
-                snowflakesRef.current.show();
-            });
-        } else {
-            snowflakesRef.current?.stop();
-            snowflakesRef.current?.hide();
-        }
-        localStorage.setItem("snowing", snowing ? "yes" : "no");
-    }, [snowing]);
-
-    useEffect(() => {
         utilWorker.formatBytecount(code, literate).then(setBytecount);
     }, [code, flags]);
 
@@ -133,12 +129,10 @@ function Theseus() {
 
     return <>
         <SettingsDialog
-            theme={theme}
-            setTheme={setTheme}
+            settings={settings}
+            setSettings={setSettings}
             timeout={timeout}
             setTimeout={setTimeout}
-            snowing={snowing}
-            setSnowing={setSnowing}
             show={showSettingsDialog}
             setShow={setShowSettingsDialog}
         />
@@ -178,10 +172,10 @@ function Theseus() {
                         </div>
                     }
                 >
-                    <Editor ratio="20%" code={header} setCode={setHeader} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
+                    <Editor ratio="20%" code={header} setCode={setHeader} settings={settings} literate={literate} claimFocus={setLastFocusedEditor}>
                         Header
                     </Editor>
-                    <Editor ratio="60%" code={code} setCode={setCode} theme={theme} literate={literate} claimFocus={setLastFocusedEditor} autoFocus>
+                    <Editor ratio="60%" code={code} setCode={setCode} settings={settings} literate={literate} claimFocus={setLastFocusedEditor} autoFocus>
                         <div className="d-flex align-items-center">
                             {bytecount}
                             {literate ? (
@@ -191,7 +185,7 @@ function Theseus() {
                             ) : null}
                         </div>
                     </Editor>
-                    <Editor ratio="20%" code={footer} setCode={setFooter} theme={theme} literate={literate} claimFocus={setLastFocusedEditor}>
+                    <Editor ratio="20%" code={footer} setCode={setFooter} settings={settings} literate={literate} claimFocus={setLastFocusedEditor}>
                         Footer
                     </Editor>
                 </Suspense>

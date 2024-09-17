@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Button, ButtonGroup, Container, Dropdown, InputGroup, Nav, Navbar, Spinner } from "react-bootstrap";
-
-import { VyRunnerState } from "./util/misc";
+import type { VyRunnerState } from "./Theseus";
 
 import logo from "../../common/assets/logo-64.png";
 import { Input } from "./dialogs/InputDialog";

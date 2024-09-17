@@ -1,5 +1,5 @@
 import { syntaxTree } from "@codemirror/language";
-import { EditorState, Range, StateField } from "@codemirror/state";
+import { combineConfig, EditorState, Facet, Range, StateField } from "@codemirror/state";
 import { Decoration, DecorationSet, WidgetType } from "@codemirror/view";
 import { SyntaxNode } from "@lezer/common";
 import { EditorView } from "codemirror";
@@ -45,6 +45,18 @@ type MatchResult = {
     matched: false,
     highlight: SyntaxNode,
 } | null;
+
+export type BracketMatchingConfig = {
+    showEof: boolean,
+};
+
+const bracketMatchingConfig = Facet.define<BracketMatchingConfig, Required<BracketMatchingConfig>>({
+    combine(configs) {
+        return combineConfig(configs, {
+            showEof: false,
+        });
+    },
+});
 
 function matchBrackets(state: EditorState, position: number, side: Side): MatchResult {
     const tree = syntaxTree(state);
@@ -120,6 +132,7 @@ const bracketMatchingState = StateField.define<DecorationSet>({
             return decorationSet;
         }
         const decorations: Range<Decoration>[] = [];
+        const config = transaction.state.facet(bracketMatchingConfig);
         for (const range of transaction.state.selection.ranges) {
             if (!range.empty) {
                 continue;
@@ -130,7 +143,7 @@ const bracketMatchingState = StateField.define<DecorationSet>({
                     match.start.map((node) => decorations.push(matchingMark.range(node.from, node.to)));
                     if (match.end) {
                         decorations.push(matchingMark.range(match.end.from, match.end.to));
-                    } else {
+                    } else if (config.showEof) {
                         decorations.push(eofWidget.range(transaction.state.doc.length));
                     }
                 } else {
@@ -143,6 +156,6 @@ const bracketMatchingState = StateField.define<DecorationSet>({
     provide: (f) => EditorView.decorations.from(f),
 });
 
-export function vyxalBracketMatching() {
-    return [theme, bracketMatchingState];
+export function vyxalBracketMatching(config: BracketMatchingConfig) {
+    return [bracketMatchingConfig.of(config), theme, bracketMatchingState];
 }

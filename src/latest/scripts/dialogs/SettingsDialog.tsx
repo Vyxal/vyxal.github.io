@@ -1,20 +1,19 @@
 import { Dispatch, SetStateAction, memo } from "react";
 import { Button, FormCheck, FormLabel, FormText, Modal, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
-import { Theme, isTheSeason } from "../util/misc";
+import { Settings, Theme, isTheSeason } from "../util/settings";
 import FormRange from "react-bootstrap/esm/FormRange";
+import { Updater } from "use-immer";
 
 type SettingsDialogParams = {
-    theme: Theme,
-    setTheme: Dispatch<SetStateAction<Theme>>,
+    settings: Settings,
+    setSettings: Updater<Settings>,
     timeout: number | null,
     setTimeout: Dispatch<SetStateAction<number | null>>,
-    snowing: boolean,
-    setSnowing: Dispatch<SetStateAction<boolean>>,
     show: boolean,
     setShow: Dispatch<SetStateAction<boolean>>,
 };
 
-export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeout, snowing, setSnowing, show, setShow }: SettingsDialogParams) {
+export const SettingsDialog = memo(function({ settings, setSettings, timeout, setTimeout, show, setShow }: SettingsDialogParams) {
     return <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
             <Modal.Title>Settings</Modal.Title>
@@ -22,25 +21,57 @@ export const SettingsDialog = memo(function({ theme, setTheme, timeout, setTimeo
         <Modal.Body>
             <div className="mb-3">
                 <FormLabel htmlFor="theme">Theme</FormLabel>
-                <ToggleButtonGroup className="d-block" name="theme" type="radio" value={Theme[theme]} onChange={(theme) => setTheme(Theme[theme as keyof typeof Theme])}>
-                    {(Object.values(Theme).filter(value => typeof value === 'string') as string[]).map((theme, i) => <ToggleButton key={i} id={`theme-${i}`} value={theme}>{theme}</ToggleButton>,
-                    )}
+                <ToggleButtonGroup
+                    className="d-block"
+                    name="theme"
+                    type="radio"
+                    value={Theme[settings.theme]}
+                    onChange={(theme) => setSettings((settings) => {
+                        settings.theme = Theme[theme as keyof typeof Theme];
+                    })}
+                >
+                    {(Object.values(Theme).filter(value => typeof value === "string") as string[])
+                        .map((theme, i) => <ToggleButton key={i} id={`theme-${i}`} value={theme}>{theme}</ToggleButton>)
+                    }
                 </ToggleButtonGroup>
+            </div>
+            <div className="mb-3">
+                <FormLabel htmlFor="bracket-matching">Highlight matching brackets</FormLabel>
+                <FormCheck
+                    type="switch"
+                    name="bracket-matching"
+                    checked={settings.highlightBrackets != "no"}
+                    onChange={(event) => setSettings((settings) => {
+                        settings.highlightBrackets = event.target.checked ? "yes" : "no";
+                    })}
+                />
+            </div>
+            <div className="mb-3">
+                <FormLabel htmlFor="bracket-matching">Show indicator when brackets are closed by EOF</FormLabel>
+                <FormCheck
+                    type="switch"
+                    name="bracket-matching-eof"
+                    disabled={settings.highlightBrackets == "no"}
+                    checked={settings.highlightBrackets == "yes-eof"}
+                    onChange={(event) => setSettings((settings) => {
+                        settings.highlightBrackets = event.target.checked ? "yes-eof" : "yes";
+                    })}
+                />
             </div>
             <div className="mb-3">
                 <FormLabel htmlFor="timeout">
                     <i className="bi bi-link-45deg"></i> Timeout
-                    <FormCheck type="switch"  className="d-inline-block ms-2" name="timeout-enabled" checked={timeout != null} onChange={(event) => setTimeout(event.currentTarget.checked ? 10 : null)} />
+                    <FormCheck type="switch"  className="d-inline-block ms-2" name="timeout-enabled" checked={timeout != null} onChange={(event) => setTimeout(event.target.checked ? 10 : null)} />
                 </FormLabel>
-                <FormRange name="timeout" step="5" max="60" min="10" disabled={timeout == null} value={timeout != null ? timeout : 10} onChange={(event) => setTimeout(Number.parseInt(event.currentTarget.value))} />
+                <FormRange name="timeout" step="5" max="60" min="10" disabled={timeout == null} value={timeout != null ? timeout : 10} onChange={(event) => setTimeout(Number.parseInt(event.target.value))} />
                 <FormText>{timeout != null ? `${timeout} seconds` : "infinite"}</FormText>
             </div>
-            {isTheSeason() && (
+            {(isTheSeason() || settings.snowing == "always") && (
                 <FormCheck
                     type="switch"
                     name="seasonal-mode"
-                    checked={snowing}
-                    onChange={(event) => setSnowing(event.currentTarget.checked)}
+                    checked={settings.snowing != "no"}
+                    onChange={(event) => setSettings((settings) => settings.snowing = event.target.checked ? "yes" : "no")}
                     label={<><i className="bi bi-snow"></i> Seasonal decorations</>}
                 />
             )}

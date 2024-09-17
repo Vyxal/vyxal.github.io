@@ -7,7 +7,6 @@ import type { SyntaxNode } from "@lezer/common";
 import { EditorView, hoverTooltip } from "@codemirror/view";
 import { Extension, MapMode } from "@codemirror/state";
 import { vyxalLanguage } from "../../../../common/scripts/languages/vyxal";
-import { vyxalBracketMatching } from "./bracket-matching";
 
 export function vyxalCompletion(elementData: ElementData) {
     return vyxalLanguage.data.of({
@@ -85,5 +84,5 @@ export function vyxalHover(util: UtilWorker): Extension {
 }
 
 export function vyxal(util: UtilWorker, data: ElementData) {
-    return new LanguageSupport(vyxalLanguage, [vyxalCompletion(data), vyxalHover(util), elementTooltip(data, false), vyxalBracketMatching()]);
+    return new LanguageSupport(vyxalLanguage, [vyxalCompletion(data), vyxalHover(util), elementTooltip(data, false)]);
 }

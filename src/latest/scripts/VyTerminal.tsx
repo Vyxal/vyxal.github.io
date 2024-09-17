@@ -22,7 +22,7 @@ type VyTerminalProps = {
 const VyTerminal = forwardRef(function VyTerminal({ code, flags, inputs, timeout, onStart, onFinish }: VyTerminalProps, ref: ForwardedRef<VyTerminalRef>) {
     const wrapperRef = useRef(null);
     const elementData = useContext(ElementDataContext);
-    const runner = useMemo(() => new VyRunner(splashes.split("\n"), elementData!.version), []);
+    const runner = useMemo(() => new VyRunner(splashes.trim().split("\n"), elementData!.version), []);
 
     useImperativeHandle(ref, () => {
         return {

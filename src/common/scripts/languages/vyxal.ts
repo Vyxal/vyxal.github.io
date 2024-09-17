@@ -11,7 +11,7 @@ export const vyxalLanguage = LRLanguage.define({
                 SyntaxTrigraph: tags.operator,
                 StructureOpen: tags.bracket,
                 StructureClose: tags.bracket,
-                Modifier: tags.modifier,
+                Modifier: tags.moduleKeyword,
                 VariableThing: tags.variableName,
                 String: tags.string,
                 SingleCharString: tags.special(tags.string),

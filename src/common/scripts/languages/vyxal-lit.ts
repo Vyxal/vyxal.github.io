@@ -12,7 +12,7 @@ export const vyxalLitLanguage = LRLanguage.define({
                 String: tags.string,
                 Number: tags.number,
                 Element: tags.keyword,
-                Modifier: tags.modifier,
+                Modifier: tags.moduleKeyword,
                 VariableThing: tags.variableName,
                 ListStuff: tags.literal,
                 GroupStuff: tags.keyword,

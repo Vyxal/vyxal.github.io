@@ -62,6 +62,7 @@ export type ElementData = {
     codepageRaw: string[],
     flagDefs: Map<string, BooleanFlagDef | ChoiceFlagDef>,
     version: string,
+    fuse: Fuse<SyntaxThing>,
 };
 type RawElementData = {
     elements: Omit<Element, "type">[],
@@ -91,65 +92,28 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch(`${DATA_URI}/theseus.jso
             codepageRaw: [...data.codepage],
             flagDefs: new Map(data.flags.map((def) => def.type == "choice" ? {...def, choices: new Map(Object.entries(def.choices))} : def).map((def) => [def.name, def])),
             version: data.version,
+            fuse: new Fuse([...elements, ...modifiers, ...syntax], {
+                includeScore: true,
+                threshold: 0.3,
+                isCaseSensitive: true,
+                ignoreLocation: true,
+                shouldSort: true,
+                keys: [
+                    {
+                        "name": "symbol",
+                        "weight": 3,
+                    },
+                    {
+                        "name": "name",
+                        "weight": 2,
+                    },
+                    {
+                        "name": "keywords",
+                        "weight": 1,
+                    },
+                ],
+            }),
         };
     });
 
 export const ElementDataContext = createContext<ElementData | undefined>(undefined);
-
-export const elementFuse = new Fuse<Element>([], {
-    includeScore: true,
-    threshold: 0.3,
-    isCaseSensitive: true,
-    keys: [
-        {
-            "name": "symbol",
-            "weight": 3,
-        },
-        {
-            "name": "name",
-            "weight": 2,
-        },
-        {
-            "name": "keywords",
-            "weight": 1,
-        },
-    ],
-    ignoreLocation: true,
-});
-export const modifierFuse = new Fuse<Modifier>([], {
-    includeScore: true,
-    threshold: 0.3,
-    isCaseSensitive: true,
-    keys: [
-        {
-            "name": "name",
-            "weight": 2,
-        },
-        {
-            "name": "keywords",
-            "weight": 1,
-        },
-    ],
-    ignoreLocation: true,
-});
-export const syntaxFuse = new Fuse<SyntaxFeature>([], {
-    includeScore: true,
-    threshold: 0.3,
-    isCaseSensitive: true,
-    keys: [
-        {
-            "name": "symbol",
-            "weight": 3,
-        },
-        {
-            "name": "name",
-            "weight": 2,
-        },
-    ],
-    ignoreLocation: true,
-});
-ELEMENT_DATA.then((data) => {
-    elementFuse.setCollection([...data.elements.values()]);
-    modifierFuse.setCollection([...data.modifiers.values()]);
-    syntaxFuse.setCollection([...data.syntax.values()]);
-});

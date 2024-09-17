@@ -1,8 +1,7 @@
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { ElementDataContext, elementFuse, modifierFuse, syntaxFuse, SyntaxThing } from "../util/element-data";
+import { ElementDataContext } from "../util/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
-import type Fuse from "fuse.js";
 import { ThingCard } from "../ThingCard";
 
 type ElementOffcanvasProps = {
@@ -11,14 +10,12 @@ type ElementOffcanvasProps = {
     insertCharacter: (char: string) => void,
 };
 
-const fuses: Fuse<SyntaxThing>[] = [elementFuse, modifierFuse, syntaxFuse];
-
 export function ElementOffcanvas({ show, setShow, insertCharacter }: ElementOffcanvasProps) {
     const elementData = useContext(ElementDataContext)!;
     const [tab, setTab] = useState("search");
     const [query, setQuery] = useState("");
     const results = query != "" ? (
-        fuses.flatMap((fuse) => fuse.search(query)).sort((a, b) => a.score! - b.score!).map(({ item }) => item)
+        elementData.fuse.search(query, { limit: 30 }).map(({ item }) => item)
     ) : [...elementData.elements.values(), ...elementData.modifiers.values(), ...elementData.syntax.values()];
     const codepage = elementData.codepageRaw;
 

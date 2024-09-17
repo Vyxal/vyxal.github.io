@@ -69,7 +69,7 @@ export function ElementOffcanvas({ show, setShow, insertCharacter }: ElementOffc
                                 }, []).map((row, index) => (
                                     <tr key={index}>
                                         {
-                                            row.map((glyph) => <td key={glyph}>{glyph}</td>)
+                                            row.map((glyph) => <td key={glyph} style={{cursor: "pointer"}} onClick={() => insertCharacter(glyph)}>{glyph}</td>)
                                         }
                                     </tr>
                                 ))

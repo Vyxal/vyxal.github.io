@@ -24,15 +24,18 @@ declare const self: Window & (WorkerGlobalScope | SharedWorkerGlobalScope);
 
 // @ts-expect-error DATA_URI gets replaced by Webpack
 const dataUri = DATA_URI;
-const [{ Vyxal }, short, long] = await Promise.all([
+const vyxalPromise = Promise.all([
     import("https://vyxal.github.io/Vyxal/vyxal.js"),
     fetch(`${dataUri}/ShortDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),
     fetch(`${dataUri}/LongDictionary.txt`, { cache: "force-cache" }).then((response) => response.text()),
-]);
-Vyxal.setShortDict(short);
-Vyxal.setLongDict(long);
+]).then(([{ Vyxal }, short, long]) => {
+    Vyxal.setShortDict(short);
+    Vyxal.setLongDict(long);
+    return Vyxal;
+});
 
-function handleRequest(request: WorkerRequest) {
+async function handleRequest(request: WorkerRequest) {
+    const Vyxal = await vyxalPromise;
     switch (request.type) {
         case "sbcsify":
             return { data: Vyxal.getSBCSified(request.code), rqid: request.rqid };
@@ -50,15 +53,15 @@ if (isShared) {
     self.addEventListener("connect", (connectEvent: MessageEvent<WorkerRequest>) => {
         console.log(`Connection opened`);
         const port = connectEvent.ports[0];
-        port.addEventListener("message", (event) => {
-            port.postMessage(handleRequest(event.data));
+        port.addEventListener("message", async(event) => {
+            port.postMessage(await handleRequest(event.data));
         });
         port.start();
         port.postMessage("ready");
     });
 } else {
-    self.addEventListener("message", (event) => {
-        self.postMessage(handleRequest(event.data));
+    self.addEventListener("message", async(event) => {
+        self.postMessage(await handleRequest(event.data));
     });
 }
 

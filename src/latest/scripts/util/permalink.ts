@@ -60,8 +60,8 @@ export function decodeHash(hash: string): V2Permalink | null {
             console.warn("Permalink is of an unsupported format!", data);
             return null;
         }
-    } catch {
-        console.warn("Failed to decode permalink!");
+    } catch (e) {
+        console.warn("Failed to decode permalink!", e);
         return null;
     }
 }

@@ -27,7 +27,6 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 // } else {
 //     console.warn("No service worker support detected, skipping registration.");
 // }
- 
 
 const utilWorker = new UtilWorker();
 
@@ -45,36 +44,37 @@ const LITERATE_MODE_FLAG_NAME = "Literate mode";
 
 export type VyRunnerState = "idle" | "starting" | "running";
 
-function Theseus() {
-    let link: V2Permalink | null;
-    if (window.location.hash.length) {
-        link = decodeHash(window.location.hash.slice(1));
-        if (link != null && link.version != null && incompatible(link.version)) {
-            window.location.replace(`https://vyxal.github.io/versions/v${link.version}#${location.hash.substring(1)}`);
-        }
-    } else {
-        link = null;
-    }
+type TheseusProps = {
+    permalink: V2Permalink | null,
+};
+
+function Theseus({ permalink }: TheseusProps) {
     const elementData = useContext(ElementDataContext)!;
-    const [flags, setFlags] = useImmer<Flags>(deserializeFlags(elementData.flagDefs, new Set(link?.flags ?? [])));
+
+    const [flags, setFlags] = useImmer<Flags>(deserializeFlags(elementData.flagDefs, new Set(permalink?.flags ?? [])));
     const literate = flags.get(LITERATE_MODE_FLAG_NAME) == true;
+
     const [settings, setSettings] = useImmer<Settings>(loadSettings());
     const [timeout, setTimeout] = useState<number | null>(10);
-    const [header, setHeader] = useState(link?.header ?? "");
-    const [code, setCode] = useState(link?.code ?? "");
-    const [footer, setFooter] = useState(link?.footer ?? "");
-    const [state, setState] = useState<VyRunnerState>((header + code + footer).length > 0 ? "starting" : "idle");
-    const [inputs, setInputs] = useState<Input[]>(link?.inputs?.map((input) => ({ id: Math.random(), value: input } as Input)) ?? []);
+
+    const [header, setHeader] = useState(permalink?.header ?? "");
+    const [code, setCode] = useState(permalink?.code ?? "");
+    const [footer, setFooter] = useState(permalink?.footer ?? "");
+    const [inputs, setInputs] = useState<Input[]>(permalink?.inputs?.map((input) => ({ id: Math.random(), value: input } as Input)) ?? []);
+    const [bytecount, setBytecount] = useState("...");
+
     const [showFlagsDialog, setShowFlagsDialog] = useState(false);
     const [showSettingsDialog, setShowSettingsDialog] = useState(false);
     const [showShareDialog, setShowShareDialog] = useState(false);
     const [showInputDialog, setShowInputDialog] = useState(false);
     const [showElementOffcanvas, setShowElementOffcanvas] = useState(false);
-    const [bytecount, setBytecount] = useState("...");
+
+    const [state, setState] = useState<VyRunnerState>((header + code + footer).length > 0 ? "starting" : "idle");
     const [lastFocusedEditor, setLastFocusedEditor] = useState<ReactCodeMirrorRef | null>(null);
+    
     const runnerRef = useRef<VyTerminalRef | null>(null);
     const snowflakesRef = useRef<Snowflakes | null>(null);
-
+    
     useEffect(() => {
         switch (settings.theme) {
             case Theme.Dark:
@@ -100,6 +100,10 @@ function Theseus() {
             snowflakesRef.current?.hide();
         }
         saveSettings(settings);
+        return () => {
+            snowflakesRef.current?.stop();
+            snowflakesRef.current?.hide();
+        };
     }, [settings]);
 
     useEffect(() => {
@@ -237,12 +241,20 @@ function Theseus() {
     </>;
 }
 
-ELEMENT_DATA.then((data) => {
-    enableMapSet();
-    const root = createRoot(document.getElementById("react-container")!);
+enableMapSet();
+const root = createRoot(document.getElementById("react-container")!);
+let permalink: V2Permalink | null;
+if (window.location.hash.length) {
+    permalink = decodeHash(window.location.hash.slice(1));
+} else {
+    permalink = null;
+}
+if (permalink != null && permalink.version != null && incompatible(permalink.version)) {
+    window.location.replace(`https://vyxal.github.io/versions/v${permalink.version}#${location.hash.substring(1)}`);
+} else {
     root.render(
-        <ElementDataContext.Provider value={data}>
-            <Theseus />
+        <ElementDataContext.Provider value={await ELEMENT_DATA}>
+            <Theseus permalink={permalink} />
         </ElementDataContext.Provider>,
     );
-});
+}

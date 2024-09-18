@@ -79,6 +79,13 @@ export class UtilWorker {
         }));
     }
 
+    async compress(decompressed: string) {
+        return (await this.send<string>({
+            type: "compress",
+            text: decompressed,
+        }));
+    }
+
     async decompress(compressed: string) {
         return (await this.send<string>({
             type: "decompress",

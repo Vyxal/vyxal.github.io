@@ -1,4 +1,4 @@
-import { Card, ListGroup } from "react-bootstrap";
+import { Badge, Card, ListGroup } from "react-bootstrap";
 import type { SyntaxThing } from "./util/element-data";
 
 const variants: { [key in SyntaxThing["type"]]: string } = {
@@ -14,7 +14,8 @@ type ThingCardProps = {
 };
 
 export function ThingCard({ thing, shadow, onClick }: ThingCardProps) {
-    return <Card border={variants[thing.type]} className={`h-100 ${(shadow ?? false) ? "shadow" : ""} ${(onClick !== undefined ? "clickable" : "")}`} onClick={onClick}>
+    return <Card border={variants[thing.type]} className={`h-100 position-relative ${(shadow ?? false) ? "shadow" : ""} ${(onClick !== undefined ? "clickable" : "")}`} onClick={onClick}>
+        {(thing.type == "element" && thing.vectorises) && <Badge bg="primary" className="position-absolute top-0 end-0 m-2">vectorizes</Badge>}
         <Card.Body>
             <Card.Title>{thing.symbol}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">{thing.name}</Card.Subtitle>

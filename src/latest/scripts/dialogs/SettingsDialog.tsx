@@ -102,7 +102,7 @@ export const SettingsDialog = memo(function({ settings, setSettings, timeout, se
                     name="seasonal-mode"
                     checked={settings.snowing != "no"}
                     onChange={(event) => setSettings((settings) => {
-                        settings.snowing = event.target.checked ? "yes" : "no";
+                        settings.snowing = event.target.checked ? "yes" : (settings.snowing == "always" ? "yes" : "no");
                     })}
                     label={<><i className="bi bi-snow"></i> Seasonal decorations</>}
                 />

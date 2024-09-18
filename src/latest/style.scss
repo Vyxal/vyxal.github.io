@@ -34,7 +34,6 @@ main {
 
 code.code-pill {
     border-radius: $border-radius-sm;
-    background-color: shade-color($code-color, 80%);
     margin-right: $spacer * .25;
     overflow-wrap: normal;
     word-break: break-word;

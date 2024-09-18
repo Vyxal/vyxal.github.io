@@ -34,7 +34,7 @@ export function ElementOffcanvas({ show, setShow, insertCharacter }: ElementOffc
             <Tab.Content className="offcanvas-body overflow-y-hidden">
                 <Tab.Pane eventKey="search" className="element-offcanvas-tab-pane">
                     <Form.Control type="search" placeholder="Search..." value={query} onChange={(event) => setQuery(event.currentTarget.value)} className="" />
-                    <Row xs={1} md={2} className="g-4 mt-0 overflow-y-scroll align-items-stretch">
+                    <Row xs={1} md={2} className="g-4 mt-0 overflow-y-auto align-items-stretch">
                         {results.length ? (
                             results.map((item, i) => {
                                 return <Col key={i}>
@@ -48,7 +48,7 @@ export function ElementOffcanvas({ show, setShow, insertCharacter }: ElementOffc
                         )}
                     </Row>
                 </Tab.Pane>
-                <Tab.Pane eventKey="codepage" className="element-offcanvas-tab-pane overflow-scroll">
+                <Tab.Pane eventKey="codepage" className="element-offcanvas-tab-pane overflow-auto">
                     <table className="table">
                         <tbody>
                             {

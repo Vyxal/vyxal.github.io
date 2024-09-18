@@ -33,22 +33,16 @@ export function vyxalCompletion(elementData: ElementData) {
 export function vyxalHover(util: UtilWorker): Extension {
     async function makeStringTooltip(view: EditorView, node: SyntaxNode): Promise<HTMLElement | null> {
         if (node.name != "String") {
-            return Promise.resolve(null);
+            return null;
         }
-        const content = view.state.doc.slice(node.from, node.to).toString();
-        switch (content.at(-1)) {
-            case "\"": {
-                return Promise.resolve(null);
-            }
-            case "„": {
-                const decompressed = await util.decompress(content);
-                const container = document.createElement("div");
-                container.innerHTML = `<b>Compressed string: </b> ${decompressed}`;
-                return container;
-            }
-            default:
-                return Promise.resolve(null);
+        const content = view.state.sliceDoc(node.from, node.to);
+        if (content.at(-1) == "”") {
+            const decompressed = await util.decompress(content.slice(1, -1));
+            const container = document.createElement("div");
+            container.innerHTML = `<div class="card shadow"><div class="card-body">Compressed string: <code>${decompressed}</code></div></div>`;
+            return container;
         }
+        return null;
     }
     const stringTooltip = hoverTooltip(async(view, pos) => {
         const node = syntaxTree(view.state).resolve(pos);

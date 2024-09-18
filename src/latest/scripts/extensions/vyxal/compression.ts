@@ -60,7 +60,7 @@ export function compressButtonPlugin(util: UtilWorker) {
     }, {
         decorations: (v) => v.decorations,
         eventHandlers: {
-            mousedown: (event, view) => {
+            click: (event, view) => {
                 const target = event.target as HTMLElement;
                 if (target.classList.contains("cm-compress-button")) {
                     return toggleCompression(util, view, syntaxTree(view.state).resolveInner(view.posAtDOM(target), -1));

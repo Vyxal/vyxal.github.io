@@ -7,7 +7,7 @@ import { ThingCard } from "../ThingCard";
 import type Fuse from "fuse.js";
 
 const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
-const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
+const PREFIXED_KEYWORD = new RegExp(` ${KEYWORD.source}`);
 
 
 function elementCompletion(thing: SyntaxThing, literate: boolean): Completion {
@@ -31,7 +31,7 @@ function elementCompletion(thing: SyntaxThing, literate: boolean): Completion {
 
 function syncElementAutocomplete(fuse: Fuse<SyntaxThing>, context: CompletionContext, literate: boolean): CompletionResult | null {
     const word = context.matchBefore(literate ? KEYWORD : PREFIXED_KEYWORD);
-    if (word != null) {
+    if (word != null && word.text.startsWith(" ")) {
         const results = fuse.search(word.text.trimStart());
         if (!results.length) {
             return null;

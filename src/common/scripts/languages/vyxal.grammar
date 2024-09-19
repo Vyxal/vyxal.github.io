@@ -47,6 +47,6 @@ AnyString {
     TwoCharNumber { "~" _ _ }
     VariableThing { "#" ($[=$>]|":[") $[a-zA-Z] $[a-zA-Z0-9_]* }
     ContextIndex { "¤" @digit }
-    Element { ![ᵃᵇᶜᵈᴴᶤᶨᵏᶪᵐⁿᵒᵖᴿᶳᵗᵘᵛᵂᵡᵞᶻ¿⸠/ϩ∥∦ᵉэᶠЧᴳᵜ∆øÞk"„”“0123456789#ᶴ'~.[\](){}ṆḌλƛΩ₳µ⟨|ı] }
+    Element { ![ᵃᵇᶜᵈᴴᶤᶨᵏᶪᵐⁿᵒᵖᴿᶳᵗᵘᵛᵂᵡᵞᶻ¿⸠/ϩ∥∦ᵉэᶠЧᴳᵜ∆øÞk"„”0123456789#ᶴ'~.[\](){}ṆḌλƛΩ₳µ⟨|ı] }
     @precedence { Space, Element }
 }

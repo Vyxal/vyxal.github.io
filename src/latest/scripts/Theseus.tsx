@@ -14,7 +14,7 @@ import { incompatible, V2Permalink } from "./util/permalink";
 import { decodeHash, encodeHash } from "./util/permalink";
 import HtmlView from "./HtmlView";
 import { CopyButton } from "./CopyButton";
-import { ELEMENT_DATA, ElementDataContext } from "./util/element-data";
+import { ElementDataContext, parseElementData } from "./util/element-data";
 import { deserializeFlags, Flags, serializeFlags } from "./flags";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
 import { enableMapSet } from "immer";
@@ -27,8 +27,6 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 // } else {
 //     console.warn("No service worker support detected, skipping registration.");
 // }
-
-const utilWorker = new UtilWorker();
 
 const VyTerminal = lazy(() => import(
     /* webpackChunkName: "terminal" */
@@ -50,6 +48,7 @@ type TheseusProps = {
 
 function Theseus({ permalink }: TheseusProps) {
     const elementData = useContext(ElementDataContext)!;
+    const utilWorker = new UtilWorker(elementData.codepage);
 
     const [settings, setSettings] = useImmer<Settings>(loadSettings());
     const [timeout, setTimeout] = useState<number | null>(10);
@@ -183,10 +182,10 @@ function Theseus({ permalink }: TheseusProps) {
                         </div>
                     }
                 >
-                    <Editor ratio="20%" code={header} setCode={setHeader} settings={settings} literate={literate} claimFocus={setLastFocusedEditor}>
+                    <Editor utilWorker={utilWorker} ratio="20%" code={header} setCode={setHeader} settings={settings} literate={literate} claimFocus={setLastFocusedEditor}>
                         Header
                     </Editor>
-                    <Editor ratio="60%" code={code} setCode={setCode} settings={settings} literate={literate} claimFocus={setLastFocusedEditor} autoFocus>
+                    <Editor utilWorker={utilWorker} ratio="60%" code={code} setCode={setCode} settings={settings} literate={literate} claimFocus={setLastFocusedEditor} autoFocus>
                         <div className="d-flex align-items-center">
                             {bytecount}
                             {literate ? (
@@ -196,7 +195,7 @@ function Theseus({ permalink }: TheseusProps) {
                             ) : null}
                         </div>
                     </Editor>
-                    <Editor ratio="20%" code={footer} setCode={setFooter} settings={settings} literate={literate} claimFocus={setLastFocusedEditor}>
+                    <Editor utilWorker={utilWorker} ratio="20%" code={footer} setCode={setFooter} settings={settings} literate={literate} claimFocus={setLastFocusedEditor}>
                         Footer
                     </Editor>
                 </Suspense>
@@ -259,8 +258,10 @@ if (window.location.hash.length) {
 if (permalink != null && permalink.version != null && incompatible(permalink.version)) {
     window.location.replace(`https://vyxal.github.io/versions/v${permalink.version}#${location.hash.substring(1)}`);
 } else {
+    // @ts-expect-error DATA_URI gets replaced by Webpack
+    const elementData = parseElementData(await fetch(`${DATA_URI}/theseus.json`).then((r) => r.json()));
     root.render(
-        <ElementDataContext.Provider value={await ELEMENT_DATA}>
+        <ElementDataContext.Provider value={elementData}>
             <Theseus permalink={permalink} />
         </ElementDataContext.Provider>,
     );

@@ -6,7 +6,6 @@ import { vyxal } from "./extensions/vyxal/vyxal-extensions";
 import { autocompletion } from "@codemirror/autocomplete";
 import { EditorView, highlightActiveLine, highlightActiveLineGutter, lineNumbers, showPanel } from "@codemirror/view";
 import { Settings, Theme } from "./util/settings";
-import { UtilWorker } from "./util/util-worker";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { ElementDataContext } from "./util/element-data";
 import { vyxalLit } from "./extensions/vyxal-lit-extensions";
@@ -14,6 +13,7 @@ import { createPortal } from "react-dom";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { Button, Stack } from "react-bootstrap";
 import { vyxalBracketMatching } from "./extensions/vyxal/bracket-matching";
+import { UtilWorker } from "./util/util-worker";
 
 const EXTENSIONS = [
     Prec.high(keymap.of([
@@ -41,7 +41,6 @@ const EXTENSIONS = [
         ".cm-tooltip": {"z-index": "400 !important"},
     }),
 ];
-const util = new UtilWorker();
 
 const THEMES = {
     [Theme.Dark]: vscodeDark,
@@ -49,6 +48,7 @@ const THEMES = {
 };
 
 type EditorProps = {
+    utilWorker: UtilWorker,
     code: string,
     ratio: string,
     setCode: Dispatch<SetStateAction<string>>,
@@ -70,7 +70,7 @@ function EditorError({ error, resetErrorBoundary }: FallbackProps) {
     </Stack>;
 }
 
-export default function Editor({ code, ratio, children, setCode, settings, literate, claimFocus, autoFocus }: EditorProps) {
+export default function Editor({ utilWorker, code, ratio, children, setCode, settings, literate, claimFocus, autoFocus }: EditorProps) {
     const elementData = useContext(ElementDataContext);
     const editorRef = useRef<ReactCodeMirrorRef | null>(null);
     const onChange = useCallback((code: string) => {
@@ -92,7 +92,7 @@ export default function Editor({ code, ratio, children, setCode, settings, liter
 
     const extensions = [
         EXTENSIONS, header, focusChangeHandler,
-        useMemo(() => literate ? vyxalLit(elementData!) : vyxal(util, elementData!), [literate]),
+        useMemo(() => literate ? vyxalLit(elementData!) : vyxal(utilWorker, elementData!), [literate]),
         useMemo(() => settings.highlightBrackets != "no" ? vyxalBracketMatching({ showEof: settings.highlightBrackets == "yes-eof" }) : [], [settings]),
     ];
 

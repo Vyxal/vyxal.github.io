@@ -1,6 +1,3 @@
-import { ELEMENT_DATA } from "./element-data";
-
-
 type UtilWorkerResponse<T> = {
     rqid: number,
     data: T,
@@ -16,7 +13,7 @@ type ThingThatLooksLikeAWorker = {
 export class UtilWorker {
     private worker: Promise<ThingThatLooksLikeAWorker>;
     private rqid: number = 0;
-    constructor() {
+    constructor(readonly codepage: Set<string>) {
         this.worker = new Promise((resolve) => {
             const worker = window.SharedWorker ? (
                 new SharedWorker(
@@ -97,7 +94,6 @@ export class UtilWorker {
         let bytecount: number;
         let processedCode: string;
         const modifiers: string[] = [];
-        const codepage = (await ELEMENT_DATA).codepage;
         if (literate) {
             processedCode = await this.sbcsify(code);
         } else {
@@ -106,7 +102,7 @@ export class UtilWorker {
         if (literate) {
             modifiers.push("literate");
         }
-        if (![...processedCode].every((char) => codepage.has(char))) {
+        if (![...processedCode].every((char) => this.codepage.has(char))) {
             bytecount = new Blob([processedCode]).size; // ick
             modifiers.push("UTF-8");
         } else {

@@ -1,5 +1,5 @@
 import { Vyxal } from "https://vyxal.github.io/Vyxal/vyxal.js";
-import type { RunRequest } from "../util/worker-types";
+import type { RunRequest } from "./runner-types";
 
 // @ts-expect-error DATA_URI gets replaced by Webpacl
 const dataUri = DATA_URI;

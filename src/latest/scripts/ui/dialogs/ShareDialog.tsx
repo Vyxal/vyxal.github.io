@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, Suspense, lazy, useEffect, useState } from "react";
 import { Modal, Nav, Spinner } from "react-bootstrap";
 
-import CGCCTemplate from "../../templates/cgcc.handlebars.md";
-import CMCTemplate from "../../templates/cmc.handlebars.md";
+import CGCCTemplate from "../../../templates/cgcc.handlebars.md";
+import CMCTemplate from "../../../templates/cmc.handlebars.md";
 import { CopyButton } from "../CopyButton";
 
 type ShareDialogProps = {

@@ -2,20 +2,23 @@ import { Dispatch, ReactNode, SetStateAction, useCallback, useContext, useMemo, 
 import ReactCodeMirror, { keymap, Prec, ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { minimalSetup } from "codemirror";
 import { vscodeDark } from "@uiw/codemirror-theme-vscode";
-import { vyxal } from "./extensions/vyxal/vyxal-extensions";
+import { vyxalCompletion } from "../language/sbcs/autocomplete";
 import { autocompletion } from "@codemirror/autocomplete";
 import { EditorView, highlightActiveLine, highlightActiveLineGutter, lineNumbers, showPanel } from "@codemirror/view";
-import { Settings, Theme } from "./util/settings";
+import { Settings, Theme } from "./settings";
 import { githubLight } from "@uiw/codemirror-theme-github";
-import { ElementDataContext } from "./util/element-data";
-import { vyxalLit } from "./extensions/vyxal-lit-extensions";
+import { ElementDataContext } from "../interpreter/element-data";
 import { createPortal } from "react-dom";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { Button, Stack } from "react-bootstrap";
-import { vyxalBracketMatching } from "./extensions/vyxal/bracket-matching";
-import { UtilWorker } from "./util/util-worker";
+import { vyxalBracketMatching } from "../language/sbcs/bracket-matching";
+import { UtilWorker } from "../workers/util-api";
+import { elementTooltip } from "../language/common";
+import { compressButtonPlugin } from "../language/sbcs/compression";
+import { vyxalHover } from "../language/sbcs/tooltips";
+import { vyxalLitCompletion } from "../language/literate/autocomplete";
 
-const EXTENSIONS = [
+const commonExtensions = [
     Prec.high(keymap.of([
         {
             key: "Ctrl-Enter",
@@ -71,7 +74,7 @@ function EditorError({ error, resetErrorBoundary }: FallbackProps) {
 }
 
 export default function Editor({ utilWorker, code, ratio, children, setCode, settings, literate, claimFocus, autoFocus }: EditorProps) {
-    const elementData = useContext(ElementDataContext);
+    const elementData = useContext(ElementDataContext)!;
     const editorRef = useRef<ReactCodeMirrorRef | null>(null);
     const onChange = useCallback((code: string) => {
         setCode(code);
@@ -91,8 +94,12 @@ export default function Editor({ utilWorker, code, ratio, children, setCode, set
     }), []);
 
     const extensions = [
-        EXTENSIONS, header, focusChangeHandler,
-        useMemo(() => literate ? vyxalLit(elementData!) : vyxal(utilWorker, elementData!), [literate]),
+        commonExtensions, header, focusChangeHandler,
+        useMemo(() => literate ? [
+            vyxalLitCompletion(elementData), elementTooltip(elementData, true),
+        ] : [
+            vyxalCompletion(elementData), vyxalHover(utilWorker), elementTooltip(elementData, false), compressButtonPlugin(utilWorker),
+        ], [literate, utilWorker]),
         useMemo(() => settings.highlightBrackets != "no" ? vyxalBracketMatching({ showEof: settings.highlightBrackets == "yes-eof" }) : [], [settings]),
     ];
 

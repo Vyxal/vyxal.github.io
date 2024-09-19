@@ -1,9 +1,9 @@
 import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
-import { ElementData, SyntaxThing } from "../util/element-data";
+import type { ElementData, SyntaxThing } from "../interpreter/element-data";
 import { syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { createRoot } from "react-dom/client";
-import { ThingCard } from "../ThingCard";
+import { ThingCard } from "../ui/ThingCard";
 import type Fuse from "fuse.js";
 
 const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;

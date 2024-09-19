@@ -1,34 +1,9 @@
-import type { CompletionContext, CompletionResult } from "@codemirror/autocomplete";
-import { LanguageSupport, syntaxTree } from "@codemirror/language";
-import type { ElementData } from "../../util/element-data";
-import type { UtilWorker } from "../../util/util-worker";
-import { elementAutocomplete, elementTooltip } from '../common';
-import type { SyntaxNode } from "@lezer/common";
-import { EditorView, hoverTooltip } from "@codemirror/view";
+import { syntaxTree } from "@codemirror/language";
 import { Extension, MapMode } from "@codemirror/state";
-import { vyxalLanguage } from "../../../../common/scripts/languages/vyxal";
-import { compressButtonPlugin } from "./compression";
-
-export function vyxalCompletion(elementData: ElementData) {
-    return vyxalLanguage.data.of({
-        autocomplete(context: CompletionContext): Promise<CompletionResult | null> {
-            const sugar = context.matchBefore(/#[,.^](.)/);
-            if (sugar != null) {
-                const desugared = elementData.sugars.get(sugar.text);
-                if (typeof desugared == "string") {
-                    return Promise.resolve({
-                        from: sugar.from,
-                        filter: false,
-                        options: [
-                            { label: desugared, detail: "sugar trigraph", type: "constant" },
-                        ],
-                    });
-                }
-            }
-            return elementAutocomplete(elementData, context, false);
-        },
-    });
-}
+import { hoverTooltip } from "@codemirror/view";
+import { SyntaxNode } from "@lezer/common";
+import { EditorView } from "codemirror";
+import { UtilWorker } from "../../workers/util-api";
 
 export function vyxalHover(util: UtilWorker): Extension {
     async function makeStringTooltip(view: EditorView, node: SyntaxNode): Promise<HTMLElement | null> {
@@ -76,8 +51,4 @@ export function vyxalHover(util: UtilWorker): Extension {
         return null;
     });
     return [stringTooltip];
-}
-
-export function vyxal(util: UtilWorker, data: ElementData) {
-    return new LanguageSupport(vyxalLanguage, [vyxalCompletion(data), vyxalHover(util), elementTooltip(data, false), compressButtonPlugin(util)]);
 }

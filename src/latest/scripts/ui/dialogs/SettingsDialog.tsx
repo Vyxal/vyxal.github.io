@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, memo, useEffect, useRef } from "react";
 import { Button, FormCheck, FormLabel, FormText, Modal, ToggleButton, ToggleButtonGroup } from "react-bootstrap";
-import { Settings, Theme, isTheSeason } from "../util/settings";
+import { Settings, Theme, isTheSeason } from "../settings";
 import FormRange from "react-bootstrap/esm/FormRange";
 import { Updater } from "use-immer";
 

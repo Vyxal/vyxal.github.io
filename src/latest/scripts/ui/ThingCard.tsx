@@ -1,5 +1,5 @@
 import { Badge, Card, ListGroup } from "react-bootstrap";
-import type { SyntaxThing } from "./util/element-data";
+import type { SyntaxThing } from "../interpreter/element-data";
 
 const variants: { [key in SyntaxThing["type"]]: string } = {
     element: "",

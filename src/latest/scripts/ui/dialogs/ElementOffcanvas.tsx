@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { ElementDataContext } from "../util/element-data";
+import { ElementDataContext } from "../../interpreter/element-data";
 import { Card, Col, Nav, Offcanvas, Row, Tab } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 import { ThingCard } from "../ThingCard";

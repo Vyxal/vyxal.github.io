@@ -1,11 +1,11 @@
 import { syntaxTree } from "@codemirror/language";
 import { Range } from "@codemirror/state";
 import { Decoration, DecorationSet, EditorView, ViewPlugin, ViewUpdate, WidgetType } from "@codemirror/view";
-import { UtilWorker } from "../../util/util-worker";
+import { UtilWorker } from "../../workers/util-api";
 import { SyntaxNode } from "@lezer/common";
 
 class CompressButtonWidget extends WidgetType {
-    eq(other: CompressButtonWidget): boolean {
+    eq(): boolean {
         return true;
     }
 

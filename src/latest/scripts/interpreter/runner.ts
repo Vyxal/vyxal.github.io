@@ -1,6 +1,6 @@
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
-import { RunRequest, WorkerMessage } from "./util/worker-types";
+import { RunRequest, RunnerMessage } from "../workers/runner-types";
 
 const MAX_BUFFER_SIZE = 20000;
 
@@ -70,9 +70,9 @@ export class VyRunner extends EventTarget {
         return new Promise<Worker>((resolve) => {
             const worker = new Worker(
                 /* webpackChunkName: "worker" */
-                new URL("./workers/runner.ts", import.meta.url),
+                new URL("../workers/runner.ts", import.meta.url),
             );
-            const listener = (event: MessageEvent<WorkerMessage>) => {
+            const listener = (event: MessageEvent<RunnerMessage>) => {
                 if (event.data.type == "ready") {
                     resolve(worker);
                     worker.addEventListener("message", this.onWorkerMessage.bind(this));
@@ -87,7 +87,7 @@ export class VyRunner extends EventTarget {
         });
     }
 
-    private onWorkerMessage(message: MessageEvent<WorkerMessage>) {
+    private onWorkerMessage(message: MessageEvent<RunnerMessage>) {
         const data = message.data;
         if (data.workerNumber != this.workerCounter) {
             console.warn("Discarding old worker message");

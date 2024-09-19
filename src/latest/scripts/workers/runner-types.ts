@@ -40,4 +40,4 @@ export interface DoneMessage {
     workerNumber: number,
 }
 
-export type WorkerMessage = ReadyMessage | StartedMessage | StdoutMessage | StderrMessage | WorkerNoticeMessage | DoneMessage;
+export type RunnerMessage = ReadyMessage | StartedMessage | StdoutMessage | StderrMessage | WorkerNoticeMessage | DoneMessage;

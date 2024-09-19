@@ -1,4 +1,4 @@
-import type { FlagDefs } from "./util/element-data";
+import type { FlagDefs } from "./element-data";
 
 export type Flags = Map<string, boolean | string>;
 

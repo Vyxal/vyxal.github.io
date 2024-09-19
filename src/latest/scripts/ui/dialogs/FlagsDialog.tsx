@@ -1,9 +1,9 @@
 import { Button, FormSelect, InputGroup, Modal } from "react-bootstrap";
 import { FormLabel } from "react-bootstrap";
 import { Dispatch, SetStateAction, memo, useContext } from "react";
-import { ElementDataContext } from "../util/element-data";
+import { ElementDataContext } from "../../interpreter/element-data";
 import { Updater } from "use-immer";
-import { Flags, deserializeFlags, serializeFlags } from "../flags";
+import { Flags, deserializeFlags, serializeFlags } from "../../interpreter/flags";
 
 type FlagsDialogProps = {
     flags: Flags,

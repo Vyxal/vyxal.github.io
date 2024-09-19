@@ -1,7 +1,7 @@
 import { ForwardedRef, forwardRef, useContext, useEffect, useImperativeHandle, useMemo, useRef } from "react";
-import { VyRunner, TerminateReason } from "./runner";
-import { ElementDataContext } from "./util/element-data";
-import splashes from "../data/splash.txt?raw";
+import { VyRunner, TerminateReason } from "../interpreter/runner";
+import { ElementDataContext } from "../interpreter/element-data";
+import splashes from "../../data/splash.txt?raw";
 
 export interface VyTerminalRef {
     start(): void,

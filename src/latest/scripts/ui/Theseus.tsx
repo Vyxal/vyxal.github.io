@@ -2,22 +2,19 @@ import { lazy, Suspense, useCallback, useContext, useEffect, useRef, useState } 
 import Header from "./Header";
 import { Spinner, Tab, Nav, Button } from "react-bootstrap";
 import { useImmer } from "use-immer";
-import { createRoot } from "react-dom/client";
-import { isTheSeason, loadSettings, saveSettings, Settings, Theme } from "./util/settings";
-import { UtilWorker } from "./util/util-worker";
+import { isTheSeason, loadSettings, saveSettings, Settings, Theme } from "./settings";
+import { UtilWorker } from "../workers/util-api";
 import { VyTerminalRef } from "./VyTerminal";
 import { SettingsDialog } from "./dialogs/SettingsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
-import { incompatible, V2Permalink } from "./util/permalink";
-import { decodeHash, encodeHash } from "./util/permalink";
+import { V2Permalink, encodeHash } from "../interpreter/permalink";
 import HtmlView from "./HtmlView";
 import { CopyButton } from "./CopyButton";
-import { ElementDataContext, parseElementData } from "./util/element-data";
-import { deserializeFlags, Flags, serializeFlags } from "./flags";
+import { ElementDataContext } from "../interpreter/element-data";
+import { deserializeFlags, Flags, serializeFlags } from "../interpreter/flags";
 import { FlagsDialog } from "./dialogs/FlagsDialog";
-import { enableMapSet } from "immer";
 import { Input, InputDialog } from "./dialogs/InputDialog";
 import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
@@ -46,7 +43,7 @@ type TheseusProps = {
     permalink: V2Permalink | null,
 };
 
-function Theseus({ permalink }: TheseusProps) {
+export function Theseus({ permalink }: TheseusProps) {
     const elementData = useContext(ElementDataContext)!;
     const utilWorker = new UtilWorker(elementData.codepage);
 
@@ -245,24 +242,4 @@ function Theseus({ permalink }: TheseusProps) {
             </div>
         </main>
     </>;
-}
-
-enableMapSet();
-const root = createRoot(document.getElementById("react-container")!);
-let permalink: V2Permalink | null;
-if (window.location.hash.length) {
-    permalink = decodeHash(window.location.hash.slice(1));
-} else {
-    permalink = null;
-}
-if (permalink != null && permalink.version != null && incompatible(permalink.version)) {
-    window.location.replace(`https://vyxal.github.io/versions/v${permalink.version}#${location.hash.substring(1)}`);
-} else {
-    // @ts-expect-error DATA_URI gets replaced by Webpack
-    const elementData = parseElementData(await fetch(`${DATA_URI}/theseus.json`).then((r) => r.json()));
-    root.render(
-        <ElementDataContext.Provider value={elementData}>
-            <Theseus permalink={permalink} />
-        </ElementDataContext.Provider>,
-    );
 }

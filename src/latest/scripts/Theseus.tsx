@@ -151,9 +151,10 @@ function Theseus({ permalink }: TheseusProps) {
         <InputDialog inputs={inputs} setInputs={setInputs} show={showInputDialog} setShow={setShowInputDialog} />
         <ElementOffcanvas
             show={showElementOffcanvas} setShow={setShowElementOffcanvas} insertCharacter={(char) => {
-                lastFocusedEditor?.view?.dispatch({
-                    changes: { from: lastFocusedEditor.view.state.doc.length, insert: char },
-                });
+                const view = lastFocusedEditor?.view;
+                if (view != null) {
+                    view.dispatch(view.state.replaceSelection(char));
+                }
             }} 
         />
         <Header

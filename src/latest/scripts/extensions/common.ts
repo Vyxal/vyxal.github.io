@@ -32,8 +32,7 @@ function elementCompletion(thing: SyntaxThing, literate: boolean): Completion {
 function syncElementAutocomplete(fuse: Fuse<SyntaxThing>, context: CompletionContext, literate: boolean): CompletionResult | null {
     const word = context.matchBefore(literate ? KEYWORD : PREFIXED_KEYWORD);
     if (word != null) {
-        word.text = word.text.trimStart();
-        const results = fuse.search(word.text);
+        const results = fuse.search(word.text.trimStart());
         if (!results.length) {
             return null;
         }

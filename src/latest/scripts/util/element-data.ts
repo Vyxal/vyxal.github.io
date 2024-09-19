@@ -95,16 +95,16 @@ export const ELEMENT_DATA: Promise<ElementData> = fetch(`${DATA_URI}/theseus.jso
             fuse: new Fuse([...elements, ...modifiers, ...syntax], {
                 includeScore: true,
                 threshold: 0.3,
-                isCaseSensitive: true,
+                isCaseSensitive: false,
                 ignoreLocation: true,
                 shouldSort: true,
                 keys: [
                     {
-                        "name": "symbol",
-                        "weight": 3,
+                        "name": "name",
+                        "weight": 2,
                     },
                     {
-                        "name": "name",
+                        "name": "description",
                         "weight": 2,
                     },
                     {

@@ -89,9 +89,9 @@ function matchBrackets(state: EditorState, position: number, side: Side): MatchR
                 if (node.name == "StructureClose") {
                     const closer = state.doc.sliceString(node.from, node.to);
                     if (closer == "}") {
-                        openers.splice(openers.length - 2);
-                    } else if (closer == ")") {
                         openers.pop();
+                    } else if (closer == ")") {
+                        openers.splice(openers.length - 2);
                     } else if (closer == "]") {
                         openers = [];
                     }

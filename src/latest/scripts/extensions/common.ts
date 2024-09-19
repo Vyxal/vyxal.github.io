@@ -7,7 +7,7 @@ import { ThingCard } from "../ThingCard";
 import type Fuse from "fuse.js";
 
 const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
-const PREFIXED_KEYWORD = new RegExp(` ${KEYWORD.source}`);
+const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
 
 
 function elementCompletion(thing: SyntaxThing, literate: boolean): Completion {

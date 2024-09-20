@@ -74,17 +74,17 @@ export function compressButtonPlugin(util: UtilWorker) {
 export function toggleCompression(util: UtilWorker, view: EditorView, node: SyntaxNode) {
     if (node.name == "String") {
         let text = view.state.sliceDoc(node.from, node.to);
-        view.state.doc.slice(node.from, node.to);
-        const compressed = text.endsWith("”");
-        if (!(compressed || text.endsWith(`"`))) {
+        const isCompressed = text.endsWith("”");
+        if (!(isCompressed || text.endsWith(`"`))) {
             text += `"`;
         }
-        (compressed ? util.decompress(text.slice(1, -1)) : util.compress(text)).then((r) => r.slice(1, -1)).then((result) => {
+        const trimmed = text.slice(1, -1);
+        (isCompressed ? util.decompress(trimmed) : util.compress(trimmed).then((r) => r.slice(1, -1))).then((result) => {
             view.dispatch({
                 changes: {
                     from: node.from,
                     to: node.to,
-                    insert: compressed ? `"${result}"` : `"${result}”`,
+                    insert: isCompressed ? `"${result}"` : `"${result}”`,
                 },
             });
         });

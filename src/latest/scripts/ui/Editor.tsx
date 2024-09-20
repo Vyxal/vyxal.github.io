@@ -13,10 +13,11 @@ import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 import { Button, Stack } from "react-bootstrap";
 import { vyxalBracketMatching } from "../language/sbcs/bracket-matching";
 import { UtilWorker } from "../workers/util-api";
-import { elementTooltip } from "../language/common";
+import { elementTooltip, vyxal, vyxalLiterate } from "../language/common";
 import { compressButtonPlugin } from "../language/sbcs/compression";
 import { vyxalHover } from "../language/sbcs/tooltips";
 import { vyxalLitCompletion } from "../language/literate/autocomplete";
+import { LanguageSupport } from "@codemirror/language";
 
 const commonExtensions = [
     Prec.high(keymap.of([
@@ -93,13 +94,15 @@ export default function Editor({ utilWorker, code, ratio, children, setCode, set
         return null;
     }), []);
 
+    const languageExtensions = useMemo(() => literate ? [
+        vyxalLiterate, vyxalLitCompletion(elementData), elementTooltip(elementData, true),
+    ] : [
+        vyxal, vyxalCompletion(elementData), vyxalHover(utilWorker), elementTooltip(elementData, false), compressButtonPlugin(utilWorker),
+    ], [literate, utilWorker]);
+
     const extensions = [
         commonExtensions, header, focusChangeHandler,
-        useMemo(() => literate ? [
-            vyxalLitCompletion(elementData), elementTooltip(elementData, true),
-        ] : [
-            vyxalCompletion(elementData), vyxalHover(utilWorker), elementTooltip(elementData, false), compressButtonPlugin(utilWorker),
-        ], [literate, utilWorker]),
+        languageExtensions,
         useMemo(() => settings.highlightBrackets != "no" ? vyxalBracketMatching({ showEof: settings.highlightBrackets == "yes-eof" }) : [], [settings]),
     ];
 

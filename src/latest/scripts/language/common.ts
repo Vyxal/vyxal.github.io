@@ -1,10 +1,12 @@
 import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import type { ElementData, SyntaxThing } from "../interpreter/element-data";
-import { syntaxTree } from "@codemirror/language";
+import { LanguageSupport, syntaxTree } from "@codemirror/language";
 import { hoverTooltip, Tooltip } from "@codemirror/view";
 import { createRoot } from "react-dom/client";
 import { ThingCard } from "../ui/ThingCard";
 import type Fuse from "fuse.js";
+import { vyxalLanguage } from "../../../common/scripts/language/vyxal";
+import { vyxalLitLanguage } from "../../../common/scripts/language/vyxal-lit";
 
 const KEYWORD = /[a-zA-Z-?!*+=&%<>][a-zA-Z0-9-?!*+=&%<>:]*/;
 const PREFIXED_KEYWORD = new RegExp(`( |^)${KEYWORD.source}`);
@@ -96,3 +98,6 @@ export function elementTooltip(elementData: ElementData, literate: boolean) {
         return null;
     });
 }
+
+export const vyxal = new LanguageSupport(vyxalLanguage);
+export const vyxalLiterate = new LanguageSupport(vyxalLitLanguage);

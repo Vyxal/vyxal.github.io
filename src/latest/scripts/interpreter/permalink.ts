@@ -1,13 +1,24 @@
 import compatRaw from "../../data/compat.json?raw";
+import { gunzipString, gzipString } from "gzip-utils";
 
 const compat = JSON.parse(compatRaw);
+
+export type Permalink = {
+    format: 2,
+    flags: string[],
+    header: string,
+    code: string,
+    footer: string,
+    inputs: string[],
+    version: string | undefined,
+};
 
 export function incompatible(permalinkVersion: string) {
     return compat[permalinkVersion] ?? false;
 }
 
-export function encodeHash(header: string, code: string, footer: string, flags: string[], inputs: string[], version: string): string {
-    return btoa(encodeURIComponent(JSON.stringify({
+export function encodeHash(header: string, code: string, footer: string, flags: string[], inputs: string[], version: string): Promise<string> {
+    return gzipString(JSON.stringify({
         format: 2,
         header: header,
         code: code,
@@ -15,7 +26,7 @@ export function encodeHash(header: string, code: string, footer: string, flags: 
         flags: flags,
         inputs: inputs,
         version: version,
-    })));
+    }), "base64url") as Promise<string>;
 }
 
 // escape() polyfill for legacy permalinks
@@ -39,9 +50,10 @@ function escape(input: string) {
     return r;
 }
 
-export function decodeHash(hash: string): V2Permalink | null {
+export async function decodeHash(hash: string): Promise<Permalink | null> {
+    let data;
     try {
-        let data = JSON.parse(decodeURIComponent(atob(hash)));
+        data = JSON.parse(decodeURIComponent(atob(hash)));
         if (data instanceof Array) {
             // it's a legacy permalink, do decoding again
             data = JSON.parse(decodeURIComponent(escape(atob(hash))));
@@ -53,35 +65,26 @@ export function decodeHash(hash: string): V2Permalink | null {
                 footer: data[3],
                 inputs: (data[4] as string).split("\n"),
                 version: data[5],
-            } as V2Permalink);
-        } else if (data.format == 2) {
-            return (data as V2Permalink);
+            } as Permalink);
+        }
+    } catch (e) {
+        // might be a compressed permalink
+        try {
+            data = JSON.parse(await gunzipString(hash, "base64url", "utf8") as string);
+        } catch (f) {
+            console.warn("Failed to decode permalink!", e, f);
+            return null;
+        }
+    }
+    try {
+        if (data.format == 2) {
+            return (data as Permalink);
         } else {
             console.warn("Permalink is of an unsupported format!", data);
             return null;
         }
     } catch (e) {
-        console.warn("Failed to decode permalink!", e);
+        console.warn("Permalink is structured incorrectly!", data, e);
         return null;
     }
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type V1Permalink = {
-    flags: string,
-    header: string,
-    code: string,
-    footer: string,
-    inputs: string,
-};
-
-export type V2Permalink = {
-    format: 2,
-    flags: string[],
-    header: string,
-    code: string,
-    footer: string,
-    inputs: string[],
-    version: string | undefined,
-};
-

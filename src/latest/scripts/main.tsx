@@ -1,14 +1,14 @@
 import { enableMapSet } from "immer";
 import { createRoot } from "react-dom/client";
-import { V2Permalink, decodeHash, incompatible } from "./interpreter/permalink";
+import { Permalink, decodeHash, incompatible } from "./interpreter/permalink";
 import { ElementDataContext, parseElementData } from "./interpreter/element-data";
 import { Theseus } from "./ui/Theseus";
 
 enableMapSet();
 const root = createRoot(document.getElementById("react-container")!);
-let permalink: V2Permalink | null;
+let permalink: Permalink | null;
 if (window.location.hash.length) {
-    permalink = decodeHash(window.location.hash.slice(1));
+    permalink = await decodeHash(window.location.hash.slice(1));
 } else {
     permalink = null;
 }

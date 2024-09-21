@@ -9,7 +9,7 @@ import { SettingsDialog } from "./dialogs/SettingsDialog";
 import ShareDialog from "./dialogs/ShareDialog";
 import { ElementOffcanvas } from "./dialogs/ElementOffcanvas";
 import type Snowflakes from "magic-snowflakes";
-import { V2Permalink, encodeHash } from "../interpreter/permalink";
+import { Permalink, encodeHash } from "../interpreter/permalink";
 import HtmlView from "./HtmlView";
 import { CopyButton } from "./CopyButton";
 import { ElementDataContext } from "../interpreter/element-data";
@@ -40,7 +40,7 @@ const LITERATE_MODE_FLAG_NAME = "Literate mode";
 export type VyRunnerState = "idle" | "starting" | "running";
 
 type TheseusProps = {
-    permalink: V2Permalink | null,
+    permalink: Permalink | null,
 };
 
 export function Theseus({ permalink }: TheseusProps) {
@@ -109,9 +109,9 @@ export function Theseus({ permalink }: TheseusProps) {
     }, [settings]);
 
     useEffect(() => {
-        history.replaceState(undefined, "", "#" + encodeHash(
+        encodeHash(
             header, code, footer, [...serializeFlags(elementData.flagDefs, flags)], inputs.map((input) => input.value), elementData.version,
-        ));
+        ).then((hash) => history.replaceState(undefined, "", "#" + hash));
     }, [header, code, footer, flags, inputs]);
 
     useEffect(() => {

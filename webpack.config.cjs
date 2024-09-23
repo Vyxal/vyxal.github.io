@@ -42,6 +42,10 @@ module.exports = function (env, argv) {
                         {
                             import: "./src/versions/versions.hbs",
                             filename: "versions.html"
+                        },
+                        {
+                            import: "./src/luminespire/luminespire.hbs",
+                            filename: "luminespire.html"
                         }
                     ]
                 ),

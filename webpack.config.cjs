@@ -85,7 +85,8 @@ module.exports = function (env, argv) {
             ),
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(gitRevisionPlugin.version()),
-                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join(".", env["vy-archive"]) : LATEST_DATA_URI)
+                DATA_URI: JSON.stringify(env["vy-archive"] != undefined ? path.join(".", env["vy-archive"]) : LATEST_DATA_URI),
+                PRODUCTION: JSON.stringify(prod),
             })
             // new WorkboxPlugin.InjectManifest({
             //     swSrc: "./src/latest/js/service.ts",

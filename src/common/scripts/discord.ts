@@ -1,5 +1,5 @@
 // @ts-expect-error PRODUCTION gets replaced by webpack
-if (PRODUCTION == "true") {
+if (PRODUCTION) {
     fetch("https://discord.com/api/guilds/936437703048822844/widget.json")
         .then((r) => r.json())
         .then(({ presence_count: online }) => {

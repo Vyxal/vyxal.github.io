@@ -1,38 +1,5 @@
-// $accordion-padding-y: 0;
-// $accordion-padding-x: 0;
-// $primary: rgb(59, 130, 246);
+@import "../common/styles/style.scss";
 
-// Configuration
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/variables-dark";
-
-$custom-colors: (
-  "ourple": #712cf9
-);
-$theme-colors: map-merge($theme-colors, $custom-colors);
-
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap/scss/utilities";
-
-main {
-    display: flex;
-    flex-direction: row;
-    @include media-breakpoint-down(md) {
-        flex-direction: column;
-        > div {
-            height: 50%;
-        }
-    }
-    @include media-breakpoint-up(md) {
-        > div {
-            width: 50%;
-        }
-    }
-    width: 100%;
-    height: 100%;
-}
 
 code.code-pill {
     border-radius: $border-radius-sm;
@@ -113,45 +80,6 @@ code.code-pill {
     }
 }
 
-// Layout & components
-@import "~bootstrap/scss/root";
-@import "~bootstrap/scss/reboot";
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/images";
-@import "~bootstrap/scss/containers";
-@import "~bootstrap/scss/grid";
-@import "~bootstrap/scss/tables";
-@import "~bootstrap/scss/forms";
-@import "~bootstrap/scss/buttons";
-@import "~bootstrap/scss/transitions";
-@import "~bootstrap/scss/dropdown";
-@import "~bootstrap/scss/button-group";
-@import "~bootstrap/scss/nav";
-@import "~bootstrap/scss/navbar";
-@import "~bootstrap/scss/card";
-@import "~bootstrap/scss/accordion";
-// @import "~bootstrap/scss/breadcrumb";
-// @import "~bootstrap/scss/pagination";
-@import "~bootstrap/scss/badge";
-// @import "~bootstrap/scss/alert";
-@import "~bootstrap/scss/progress";
-@import "~bootstrap/scss/list-group";
-@import "~bootstrap/scss/close";
-@import "~bootstrap/scss/toasts";
-@import "~bootstrap/scss/modal";
-@import "~bootstrap/scss/tooltip";
-// @import "~bootstrap/scss/popover";
-// @import "~bootstrap/scss/carousel";
-@import "~bootstrap/scss/spinners";
-@import "~bootstrap/scss/offcanvas";
-@import "~bootstrap/scss/placeholders";
-
 .input-group {
-    width: initial;
+    width: initial !important;
 }
-
-// Helpers
-@import "~bootstrap/scss/helpers";
-
-// Utilities
-@import "~bootstrap/scss/utilities/api";

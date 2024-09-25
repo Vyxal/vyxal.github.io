@@ -6,6 +6,11 @@
 @import "~bootstrap/scss/mixins";
 @import "~bootstrap/scss/utilities";
 
+$custom-colors: (
+  "ourple": #712cf9
+);
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
 // Layout & components
 @import "~bootstrap/scss/root";
 @import "~bootstrap/scss/reboot";
@@ -45,7 +50,7 @@
 // Utilities
 @import "~bootstrap/scss/utilities/api";
 
-.cm-editor {
+.rounded-cm-wrapper .cm-editor {
     @extend .border;
     @extend .rounded;
 }
@@ -54,5 +59,21 @@
     .discord-online {
         position: absolute;
         transform: translateY(-50%);
+    }
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    @include media-breakpoint-down(md) {
+        flex-direction: column;
+        > div {
+            height: 50%;
+        }
+    }
+    @include media-breakpoint-up(md) {
+        > div {
+            width: 50%;
+        }
     }
 }

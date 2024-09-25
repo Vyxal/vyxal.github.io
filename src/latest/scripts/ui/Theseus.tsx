@@ -168,7 +168,7 @@ export function Theseus({ permalink }: TheseusProps) {
                 }
             }} inputs={inputs} setShowFlagsDialog={setShowFlagsDialog} setShowSettingsDialog={setShowSettingsDialog} setShowShareDialog={setShowShareDialog} setShowInputDialog={setShowInputDialog} setShowElementOffcanvas={setShowElementOffcanvas}
         />
-        <main>
+        <main className="w-100 h-100 main">
             <div>
                 <Suspense
                     fallback={

@@ -190,9 +190,10 @@ module.exports = function (env, argv) {
             ],
         },
         ignoreWarnings: [
-            // TODO: Remove these once Bootstrap 5.3.4 releases
-            /https:\/\/sass-lang.com\/d\/mixed-decls/,
-            /\d+ repetitive deprecation warnings omitted\./,
+            // TODO: Remove once Bootstrap gets their shit together
+            /bootstrap[\/\\]scss/,
+            /Sass @import rules/,
+            /repetitive deprecation warnings omitted/,
         ]
     }];
 }

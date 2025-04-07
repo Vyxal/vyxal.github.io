@@ -24,7 +24,7 @@ async function ShareDialogBody() {
     const Handlebars = await import(
         /* webpackPrefetch: true */
         /* webpackChunkName: "handlebars" */
-        "handlebars"
+        "handlebars",
     );
     const cgcc = Handlebars.compile<Template>(CGCCTemplate);
     const cmc = Handlebars.compile<Template>(CMCTemplate);

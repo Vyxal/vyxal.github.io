@@ -28,11 +28,11 @@ import { InputList } from "./Inputs";
 
 const VyTerminal = lazy(() => import(
     /* webpackChunkName: "terminal" */
-    "./VyTerminal"
+    "./VyTerminal",
 ));
 const Editor = lazy(() => import(
     /* webpackChunkName: "editor" */
-    "./Editor"
+    "./Editor",
 ));
 
 // TODO: Don't hardcode this
@@ -90,7 +90,7 @@ export function Theseus({ permalink }: TheseusProps) {
         if (settingsState.snowing == "always" || (settingsState.snowing == "yes" && isTheSeason())) {
             import(
                 /* webpackChunkName: "magic-snowflakes" */
-                "magic-snowflakes"
+                "magic-snowflakes",
             ).then(({ default: Snowflakes }) => {
                 if (snowflakesRef.current == null) {
                     snowflakesRef.current = new Snowflakes();

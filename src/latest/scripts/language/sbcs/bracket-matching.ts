@@ -67,7 +67,7 @@ function matchBrackets(state: EditorState, position: number, side: Side): MatchR
         do {
             if (iter.name == "StructureClose") {
                 const closer = state.doc.sliceString(iter.from, iter.to);
-                if (closer == "}" || closer == "⍟") {
+                if (closer == "}" || closer == "⍟"|| closer == "⎋") {
                     depth--;
                 } else if (closer == ")") {
                     depth -= 2;
@@ -88,7 +88,7 @@ function matchBrackets(state: EditorState, position: number, side: Side): MatchR
             enter(node) {
                 if (node.name == "StructureClose") {
                     const closer = state.doc.sliceString(node.from, node.to);
-                    if (closer == "}" || closer == "⍟") {
+                    if (closer == "}" || closer == "⍟" || closer == "⎋") {
                         openers.pop();
                     } else if (closer == ")") {
                         openers.splice(openers.length - 2);
@@ -103,7 +103,7 @@ function matchBrackets(state: EditorState, position: number, side: Side): MatchR
             to: startNode.from - 1,
         });
         const closer = state.doc.sliceString(startNode.from, startNode.to);
-        if (closer == "}" || closer == "⍟") {
+        if (closer == "}" || closer == "⍟"|| closer == "⎋") {
             if (openers.length >= 1) {
                 return { matched: true, start: [openers.pop()!], end: startNode };
             }

@@ -145,7 +145,7 @@ export function Theseus({ permalink }: TheseusProps) {
                 case "starting":
                 case "idle":
                     setState({ name: "starting" });
-                    runnerRef.current.start(code, flags, inputs, group, timeout);
+                    runnerRef.current.start(header + code + footer, flags, inputs, group, timeout);
                     break;
                 case "running":
                     runnerRef.current.stop();

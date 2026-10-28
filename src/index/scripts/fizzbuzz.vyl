@@ -2,5 +2,5 @@
 100 map<
   n [3, 5] divides?
   "FizzBuzz" halve
-  dot-product maximum
+  dot-product zip-max
 } join-on-newlines
